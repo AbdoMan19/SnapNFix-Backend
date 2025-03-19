@@ -1,4 +1,4 @@
-namespace SnapnFix.Api;
+namespace SnapNFix;
 
 public class WeatherForecast
 {

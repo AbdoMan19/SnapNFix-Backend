@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace SnapnFix.Api.Controllers;
+namespace SnapNFix.Controllers;
 
 [ApiController]
 [Route("[controller]")]
