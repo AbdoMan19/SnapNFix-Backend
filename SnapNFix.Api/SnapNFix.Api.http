@@ -1,0 +1,6 @@
+@SnapNFix.Api_HostAddress = http://localhost:5148
+
+GET {{SnapNFix.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
