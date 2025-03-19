@@ -29,9 +29,7 @@ public class SnapNFixContext
         modelBuilder.HasPostgresExtension("btree_gist");
         modelBuilder.HasPostgresExtension("pg_stat_statements");
         modelBuilder.ApplyConfigurationsFromAssembly(AssemblyReference.Assembly);
-;
-
-        
+  
     }
     
 }

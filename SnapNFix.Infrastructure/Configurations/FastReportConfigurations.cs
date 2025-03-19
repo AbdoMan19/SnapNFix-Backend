@@ -12,17 +12,18 @@ public class FastReportConfiguration : IEntityTypeConfiguration<FastReport>
 
         builder.HasOne(f => f.User)
             .WithMany(u => u.FastReports)
-            .HasForeignKey(f => f.UserId);
+            .HasForeignKey(f => f.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(f => f.Issue)
             .WithMany(i => i.AssociatedFastReports)
-            .HasForeignKey(f => f.IssueId);
+            .HasForeignKey(f => f.IssueId)
+            .OnDelete(DeleteBehavior.Restrict);
 
+        builder.HasIndex(fr => new { fr.UserId, fr.IssueId })
+            .IsUnique(); 
         builder.HasIndex(f => f.UserId);
         builder.HasIndex(f => f.IssueId);
-
-        // Partial index for non-deleted (if applicable in future)
-        builder.HasIndex(f => f.IssueId)
-            .HasFilter("\"IsDeleted\" = FALSE"); // Optional if you add IsDeleted later
+        
     }
 }

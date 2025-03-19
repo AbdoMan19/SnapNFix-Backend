@@ -1,6 +1,5 @@
 ﻿using NetTopologySuite.Geometries;
 using SnapNFix.Domain.Enums;
-
 namespace SnapNFix.Domain.Entities;
 
 public class SnapReport
@@ -20,8 +19,6 @@ public class SnapReport
     //location
     public Point Location { get; set; }
     public ReportStatus Status { get; set; } = ReportStatus.Pending;
-    
-    public bool IsDeleted { get; set; }
     
     //dates
     public DateTime CreatedAt { get; set; }

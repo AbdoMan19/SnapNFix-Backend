@@ -19,6 +19,11 @@ public class IssueConfiguration : IEntityTypeConfiguration<Issue>
 
         builder.HasMany(i => i.AssociatedFastReports)
             .WithOne(f => f.Issue)
-            .HasForeignKey(f => f.IssueId);
+            .HasForeignKey(f => f.IssueId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.HasIndex(i => i.MainReportId); // For FK filtering
+
+        builder.HasIndex(i => i.MainReportId).IsUnique();
     }
 }

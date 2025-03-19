@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Infrastructure.Context;
 using SnapNFix.Infrastructure.Extensions;
@@ -32,6 +33,11 @@ public class Program
         builder.Services.AddOpenApi();
 
         var app = builder.Build();
+        using (var scope = app.Services.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<SnapNFixContext>();
+            dbContext.Database.Migrate(); // Applies any pending migrations
+        }
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())

@@ -4,7 +4,6 @@ namespace SnapNFix.Domain.Entities;
 
 public class User : IdentityUser<Guid>
 {
-    public string FullName => $"{FirstName} {LastName}".Trim();
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string ImagePath { get; set; }
