@@ -14,6 +14,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\SnapNFix.Domain\SnapNFix.Domain.csproj" />
+      <ProjectReference Include="..\SnapNFix.Application\SnapNFix.Application.csproj" />
     </ItemGroup>
 
     <ItemGroup>
