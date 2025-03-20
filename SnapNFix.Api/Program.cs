@@ -20,10 +20,10 @@ public class Program
                 options.Password.RequiredLength=8;
                 options.Password.RequireLowercase = true;
                 options.Password.RequireUppercase = true;
-                options.User.RequireUniqueEmail = true;
+                options.User.RequireUniqueEmail = false;
                 options.Lockout.MaxFailedAccessAttempts = 3;
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromSeconds(10);
-
+                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
             } )
             .AddEntityFrameworkStores<SnapNFixContext>()
             .AddDefaultTokenProviders();

@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Scrutor;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Infrastructure.Context;
+using SnapNFix.Infrastructure.Services;
 
 namespace SnapNFix.Infrastructure.Extensions;
 
@@ -31,6 +32,9 @@ public static class DependencyInjection
             .UsingRegistrationStrategy(RegistrationStrategy.Skip)
             .AsImplementedInterfaces()
             .WithScopedLifetime());
+
+        services.AddDistributedMemoryCache();
+        
         return services;
     }
 

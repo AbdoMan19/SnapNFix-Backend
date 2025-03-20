@@ -1,4 +1,4 @@
-﻿/*using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using SnapNFix.Application.Interfaces;
 using SnapNFix.Infrastructure.Context;
@@ -244,4 +244,4 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
         {
             return _context.Set<TEntity>().AsQueryable();
         }
-}*/
+}
