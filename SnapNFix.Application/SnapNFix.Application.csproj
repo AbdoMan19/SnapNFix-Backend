@@ -31,4 +31,15 @@
       </PackageReference>
     </ItemGroup>
 
+    <ItemGroup>
+      <EmbeddedResource Update="Resources\Shared.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>Shared.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\Shared.Ar.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Shared.Ar.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
 </Project>
