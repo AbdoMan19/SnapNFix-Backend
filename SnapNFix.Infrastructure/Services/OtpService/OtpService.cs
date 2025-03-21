@@ -1,9 +1,9 @@
 using Microsoft.Extensions.Caching.Distributed;
 using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
 
-namespace SnapNFix.Infrastructure.Services;
+using SnapNFix.Domain.Interfaces;
+
+namespace SnapNFix.Infrastructure.Services.OtpService;
 
 public class OtpService : IOtpService
 {

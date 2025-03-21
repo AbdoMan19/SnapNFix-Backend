@@ -1,6 +1,7 @@
 using FluentValidation;
 
 using SnapNFix.Application.Interfaces;
+using SnapNFix.Domain.Entities;
 
 namespace SnapNFix.Application.Features.Users.Commands.RegisterUser
 {
@@ -25,7 +26,7 @@ namespace SnapNFix.Application.Features.Users.Commands.RegisterUser
                 .Matches(@"^\+?[0-9]{10,15}$").WithMessage("Phone number is not valid")
                 .MustAsync(async (phone, cancellation) => 
                 {
-                    var userExists = _unitOfWork.Repository<Domain.Entities.User>()
+                    var userExists = _unitOfWork.Repository<User>()
                         .ExistsByName(u => u.PhoneNumber == phone);
                     return !userExists;
                 }).WithMessage("Phone number is already registered");

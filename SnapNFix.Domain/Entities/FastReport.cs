@@ -10,7 +10,7 @@ public class FastReport
     public Guid IssueId { get; set; }
     public Issue Issue { get; set; }
     
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public string? Comment { get; set; }
 
     

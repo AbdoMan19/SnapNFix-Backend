@@ -1,4 +1,4 @@
-namespace SnapNFix.Infrastructure.Services;
+namespace SnapNFix.Domain.Interfaces;
 
 public interface IOtpService
 {

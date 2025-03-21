@@ -21,7 +21,7 @@ public class SnapReport
     public ReportStatus Status { get; set; } = ReportStatus.Pending;
     
     //dates
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? DeletedAt { get; set; }
 
 
