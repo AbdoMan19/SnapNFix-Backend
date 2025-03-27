@@ -2,29 +2,32 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Infrastructure.Services.TokenService;
 
-public class TokenService : ITokenService
+public class JwtService : ITokenService
 {
     private readonly IConfiguration _configuration;
+    private readonly UserManager<User> _userManager;
 
-    public TokenService(IConfiguration configuration)
+    public JwtService(IConfiguration configuration , UserManager<User> userManager)
     {
         _configuration = configuration;
+        _userManager = userManager;
     }
 
-    public string GenerateJwtToken(Guid userId, string email, IList<string> roles)
+    public async Task<string> GenerateJwtToken(User user)
     {
         var claims = new List<Claim>
         {
-            new(ClaimTypes.NameIdentifier, userId.ToString()),
-            new(ClaimTypes.Email, email)
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
         };
-        
+        var roles = await _userManager.GetRolesAsync(user);
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));

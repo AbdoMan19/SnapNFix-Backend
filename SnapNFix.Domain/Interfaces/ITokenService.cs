@@ -1,8 +1,10 @@
+using SnapNFix.Domain.Entities;
+
 namespace SnapNFix.Domain.Interfaces;
 
 public interface ITokenService
 {
-    string GenerateJwtToken(Guid userId, string email, IList<string> roles);
+    Task<string> GenerateJwtToken(User user);
     string GenerateRefreshToken();
     DateTime GetTokenExpiration();
 }

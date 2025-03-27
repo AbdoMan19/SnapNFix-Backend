@@ -28,12 +28,12 @@ public class Program
             } )
             .AddEntityFrameworkStores<SnapNFixContext>()
             .AddDefaultTokenProviders();
-        builder.Services.AddAuthentication()
+        /*builder.Services.AddAuthentication()
             .AddGoogle(options =>
             {
                 options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
                 options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
-            });
+            });*/
 
         builder.Services.AddControllers();
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

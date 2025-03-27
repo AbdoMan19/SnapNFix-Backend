@@ -1,50 +1,50 @@
-using Microsoft.Extensions.Caching.Distributed;
 using System.Security.Cryptography;
-
+using Microsoft.Extensions.Caching.Memory;
 using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Infrastructure.Services.OtpService;
 
+//todo convert it to redis
+
 public class OtpService : IOtpService
 {
-    private readonly IDistributedCache _cache;
+    private readonly IMemoryCache _cache;
     private readonly TimeSpan _otpLifetime = TimeSpan.FromMinutes(5);
 
-    public OtpService(IDistributedCache cache)
+    public OtpService(IMemoryCache cache)
     {
         _cache = cache;
     }
 
-    public async Task<string> GenerateOtpAsync(string phoneNumber)
+    public Task<string> GenerateOtpAsync(string phoneNumber)
     {
         string otp = GenerateRandomOtp();
         
-        var options = new DistributedCacheEntryOptions
+        var cacheEntryOptions = new MemoryCacheEntryOptions()
+            .SetAbsoluteExpiration(_otpLifetime);
+
+        _cache.Set($"OTP_{phoneNumber}", otp, cacheEntryOptions);
+        
+        return Task.FromResult(otp);
+    }
+
+    public Task<bool> VerifyOtpAsync(string phoneNumber, string otp)
+    {
+        if (_cache.TryGetValue($"OTP_{phoneNumber}", out string? storedOtp) && storedOtp != null)
         {
-            AbsoluteExpirationRelativeToNow = _otpLifetime
-        };
-
-        await _cache.SetStringAsync($"OTP_{phoneNumber}", otp, options);
+            return Task.FromResult(storedOtp == otp);
+        }
         
-        return otp;
+        return Task.FromResult(false);
     }
 
-    public async Task<bool> VerifyOtpAsync(string phoneNumber, string otp)
+    public Task InvalidateOtpAsync(string phoneNumber)
     {
-        string storedOtp = await _cache.GetStringAsync($"OTP_{phoneNumber}");
-        
-        if (string.IsNullOrEmpty(storedOtp))
-            return false;
-            
-        return storedOtp == otp;
+        _cache.Remove($"OTP_{phoneNumber}");
+        return Task.CompletedTask;
     }
 
-    public async Task InvalidateOtpAsync(string phoneNumber)
-    {
-        await _cache.RemoveAsync($"OTP_{phoneNumber}");
-    }
-
-    private string GenerateRandomOtp()
+    private static string GenerateRandomOtp()
     {
         return RandomNumberGenerator.GetInt32(100000, 1000000).ToString("D6");
     }
