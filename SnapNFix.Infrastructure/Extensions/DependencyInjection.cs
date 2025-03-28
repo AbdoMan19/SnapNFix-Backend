@@ -33,7 +33,8 @@ public static class DependencyInjection
             .AsImplementedInterfaces()
             .WithScopedLifetime());
 
-        services.AddDistributedMemoryCache();
+        services.AddMemoryCache();
+        
         
         return services;
     }

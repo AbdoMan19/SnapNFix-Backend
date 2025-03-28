@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.RateLimiting; // Add this namespace
 using SnapNFix.Domain.Entities;
 using SnapNFix.Infrastructure.Context;
 using SnapNFix.Infrastructure.Extensions;
+using System.Threading.RateLimiting; // Add this namespace
 
 namespace SnapNFix.Api;
 
@@ -13,19 +15,19 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddInfrastructure(builder.Configuration);
+
+        // Add Identity
         builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
             {
-                
-                options.Password.RequireDigit=true;
-                options.Password.RequiredLength=8;
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 8;
                 options.Password.RequireLowercase = true;
                 options.Password.RequireUppercase = true;
                 options.Password.RequireNonAlphanumeric = true;
                 options.User.RequireUniqueEmail = true;
                 options.Lockout.MaxFailedAccessAttempts = 3;
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromSeconds(10);
-           //     options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-            } )
+            })
             .AddEntityFrameworkStores<SnapNFixContext>()
             .AddDefaultTokenProviders();
         /*builder.Services.AddAuthentication()
@@ -35,11 +37,23 @@ public class Program
                 options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
             });*/
 
+        // Add Rate Limiting
+        builder.Services.AddRateLimiter(options =>
+        {
+            options.AddFixedWindowLimiter("FixedWindowPolicy", limiterOptions =>
+            {
+                limiterOptions.PermitLimit = 5; // Allow 5 requests
+                limiterOptions.Window = TimeSpan.FromSeconds(10); // Per 10 seconds
+                limiterOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                limiterOptions.QueueLimit = 2; // Allow 2 requests to queue
+            });
+        });
+
         builder.Services.AddControllers();
-        // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
 
         var app = builder.Build();
+
         using (var scope = app.Services.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<SnapNFixContext>();
@@ -53,9 +67,12 @@ public class Program
         }
 
         app.UseHttpsRedirection();
+
+        // Use Rate Limiting Middleware
+        app.UseRateLimiter();
+
         app.UseAuthentication();
         app.UseAuthorization();
-
 
         app.MapControllers();
 
