@@ -1,10 +1,13 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.RateLimiting; // Add this namespace
+using Microsoft.AspNetCore.RateLimiting;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Infrastructure.Context;
 using SnapNFix.Infrastructure.Extensions;
-using System.Threading.RateLimiting; // Add this namespace
+using System.Threading.RateLimiting;
+using MediatR;
+using SnapNFix.Application.Features.Auth.LoginWithPhoneOrEmail;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SnapNFix.Api;
 
@@ -15,6 +18,9 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddInfrastructure(builder.Configuration);
+
+        builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(LoginWithPhoneOrEmailCommandHandler).Assembly));
+
 
         // Add Identity
         builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
@@ -57,10 +63,9 @@ public class Program
         using (var scope = app.Services.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<SnapNFixContext>();
-            dbContext.Database.Migrate(); // Applies any pending migrations
+            dbContext.Database.Migrate();
         }
 
-        // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
@@ -68,7 +73,6 @@ public class Program
 
         app.UseHttpsRedirection();
 
-        // Use Rate Limiting Middleware
         app.UseRateLimiter();
 
         app.UseAuthentication();
