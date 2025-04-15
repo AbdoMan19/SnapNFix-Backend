@@ -5,6 +5,7 @@ using SnapNFix.Application.Features.Auth.LoginWithPhoneOrEmail;
 using SnapNFix.Application.Features.Auth.Logout;
 using SnapNFix.Application.Features.Auth.RefreshToken;
 using SnapNFix.Application.Features.Auth.Dtos;
+using SnapNFix.Application.Features.Users.Commands.RegisterUser;
 
 namespace SnapNFix.Api.Controllers;
 
@@ -41,6 +42,14 @@ public class AuthController : ControllerBase
     {
         command.IpAddress = GetIpAddress();
         var result = await _mediator.Send(command);
+        return result;
+    }
+
+    [HttpPost("register")]
+    public async Task<ActionResult<GenericResponseModel<Guid>>> Register([FromBody] RegisterUserCommand command)
+    {
+        var result = await _mediator.Send(command);
+
         return result;
     }
 

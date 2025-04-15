@@ -16,11 +16,4 @@ public class CitizensController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpPost("register")]
-    public async Task<ActionResult<GenericResponseModel<Guid>>> Register([FromBody] RegisterUserCommand command)
-    {
-        var result = await _mediator.Send(command);
-
-        return result;
-    }
 }

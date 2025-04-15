@@ -100,6 +100,7 @@ public class JwtService : ITokenService
     public async Task<(string JwtToken, string RefreshToken)> RefreshTokenAsync(string accessToken, string refreshToken, string ipAddress)
     {
         // Validate the expired access token
+
         var principal = GetPrincipalFromExpiredToken(accessToken);
         if (principal == null)
         {
