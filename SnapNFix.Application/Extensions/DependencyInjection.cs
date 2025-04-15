@@ -23,12 +23,6 @@ public static class DependencyInjection
         config.Scan(Assembly.GetExecutingAssembly());
         services.AddSingleton(config);
         services.AddScoped<IMapper, ServiceMapper>();*/
-        services.Scan(action => 
-            action.FromAssemblies(Assembly.GetExecutingAssembly())
-                .AddClasses()
-                .UsingRegistrationStrategy(RegistrationStrategy.Skip)
-                .AsImplementedInterfaces()
-                .WithScopedLifetime());
         return services;
     }
 }

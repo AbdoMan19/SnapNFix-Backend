@@ -11,19 +11,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="612cad8c-6ee7-4896-9b39-3d1bd72cb61f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/Dtos/AuthResponse.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/GoogleLogin/GoogleLoginCommand.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/GoogleLogin/GoogleLoginCommandHandler.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/GoogleLogin/GoogleLoginCommandValidator.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Users/Commands/PhoneVerification/PhoneVerificationCommand.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Users/Commands/PhoneVerification/PhoneVerificationCommandHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.SnapNFix-Backend/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SnapNFix-Backend/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Api/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Api/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Api/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Api/appsettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Domain/Interfaces/ITokenService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Domain/Interfaces/ITokenService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Factories/SnapNFixContextFactory.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/OtpService/OtpService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/OtpService/OtpService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/TokenService/TokenService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/TokenService/TokenService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Api/Controllers/AuthController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Api/Controllers/AuthController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Extensions/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Extensions/DependencyInjection.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,28 +60,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET Launch Settings Profile.SnapNFix.Api: http.executor&quot;: &quot;Run&quot;,
-    &quot;.NET Launch Settings Profile.SnapnFix: http.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/RegisterWithThirdParty&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;CodeLensConfigurable&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Launch Settings Profile.SnapNFix.Api: http.executor": "Debug",
+    ".NET Launch Settings Profile.SnapnFix: http.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "#1 on Development",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "CodeLensConfigurable",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;rider.external.source.directories&quot;: [
-      &quot;C:\\Users\\abdel\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache&quot;,
-      &quot;C:\\Users\\abdel\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache&quot;,
-      &quot;C:\\Users\\abdel\\AppData\\Local\\Symbols\\src&quot;
+  "keyToStringList": {
+    "rider.external.source.directories": [
+      "C:\\Users\\abdel\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache",
+      "C:\\Users\\abdel\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache",
+      "C:\\Users\\abdel\\AppData\\Local\\Symbols\\src"
     ]
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.SnapNFix.Api: http">
     <configuration name="SnapNFix.Api: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/SnapNFix.Api/SnapNFix.Api.csproj" />
@@ -146,6 +135,7 @@
       <workItem from="1742679916968" duration="672000" />
       <workItem from="1742779963821" duration="8011000" />
       <workItem from="1743105865816" duration="1991000" />
+      <workItem from="1744738271479" duration="4106000" />
     </task>
     <task id="LOCAL-00001" summary="setup database">
       <option name="closed" value="true" />
@@ -185,5 +175,24 @@
     <MESSAGE value="Fix bug" />
     <MESSAGE value="Fix database bugs" />
     <option name="LAST_COMMIT_MESSAGE" value="Fix database bugs" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/SnapNFix.Api/Controllers/AuthController.cs</url>
+          <line>50</line>
+          <properties documentPath="D:\projects\Graduation Project 2025\SnapNFix-Backend\SnapNFix.Api\Controllers\AuthController.cs" containingFunctionPresentation="Method 'Register'">
+            <startOffsets>
+              <option value="1556" />
+            </startOffsets>
+            <endOffsets>
+              <option value="1599" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

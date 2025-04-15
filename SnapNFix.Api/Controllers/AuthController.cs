@@ -21,36 +21,35 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<GenericResponseModel<AuthResponse>> Login([FromBody] LoginWithPhoneOrEmailCommand command)
+    public async Task<IActionResult> Login([FromBody] LoginWithPhoneOrEmailCommand command)
     {
         command.IpAddress = GetIpAddress();
         var result = await _mediator.Send(command);
-        return result;
+        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
 
 
     [HttpPost("refresh-token")]
-    public async Task<GenericResponseModel<AuthResponse>> RefreshToken([FromBody] RefreshTokenCommand command)
+    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenCommand command)
     {
         command.IpAddress = GetIpAddress();
         var result = await _mediator.Send(command);
-        return result;
+        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
 
     [HttpPost("logout")]
-    public async Task<GenericResponseModel<bool>> Logout([FromBody] LogoutCommand command)
+    public async Task<IActionResult> Logout([FromBody] LogoutCommand command)
     {
         command.IpAddress = GetIpAddress();
         var result = await _mediator.Send(command);
-        return result;
+        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult<GenericResponseModel<Guid>>> Register([FromBody] RegisterUserCommand command)
+    public async Task<ActionResult> Register(RegisterUserCommand command)
     {
         var result = await _mediator.Send(command);
-
-        return result;
+        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
 
     private string GetIpAddress()
