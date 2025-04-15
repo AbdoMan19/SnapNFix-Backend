@@ -1,6 +1,8 @@
 using FluentValidation;
 using MediatR;
 using SnapNFix.Application.Common.ResponseModel;
+using System;
+using System.Linq;
 
 namespace SnapNFix.Application.Common.Behaviors;
 
@@ -8,7 +10,6 @@ public sealed class ValidationBehavior<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
     where TResponse : BaseResponseModel
-
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
 
@@ -22,7 +23,6 @@ public sealed class ValidationBehavior<TRequest, TResponse>
         RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
-
         if (!_validators.Any())
         {
             return await next();
@@ -42,9 +42,21 @@ public sealed class ValidationBehavior<TRequest, TResponse>
 
         if (failures.Any())
         {
-            return GenericResponseModel<bool>.Failure("Validation Failed", failures) as TResponse;
+            var responseType = typeof(TResponse);
+            var innerType = responseType.GetGenericArguments()[0];
             
+            var genericMethod = typeof(ValidationBehavior<TRequest, TResponse>)
+                .GetMethod(nameof(CreateFailureResponse), System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                .MakeGenericMethod(innerType);
+            
+            return (TResponse)genericMethod.Invoke(this, new object[] { failures });
         }
+        
         return await next();
+    }
+
+    private GenericResponseModel<T> CreateFailureResponse<T>(IList<ErrorResponseModel> errors)
+    {
+        return GenericResponseModel<T>.Failure("Validation Failed", errors);
     }
 }

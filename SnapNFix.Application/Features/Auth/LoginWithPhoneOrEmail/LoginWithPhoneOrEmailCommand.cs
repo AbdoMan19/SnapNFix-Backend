@@ -8,6 +8,5 @@ public class LoginWithPhoneOrEmailCommand : IRequest<GenericResponseModel<AuthRe
 {
     public string Email { get; set; } = string.Empty;
     public string PhoneNumber { get; set; } = string.Empty;
-    public required string Password { get; set; }
-    public string IpAddress { get; set; } = string.Empty;
+    public string Password { get; set; }
 }

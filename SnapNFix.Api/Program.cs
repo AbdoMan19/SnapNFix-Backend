@@ -57,7 +57,7 @@ public class Program
         using (var scope = app.Services.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<SnapNFixContext>();
-            dbContext.Database.Migrate(); // Applies any pending migrations
+            dbContext.Database.Migrate(); 
         }
         app.UseWebApiMiddleware();
         app.UseRouting();

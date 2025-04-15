@@ -95,7 +95,7 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
         var token = await _tokenService.GenerateJwtToken(user);
         var refreshToken = _tokenService.GenerateRefreshToken();
         
-        await _tokenService.SaveRefreshTokenAsync(user, refreshToken, request.IpAddress);
+        await _tokenService.SaveRefreshTokenAsync(user, refreshToken, "1.0.0.0");
 
         _logger.LogInformation("User {UserId} logged in successfully", user.Id);
 

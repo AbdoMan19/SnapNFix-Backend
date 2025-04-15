@@ -21,9 +21,8 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginWithPhoneOrEmailCommand command)
+    public async Task<IActionResult> Login([FromBody] LoginWithPhoneOrEmailCommand command)
     {
-        command.IpAddress = GetIpAddress();
         var result = await _mediator.Send(command);
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
@@ -32,7 +31,6 @@ public class AuthController : ControllerBase
     [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenCommand command)
     {
-        command.IpAddress = GetIpAddress();
         var result = await _mediator.Send(command);
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
@@ -40,7 +38,6 @@ public class AuthController : ControllerBase
     [HttpPost("logout")]
     public async Task<IActionResult> Logout([FromBody] LogoutCommand command)
     {
-        command.IpAddress = GetIpAddress();
         var result = await _mediator.Send(command);
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
@@ -48,18 +45,8 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<ActionResult> Register(RegisterUserCommand command)
     {
-        
-        if(command == null)
-            return BadRequest("Invalid request");
         var result = await _mediator.Send(command);
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
 
-    private string GetIpAddress()
-    {
-        if (Request.Headers.ContainsKey("X-Forwarded-For"))
-            return Request.Headers["X-Forwarded-For"];
-
-        return HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "Unknown";
-    }
 }

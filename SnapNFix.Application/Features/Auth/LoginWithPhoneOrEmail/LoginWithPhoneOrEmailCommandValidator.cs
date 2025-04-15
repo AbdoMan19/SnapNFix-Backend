@@ -8,7 +8,7 @@ namespace SnapNFix.Application.Features.Auth.LoginWithPhoneOrEmail;
 
 public class LoginWithPhoneOrEmailCommandValidator : AbstractValidator<LoginWithPhoneOrEmailCommand>
 {
-    public LoginWithPhoneOrEmailCommandValidator(IUnitOfWork unitOfWork , UserManager<User> userManager)
+    public LoginWithPhoneOrEmailCommandValidator()
     {
         RuleFor(x => new { x.Email, x.PhoneNumber })
             .Must(x => !string.IsNullOrWhiteSpace(x.Email) || !string.IsNullOrWhiteSpace(x.PhoneNumber))
