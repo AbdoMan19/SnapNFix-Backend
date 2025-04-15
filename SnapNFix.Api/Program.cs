@@ -47,13 +47,18 @@ public class Program
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = builder.Configuration["Jwt:Issuer"],
                     ValidAudience = builder.Configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(builder.Configuration["Jwt:SecretForKey"]))
+                    IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(builder.Configuration["Jwt:Key"]))
                 };
             });
         
+        
 
         var app = builder.Build();
-
+        using (var scope = app.Services.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<SnapNFixContext>();
+            dbContext.Database.Migrate(); // Applies any pending migrations
+        }
         app.UseWebApiMiddleware();
         app.UseRouting();
 

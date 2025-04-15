@@ -18,6 +18,15 @@ public static class ServiceCollectionExtensions
         {
             options.SuppressModelStateInvalidFilter = true;
         });
+        services.Scan(scan => scan
+            .FromAssemblies(
+                Assembly.GetExecutingAssembly(),
+                Application.AssemblyReference.Assembly,
+                Infrastructure.AssemblyReference.Assembly
+            )
+            .AddClasses()
+            .AsMatchingInterface()
+            .WithScopedLifetime());
 
         services.AddIdentity<User, IdentityRole<Guid>>(options =>
             {
@@ -32,6 +41,7 @@ public static class ServiceCollectionExtensions
             })
             .AddEntityFrameworkStores<SnapNFixContext>()
             .AddDefaultTokenProviders();
+
 
         services.AddApiVersioning(options =>
         {

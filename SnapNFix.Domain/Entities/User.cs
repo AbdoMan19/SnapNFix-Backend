@@ -6,7 +6,7 @@ public class User : IdentityUser<Guid>
 {
     public string FirstName { get; set; }
     public string LastName { get; set; }
-    public string ImagePath { get; set; }
+    public string ImagePath { get; set; } = string.Empty;
     public string Username { get; set; } = Guid.NewGuid().ToString();
     public bool IsSuspended => AccessFailedCount >= 3;
     public bool IsDeleted { get; set; }
