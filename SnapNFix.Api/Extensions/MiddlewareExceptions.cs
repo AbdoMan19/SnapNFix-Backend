@@ -1,0 +1,34 @@
+namespace SnapNFix.Api.Extensions;
+
+public static class MiddlewareExtensions
+{
+    public static WebApplication UseWebApiMiddleware(this WebApplication app)
+    {
+
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ecommerce API v1");
+                c.OAuthClientId("swagger-ui");
+                c.OAuthAppName("Swagger UI");
+            });
+        }
+        app.UseCookiePolicy(new CookiePolicyOptions
+        {
+            MinimumSameSitePolicy = SameSiteMode.Strict
+        });
+        app.UseHsts();
+        app.UseExceptionHandler();
+        app.UseHttpsRedirection();
+        app.UseRateLimiter();
+        app.UseCors("DefaultPolicy");
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.MapHealthChecks("/health");
+
+        return app;
+    }
+}

@@ -7,11 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Common\Behaviors\" />
       <Folder Include="Common\Exceptions\" />
       <Folder Include="Common\Mapping\" />
-      <Folder Include="Extensions\" />
-      <Folder Include="Utilities\" />
     </ItemGroup>
 
     <ItemGroup>
@@ -19,7 +16,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="FluentValidation" Version="11.11.0" />
+      <PackageReference Include="FluentValidation" Version="12.0.0-preview1" />
+      <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0-preview1" />
       <PackageReference Include="Google.Apis.Auth" Version="1.69.0" />
       <PackageReference Include="MediatR" Version="12.4.1" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.3" />
@@ -32,6 +30,7 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+      <PackageReference Include="Scrutor" Version="6.0.1" />
       <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.8.0" />
     </ItemGroup>
 

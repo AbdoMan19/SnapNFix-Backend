@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.RateLimiting;
@@ -8,6 +10,9 @@ using System.Threading.RateLimiting;
 using MediatR;
 using SnapNFix.Application.Features.Auth.LoginWithPhoneOrEmail;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using SnapNFix.Api.Extensions;
+using SnapNFix.Application.Extensions;
 
 namespace SnapNFix.Api;
 
@@ -17,66 +22,40 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddInfrastructure(builder.Configuration);
+        builder.Services
+            .AddWebApiServices()
+            .AddApplication()
+            .AddInfrastructure(builder.Configuration)
+            .AddCustomSwagger();
+        
 
-        builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(LoginWithPhoneOrEmailCommandHandler).Assembly));
-
-
-        // Add Identity
-        builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
+        builder.Services.AddControllers()
+            .AddJsonOptions(o =>
             {
-                options.Password.RequireDigit = true;
-                options.Password.RequiredLength = 8;
-                options.Password.RequireLowercase = true;
-                options.Password.RequireUppercase = true;
-                options.Password.RequireNonAlphanumeric = true;
-                options.User.RequireUniqueEmail = true;
-                options.Lockout.MaxFailedAccessAttempts = 3;
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromSeconds(10);
-            })
-            .AddEntityFrameworkStores<SnapNFixContext>()
-            .AddDefaultTokenProviders();
-        /*builder.Services.AddAuthentication()
-            .AddGoogle(options =>
-            {
-                options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-                options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
-            });*/
-
-        // Add Rate Limiting
-        builder.Services.AddRateLimiter(options =>
-        {
-            options.AddFixedWindowLimiter("FixedWindowPolicy", limiterOptions =>
-            {
-                limiterOptions.PermitLimit = 5; // Allow 5 requests
-                limiterOptions.Window = TimeSpan.FromSeconds(10); // Per 10 seconds
-                limiterOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-                limiterOptions.QueueLimit = 2; // Allow 2 requests to queue
+                o.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
+                o.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             });
-        });
-
-        builder.Services.AddControllers();
-        builder.Services.AddOpenApi();
+        
+        builder.Services.AddAuthentication("Bearer")
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(builder.Configuration["Jwt:SecretForKey"]))
+                };
+            });
+        
 
         var app = builder.Build();
 
-        using (var scope = app.Services.CreateScope())
-        {
-            var dbContext = scope.ServiceProvider.GetRequiredService<SnapNFixContext>();
-            dbContext.Database.Migrate();
-        }
-
-        if (app.Environment.IsDevelopment())
-        {
-            app.MapOpenApi();
-        }
-
-        app.UseHttpsRedirection();
-
-        app.UseRateLimiter();
-
-        app.UseAuthentication();
-        app.UseAuthorization();
+        app.UseWebApiMiddleware();
+        app.UseRouting();
 
         app.MapControllers();
 
