@@ -21,7 +21,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginWithPhoneOrEmailCommand command)
+    public async Task<IActionResult> Login(LoginWithPhoneOrEmailCommand command)
     {
         command.IpAddress = GetIpAddress();
         var result = await _mediator.Send(command);
@@ -48,6 +48,9 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<ActionResult> Register(RegisterUserCommand command)
     {
+        
+        if(command == null)
+            return BadRequest("Invalid request");
         var result = await _mediator.Send(command);
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }

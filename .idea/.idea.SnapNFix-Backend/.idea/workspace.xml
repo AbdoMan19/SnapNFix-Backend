@@ -11,7 +11,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="612cad8c-6ee7-4896-9b39-3d1bd72cb61f" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.SnapNFix-Backend/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SnapNFix-Backend/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SnapNFix.Api/Controllers/AuthController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Api/Controllers/AuthController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Api/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Api/appsettings.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Extensions/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Extensions/DependencyInjection.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -45,6 +47,7 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/b96167fbfe8bd45d94e4dcda42c7d09eb5745459/src/Identity/Extensions.Stores/src/IdentityUser.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/df9eda5d85874f5a8568b87d4adcd4ed21930/0b/32210de8/Point.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/f4bc324a395d24ed12db75b0a81536b642509aa14825bf114d9b7c934e2b/Mediator.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/SnapNFix.Api/Program.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/SnapNFix.Api/appsettings.json" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -135,7 +138,7 @@
       <workItem from="1742679916968" duration="672000" />
       <workItem from="1742779963821" duration="8011000" />
       <workItem from="1743105865816" duration="1991000" />
-      <workItem from="1744738271479" duration="4106000" />
+      <workItem from="1744738271479" duration="6643000" />
     </task>
     <task id="LOCAL-00001" summary="setup database">
       <option name="closed" value="true" />
@@ -180,17 +183,56 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/SnapNFix.Api/Controllers/AuthController.cs</url>
-          <line>50</line>
-          <properties documentPath="D:\projects\Graduation Project 2025\SnapNFix-Backend\SnapNFix.Api\Controllers\AuthController.cs" containingFunctionPresentation="Method 'Register'">
+          <url>file://$PROJECT_DIR$/SnapNFix.Application/Features/Users/Commands/RegisterUser/RegisterUserCommandHandler.cs</url>
+          <line>49</line>
+          <properties documentPath="D:\projects\Graduation Project 2025\SnapNFix-Backend\SnapNFix.Application\Features\Users\Commands\RegisterUser\RegisterUserCommandHandler.cs" containingFunctionPresentation="Method 'Handle'">
             <startOffsets>
-              <option value="1556" />
+              <option value="1850" />
             </startOffsets>
             <endOffsets>
-              <option value="1599" />
+              <option value="1932" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="2" />
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/SnapNFix.Application/Extensions/DependencyInjection.cs</url>
+          <line>13</line>
+          <properties documentPath="D:\projects\Graduation Project 2025\SnapNFix-Backend\SnapNFix.Application\Extensions\DependencyInjection.cs" containingFunctionPresentation="Method 'AddApplication'">
+            <startOffsets>
+              <option value="430" />
+            </startOffsets>
+            <endOffsets>
+              <option value="687" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/SnapNFix.Application/Features/Users/Commands/RegisterUser/RegisterUserCommandHandler.cs</url>
+          <line>25</line>
+          <properties documentPath="D:\projects\Graduation Project 2025\SnapNFix-Backend\SnapNFix.Application\Features\Users\Commands\RegisterUser\RegisterUserCommandHandler.cs" containingFunctionPresentation="Constructor 'RegisterUserCommandHandler'">
+            <startOffsets>
+              <option value="963" />
+            </startOffsets>
+            <endOffsets>
+              <option value="990" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/SnapNFix.Application/Features/Users/Commands/RegisterUser/RegisterUserCommandValidator.cs</url>
+          <line>12</line>
+          <properties documentPath="D:\projects\Graduation Project 2025\SnapNFix-Backend\SnapNFix.Application\Features\Users\Commands\RegisterUser\RegisterUserCommandValidator.cs" containingFunctionPresentation="Constructor 'RegisterUserCommandValidator'">
+            <startOffsets>
+              <option value="400" />
+            </startOffsets>
+            <endOffsets>
+              <option value="425" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

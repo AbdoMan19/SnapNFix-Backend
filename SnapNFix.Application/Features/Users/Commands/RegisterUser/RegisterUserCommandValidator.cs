@@ -11,14 +11,13 @@ namespace SnapNFix.Application.Features.Users.Commands.RegisterUser
         public RegisterUserCommandValidator(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
+            
 
             RuleFor(x => x.FirstName)
-                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("First name is required")
                 .MaximumLength(50).WithMessage("First name must not exceed 50 characters");
 
             RuleFor(x => x.LastName)
-                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("Last name is required")
                 .MaximumLength(50).WithMessage("Last name must not exceed 50 characters");
 
@@ -26,20 +25,24 @@ namespace SnapNFix.Application.Features.Users.Commands.RegisterUser
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("Phone number is required")
                 .Matches(@"^\+?[0-9]{10,15}$").WithMessage("Phone number is not valid")
-                .MustAsync(async (phone, cancellation) => 
-                    !_unitOfWork.Repository<User>().ExistsByName(u => u.PhoneNumber == phone)
+                .Must(phone =>
+                    {
+                        var existingUser =  _unitOfWork.Repository<User>().ExistsByName(u => u.PhoneNumber == phone);
+                        return existingUser;
+                    }
                 ).WithMessage("Phone number is already registered");
 
             RuleFor(x => x.Email)
-                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("Email is required")
                 .EmailAddress().WithMessage("Email is not valid")
-                .MustAsync(async (email, cancellation) => 
-                    !_unitOfWork.Repository<User>().ExistsByName(u => u.Email == email)
+                .Must( email=>
+                    {
+                        var existingUser = _unitOfWork.Repository<User>().ExistsByName(u => u.Email == email);
+                        return existingUser;
+                    }
                 ).WithMessage("Email is already registered");
 
             RuleFor(x => x.Password)
-                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("Password is required")
                 .MinimumLength(8).WithMessage("Password must be at least 8 characters")
                 .Matches("[A-Z]").WithMessage("Password must contain at least one uppercase letter")
@@ -50,8 +53,7 @@ namespace SnapNFix.Application.Features.Users.Commands.RegisterUser
             RuleFor(x => x.ConfirmPassword)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("Confirm password is required")
-                .Equal(x => x.Password).WithMessage("Passwords do not match")
-                .When(x => !string.IsNullOrWhiteSpace(x.Password), ApplyConditionTo.CurrentValidator);
+                .Equal(x => x.Password).WithMessage("Passwords do not match");
         }
     }
 }

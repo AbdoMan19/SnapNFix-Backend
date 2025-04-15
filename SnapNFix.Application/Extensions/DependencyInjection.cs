@@ -1,7 +1,6 @@
 using System.Reflection;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using Scrutor;
 using SnapNFix.Application.Common.Behaviors;
 
 namespace SnapNFix.Application.Extensions;
