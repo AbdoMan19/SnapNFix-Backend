@@ -35,25 +35,27 @@ public static class ServiceCollectionExtensions
                 {
                     npgsql.UseNetTopologySuite();
                 }));
-        services.AddIdentity<User, IdentityRole<Guid>>(options =>
-            {
-                options.Password.RequireDigit = true;
-                options.Password.RequiredLength = 8;
-                options.Password.RequireLowercase = true;
-                options.Password.RequireUppercase = true;
-                options.Password.RequireNonAlphanumeric = true;
-                options.User.RequireUniqueEmail = true;
-                
-                options.Lockout.MaxFailedAccessAttempts = 3;
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromSeconds(10);
-            })
-            .AddEntityFrameworkStores<SnapNFixContext>()
-            .AddDefaultTokenProviders();
-        
+            
         services.Configure<DataProtectionTokenProviderOptions>(options =>
         {
             options.TokenLifespan = TimeSpan.FromHours(1);
         });
+        
+        services.AddIdentity<User, IdentityRole<Guid>>(options =>
+        {
+            options.Password.RequireDigit = true;
+            options.Password.RequiredLength = 8;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireUppercase = true;
+            options.Password.RequireNonAlphanumeric = true;
+            options.User.RequireUniqueEmail = false; 
+            options.Lockout.MaxFailedAccessAttempts = 3;
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromSeconds(10);
+        })
+        .AddEntityFrameworkStores<SnapNFixContext>()
+        .AddDefaultTokenProviders()
+        .AddUserValidator<OptionalEmailValidator<User>>();
+
 
 
         /*services.AddApiVersioning(options =>

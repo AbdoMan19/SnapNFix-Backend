@@ -10,9 +10,24 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
     {
         builder.HasKey(u => u.Id);
         
+        builder.Property(u => u.FirstName)
+            .IsRequired()
+            .HasMaxLength(50);
+            
+        builder.Property(u => u.LastName)
+            .IsRequired()
+            .HasMaxLength(50);
+            
+        builder.Property(u => u.PhoneNumber)
+            .IsRequired();
+            
+        builder.HasIndex(u => u.PhoneNumber)
+            .IsUnique();
+            
+        builder.Property(u => u.Email).IsRequired(false);
+        builder.Property(u => u.NormalizedEmail).IsRequired(false);
 
         builder.HasIndex(u => new { u.FirstName, u.LastName });
-
 
         builder.HasMany(u => u.SnapReports)
             .WithOne(r => r.User)
