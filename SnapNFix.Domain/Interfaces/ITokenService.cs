@@ -5,13 +5,14 @@ namespace SnapNFix.Domain.Interfaces;
 
 public interface ITokenService
 {
+    //AccessToken
     Task<string> GenerateJwtToken(User user);
-    string GenerateRefreshToken();
     DateTime GetTokenExpiration();
     
-    ClaimsPrincipal? GetPrincipalFromExpiredToken(string token);
-    Task<(string JwtToken, string RefreshToken)> RefreshTokenAsync(string accessToken, string refreshToken, string ipAddress);
-    Task RevokeRefreshTokenAsync(string refreshToken, string ipAddress);
-    Task<RefreshToken> SaveRefreshTokenAsync(User user, string refreshToken, string ipAddress);
-    Task<RefreshToken?> GetRefreshTokenAsync(string token);
+    
+    //RefreshToken
+    string GenerateRefreshToken();
+    RefreshToken GenerateRefreshToken(User user);
+    Task<(string JwtToken, string RefreshToken)> RefreshTokenAsync(RefreshToken refresh);
+    public DateTime GetRefreshTokenExpirationDays();
 }

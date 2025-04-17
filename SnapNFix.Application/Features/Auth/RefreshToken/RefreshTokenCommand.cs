@@ -6,7 +6,5 @@ namespace SnapNFix.Application.Features.Auth.RefreshToken;
 
 public class RefreshTokenCommand : IRequest<GenericResponseModel<AuthResponse>>
 {
-    public required string AccessToken { get; set; }
-    public required string RefreshToken { get; set; }
-    public required string IpAddress { get; set; }
+    public string RefreshToken { get; set; }
 }

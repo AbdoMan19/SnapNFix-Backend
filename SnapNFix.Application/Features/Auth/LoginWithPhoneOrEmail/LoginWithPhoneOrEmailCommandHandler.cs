@@ -7,8 +7,6 @@ using SnapNFix.Application.Features.Auth.Dtos;
 using SnapNFix.Application.Interfaces;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
-using System.Threading;
-using System.Threading.Tasks;
 using Constants = SnapNFix.Application.Utilities.Constants;
 
 namespace SnapNFix.Application.Features.Auth.LoginWithPhoneOrEmail;
@@ -39,28 +37,24 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
         {
             ErrorResponseModel.Create("Authentication", "Invalid credentials")
         };
+        User user = null;
+        var isEmail = false;
+        var isPhone = false;
 
-        string identifier = !string.IsNullOrEmpty(request.Email) 
-            ? request.Email 
-            : request.PhoneNumber;
-            
-        if (string.IsNullOrEmpty(identifier))
+        if (request.EmailOrPhone.Contains("@"))
         {
-            _logger.LogWarning("Login attempt failed: No identifier provided");
-            return GenericResponseModel<AuthResponse>.Failure(
-                Constants.FailureMessage, 
-                new List<ErrorResponseModel>{ ErrorResponseModel.Create("Authentication", "Email or phone number is required") });
+            isEmail = true;
+            user = await _userManager.FindByEmailAsync(request.EmailOrPhone);
         }
-
-        var user = await _unitOfWork.Repository<User>()
-            .FindBy(u => 
-                (!string.IsNullOrEmpty(request.Email) && u.Email == request.Email) || 
-                (!string.IsNullOrEmpty(request.PhoneNumber) && u.PhoneNumber == request.PhoneNumber))
-            .FirstOrDefaultAsync(cancellationToken);
-        
+        else
+        {
+            isPhone = true;
+            user = await _userManager.Users
+                .FirstOrDefaultAsync(u => u.PhoneNumber == request.EmailOrPhone, cancellationToken);
+        }
         if (user == null)
         {
-            _logger.LogWarning("Login attempt failed: User not found for identifier {Identifier}", identifier);
+            _logger.LogWarning("Login attempt failed: User not found for identifier {Identifier}", nameof(request.EmailOrPhone));
             return GenericResponseModel<AuthResponse>.Failure(Constants.FailureMessage, invalidCredentialsError);
         }
 
@@ -82,27 +76,29 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
             return GenericResponseModel<AuthResponse>.Failure(Constants.FailureMessage, invalidCredentialsError);
         }
 
-        if (_userManager.Options.SignIn.RequireConfirmedEmail && !user.EmailConfirmed)
+        if (isEmail && !user.EmailConfirmed ||
+            isPhone && !user.PhoneNumberConfirmed)
         {
             _logger.LogWarning("Login attempt with unconfirmed email for user {UserId}", user.Id);
             return GenericResponseModel<AuthResponse>.Failure(
                 Constants.FailureMessage,
-                new List<ErrorResponseModel>{ ErrorResponseModel.Create("Authentication", "Email address not confirmed") });
+                new List<ErrorResponseModel>{ ErrorResponseModel.Create("Authentication", "EmailOrPhone not confirmed") });
         }
 
         await _userManager.ResetAccessFailedCountAsync(user);
 
         var token = await _tokenService.GenerateJwtToken(user);
-        var refreshToken = _tokenService.GenerateRefreshToken();
-        
-        await _tokenService.SaveRefreshTokenAsync(user, refreshToken, "1.0.0.0");
+        var refreshToken = _tokenService.GenerateRefreshToken(user);
+
+        _unitOfWork.Repository<Domain.Entities.RefreshToken>().Add(refreshToken);
+        await _unitOfWork.SaveChanges();
 
         _logger.LogInformation("User {UserId} logged in successfully", user.Id);
 
         return GenericResponseModel<AuthResponse>.Success(new AuthResponse
         {
             Token = token,
-            RefreshToken = refreshToken,
+            RefreshToken = refreshToken.Token,
             ExpiresAt = _tokenService.GetTokenExpiration(),
         });
     }

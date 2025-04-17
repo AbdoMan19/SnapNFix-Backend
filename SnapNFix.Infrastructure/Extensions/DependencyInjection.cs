@@ -17,13 +17,7 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
 
-        services.AddDbContext<SnapNFixContext>(options =>
-            options.UseNpgsql(
-                configuration.GetConnectionString("DefaultConnection"),
-                npgsql =>
-                {
-                    npgsql.UseNetTopologySuite();
-                }));
+
         services.Scan(selector => selector
             .FromAssemblies(
                 Assembly.GetExecutingAssembly()

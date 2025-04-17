@@ -13,8 +13,8 @@ using SnapNFix.Infrastructure.Context;
 namespace SnapNFix.Infrastructure.Migrations
 {
     [DbContext(typeof(SnapNFixContext))]
-    [Migration("20250320054937_initial")]
-    partial class initial
+    [Migration("20250417010045_initialMigration")]
+    partial class initialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -208,6 +208,39 @@ namespace SnapNFix.Infrastructure.Migrations
                     b.ToTable("Issue");
                 });
 
+            modelBuilder.Entity("SnapNFix.Domain.Entities.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("Revoked")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Token")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshToken");
+                });
+
             modelBuilder.Entity("SnapNFix.Domain.Entities.SnapReport", b =>
                 {
                     b.Property<Guid>("Id")
@@ -278,6 +311,9 @@ namespace SnapNFix.Infrastructure.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -332,9 +368,16 @@ namespace SnapNFix.Infrastructure.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -431,6 +474,17 @@ namespace SnapNFix.Infrastructure.Migrations
                     b.Navigation("MainReport");
                 });
 
+            modelBuilder.Entity("SnapNFix.Domain.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("SnapNFix.Domain.Entities.User", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("SnapNFix.Domain.Entities.SnapReport", b =>
                 {
                     b.HasOne("SnapNFix.Domain.Entities.Issue", "Issue")
@@ -458,6 +512,8 @@ namespace SnapNFix.Infrastructure.Migrations
             modelBuilder.Entity("SnapNFix.Domain.Entities.User", b =>
                 {
                     b.Navigation("FastReports");
+
+                    b.Navigation("RefreshTokens");
 
                     b.Navigation("SnapReports");
                 });

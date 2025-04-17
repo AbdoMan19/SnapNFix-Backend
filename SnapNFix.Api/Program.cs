@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
@@ -8,6 +9,7 @@ using SnapNFix.Infrastructure.Context;
 using SnapNFix.Infrastructure.Extensions;
 using System.Threading.RateLimiting;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using SnapNFix.Application.Features.Auth.LoginWithPhoneOrEmail;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -23,7 +25,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services
-            .AddWebApiServices()
+            .AddWebApiServices(builder.Configuration)
             .AddApplication()
             .AddInfrastructure(builder.Configuration)
             .AddCustomSwagger();
@@ -37,32 +39,29 @@ public class Program
                 o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             });
         
-        builder.Services.AddAuthentication("Bearer")
+        builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
             .AddJwtBearer(options =>
             {
-                options.TokenValidationParameters = new()
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = builder.Configuration["Jwt:Issuer"],
                     ValidAudience = builder.Configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(builder.Configuration["Jwt:Key"]))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
                 };
             });
         
         
 
         var app = builder.Build();
-        using (var scope = app.Services.CreateScope())
-        {
-            var dbContext = scope.ServiceProvider.GetRequiredService<SnapNFixContext>();
-            dbContext.Database.Migrate(); 
-        }
-        app.UseWebApiMiddleware();
-        app.UseRouting();
 
-        app.MapControllers();
+        app.UseWebApiMiddleware();
 
         app.Run();
     }

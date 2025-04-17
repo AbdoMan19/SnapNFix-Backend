@@ -1,6 +1,6 @@
 namespace SnapNFix.Api.Extensions;
 
-public static class MiddlewareExtensions
+public static class MiddlewareExtension
 {
     public static WebApplication UseWebApiMiddleware(this WebApplication app)
     {
@@ -24,9 +24,10 @@ public static class MiddlewareExtensions
         app.UseHttpsRedirection();
         app.UseRateLimiter();
         app.UseCors("DefaultPolicy");
+        app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
-
+        app.MapControllers();
         app.MapHealthChecks("/health");
 
         return app;

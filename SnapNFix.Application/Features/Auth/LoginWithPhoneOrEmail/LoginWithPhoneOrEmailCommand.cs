@@ -6,7 +6,6 @@ namespace SnapNFix.Application.Features.Auth.LoginWithPhoneOrEmail;
 
 public class LoginWithPhoneOrEmailCommand : IRequest<GenericResponseModel<AuthResponse>>
 {
-    public string Email { get; set; } = string.Empty;
-    public string PhoneNumber { get; set; } = string.Empty;
+    public string EmailOrPhone { get; set; }
     public string Password { get; set; }
 }

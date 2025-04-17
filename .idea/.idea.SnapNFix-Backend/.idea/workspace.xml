@@ -11,10 +11,45 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="612cad8c-6ee7-4896-9b39-3d1bd72cb61f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/RefreshToken/RefreshTokenCommandValidator.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/RefreshTokenConfigurations.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SnapNFix-Backend/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SnapNFix-Backend/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix-Backend.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix-Backend.sln.DotSettings.user" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SnapNFix.Api/Controllers/AuthController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Api/Controllers/AuthController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Api/Extensions/MiddlewareExceptions.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Api/Extensions/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Api/Extensions/ServiceCollectionExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Api/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Api/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Api/SnapNFix.Api.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Api/SnapNFix.Api.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SnapNFix.Api/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Api/appsettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Extensions/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Extensions/DependencyInjection.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/GoogleLogin/GoogleLoginCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/GoogleLogin/GoogleLoginCommandHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/LoginWithPhoneOrEmail/LoginWithPhoneOrEmailCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/LoginWithPhoneOrEmail/LoginWithPhoneOrEmailCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/LoginWithPhoneOrEmail/LoginWithPhoneOrEmailCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/LoginWithPhoneOrEmail/LoginWithPhoneOrEmailCommandHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/LoginWithPhoneOrEmail/LoginWithPhoneOrEmailCommandValidator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/LoginWithPhoneOrEmail/LoginWithPhoneOrEmailCommandValidator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/Logout/LogoutCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/Logout/LogoutCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/Logout/LogoutCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/Logout/LogoutCommandHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/RefreshToken/RefreshTokenCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/RefreshToken/RefreshTokenCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/RefreshToken/RefreshTokenCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/RefreshToken/RefreshTokenCommandHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/Users/Commands/PhoneVerification/PhoneVerificationCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Users/Commands/PhoneVerification/PhoneVerificationCommandHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/Users/Commands/RegisterUser/RegisterUserCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Users/Commands/RegisterUser/RegisterUserCommandHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/Users/Commands/RegisterUser/RegisterUserCommandValidator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Users/Commands/RegisterUser/RegisterUserCommandValidator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Resources/Shared.Designer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Resources/Shared.Designer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Resources/Shared.resx" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Resources/Shared.resx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/SnapNFix.Application.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/SnapNFix.Application.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Domain/Entities/RefreshToken.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Domain/Entities/RefreshToken.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Domain/Interfaces/IGenericRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Domain/Interfaces/IGenericRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Domain/Interfaces/ITokenService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Domain/Interfaces/ITokenService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/RefreshConfigurations.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/UserConfigurations.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/UserConfigurations.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Extensions/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Extensions/DependencyInjection.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250320054937_initial.Designer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250320054937_initial.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250414212734_AbdelrahmanVersion.Designer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250414212734_AbdelrahmanVersion.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250415205253_AddCreatedAtColumn.Designer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250415205253_AddCreatedAtColumn.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/SnapNFixContextModelSnapshot.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Repositories/GenericRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Repositories/GenericRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/TokenService/JwtService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/TokenService/TokenService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,7 +103,7 @@
     ".NET Launch Settings Profile.SnapNFix.Api: http.executor": "Debug",
     ".NET Launch Settings Profile.SnapnFix: http.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "#1 on Development",
+    "git-widget-placeholder": "features/LoginWithEmailOrPhone",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -172,6 +207,17 @@
   </component>
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="setup database" />
@@ -182,32 +228,6 @@
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/SnapNFix.Application/Features/Users/Commands/RegisterUser/RegisterUserCommandHandler.cs</url>
-          <line>49</line>
-          <properties documentPath="D:\projects\Graduation Project 2025\SnapNFix-Backend\SnapNFix.Application\Features\Users\Commands\RegisterUser\RegisterUserCommandHandler.cs" containingFunctionPresentation="Method 'Handle'">
-            <startOffsets>
-              <option value="1850" />
-            </startOffsets>
-            <endOffsets>
-              <option value="1932" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/SnapNFix.Application/Extensions/DependencyInjection.cs</url>
-          <line>13</line>
-          <properties documentPath="D:\projects\Graduation Project 2025\SnapNFix-Backend\SnapNFix.Application\Extensions\DependencyInjection.cs" containingFunctionPresentation="Method 'AddApplication'">
-            <startOffsets>
-              <option value="430" />
-            </startOffsets>
-            <endOffsets>
-              <option value="687" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/SnapNFix.Application/Features/Users/Commands/RegisterUser/RegisterUserCommandHandler.cs</url>
           <line>25</line>
@@ -233,6 +253,19 @@
             </endOffsets>
           </properties>
           <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/SnapNFix.Api/Controllers/AuthController.cs</url>
+          <line>43</line>
+          <properties documentPath="D:\projects\Graduation Project 2025\SnapNFix-Backend\SnapNFix.Api\Controllers\AuthController.cs" containingFunctionPresentation="Method 'Logout'">
+            <startOffsets>
+              <option value="1346" />
+            </startOffsets>
+            <endOffsets>
+              <option value="1401" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="12" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

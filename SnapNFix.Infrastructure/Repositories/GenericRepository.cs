@@ -66,6 +66,13 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
             if (entity is null) return null;
             return _dbSet.Remove(entity).Entity;
         }
+        
+        public async Task DeleteAll(Expression<Func<TEntity, bool>> predicate)
+        {
+            await _dbSet.Where(predicate).ExecuteDeleteAsync();
+        }
+        
+        
 
         public TEntity? GetById(Guid id)
         {

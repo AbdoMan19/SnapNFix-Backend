@@ -4,6 +4,7 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
 using SnapNFix.Api.Handlers;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Infrastructure.Context;
@@ -12,7 +13,7 @@ namespace SnapNFix.Api.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddWebApiServices(this IServiceCollection services)
+    public static IServiceCollection AddWebApiServices(this IServiceCollection services , IConfiguration configuration)
     {
         services.Configure<ApiBehaviorOptions>(options =>
         {
@@ -27,7 +28,13 @@ public static class ServiceCollectionExtensions
             .AddClasses()
             .AsMatchingInterface()
             .WithScopedLifetime());
-
+        services.AddDbContext<SnapNFixContext>(options =>
+            options.UseNpgsql(
+                configuration.GetConnectionString("DefaultConnection"),
+                npgsql =>
+                {
+                    npgsql.UseNetTopologySuite();
+                }));
         services.AddIdentity<User, IdentityRole<Guid>>(options =>
             {
                 options.Password.RequireDigit = true;
@@ -43,12 +50,12 @@ public static class ServiceCollectionExtensions
             .AddDefaultTokenProviders();
 
 
-        services.AddApiVersioning(options =>
+        /*services.AddApiVersioning(options =>
         {
             options.ReportApiVersions = true;
             options.AssumeDefaultVersionWhenUnspecified = true;
             options.DefaultApiVersion = new ApiVersion(1, 0);
-        });
+        })*/
         
         services.AddRateLimiter(options =>
         {
@@ -75,11 +82,14 @@ public static class ServiceCollectionExtensions
             .AddDbContextCheck<SnapNFixContext>();
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddHttpContextAccessor();
-        services.AddAuthorization();
 
         services.AddEndpointsApiExplorer();
 
-
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+            options.AddPolicy("Citizen", policy => policy.RequireRole("Citizen"));
+        });
         services.AddProblemDetails();
 
         return services;

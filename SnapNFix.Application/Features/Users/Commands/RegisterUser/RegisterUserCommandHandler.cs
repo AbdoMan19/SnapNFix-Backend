@@ -43,11 +43,9 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
             UserName = Guid.NewGuid().ToString(), 
             PhoneNumberConfirmed = false,
             EmailConfirmed = false,       
-            // ImagePath = "defaults/user-profile.png", 
             IsDeleted = false
         };
-
-        await _unitOfWork.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted);
+        
         var result = await _userManager.CreateAsync(user, request.Password);
         if (!result.Succeeded)
         {
@@ -64,14 +62,9 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
         }
 
         await _userManager.AddToRoleAsync(user, citizenRoleName);
-
-        if (!string.IsNullOrEmpty(request.PhoneNumber))
-        {
-            await _otpService.GenerateOtpAsync(request.PhoneNumber);
-            _logger.LogInformation("OTP sent to phone number {PhoneNumber}", request.PhoneNumber);
-        }
-
-        await _unitOfWork.CommitTransactionAsync();
+        
+        await _otpService.GenerateOtpAsync(request.PhoneNumber);
+        _logger.LogInformation("OTP sent to phone number {PhoneNumber}", request.PhoneNumber);
         
         _logger.LogInformation("User {UserId} registered successfully", user.Id);
         return GenericResponseModel<Guid>.Success(user.Id);

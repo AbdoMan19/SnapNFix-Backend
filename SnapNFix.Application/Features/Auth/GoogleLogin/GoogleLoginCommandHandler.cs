@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Auth.Dtos;
+using SnapNFix.Application.Interfaces;
 using SnapNFix.Application.Utilities;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
@@ -15,15 +16,18 @@ public class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCommand, Gen
     private readonly UserManager<User> _userManager;
     private readonly ITokenService _tokenService;
     private readonly IConfiguration _configuration;
+    private readonly IUnitOfWork _unitOfWork;
 
     public GoogleLoginCommandHandler(
         UserManager<User> userManager,
         ITokenService tokenService,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IUnitOfWork unitOfWork)
     {
         _userManager = userManager;
         _tokenService = tokenService;
         _configuration = configuration;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<GenericResponseModel<AuthResponse>> Handle(GoogleLoginCommand request, CancellationToken cancellationToken)
@@ -44,6 +48,7 @@ public class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCommand, Gen
                 LastName = payload.FamilyName,
                 EmailConfirmed = payload.EmailVerified,
                 PhoneNumberConfirmed = false,
+                //PasswordHash = 
             };
             await _userManager.AddToRoleAsync(user , "Citizen");
             var result = await _userManager.CreateAsync(user);
@@ -56,12 +61,13 @@ public class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCommand, Gen
         }
         
         var token = await _tokenService.GenerateJwtToken(user);
-        var refreshToken = _tokenService.GenerateRefreshToken();
-
+        var refreshToken = _tokenService.GenerateRefreshToken(user);
+        _unitOfWork.Repository<Domain.Entities.RefreshToken>().Add(refreshToken);
+        await _unitOfWork.SaveChanges();
         return GenericResponseModel<AuthResponse>.Success(new AuthResponse
         {
             Token = token,
-            RefreshToken = refreshToken,
+            RefreshToken = refreshToken.Token,
             ExpiresAt = _tokenService.GetTokenExpiration()
         });
 

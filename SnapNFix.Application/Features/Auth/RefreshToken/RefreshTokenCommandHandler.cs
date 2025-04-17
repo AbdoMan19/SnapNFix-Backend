@@ -1,41 +1,38 @@
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Auth.Dtos;
+using SnapNFix.Application.Interfaces;
 using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Application.Features.Auth.RefreshToken;
 
-public class RefreshTokenCommandHandler(ITokenService tokenService) 
+public class RefreshTokenCommandHandler(ITokenService tokenService , IUnitOfWork unitOfWork) 
     : IRequestHandler<RefreshTokenCommand, GenericResponseModel<AuthResponse>>
 {
     public async Task<GenericResponseModel<AuthResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
-        try
+        var refreshToken = await unitOfWork.Repository<Domain.Entities.RefreshToken>()
+            .FindBy(x => x.Token == request.RefreshToken)
+            .Include(r => r.User)
+            .FirstOrDefaultAsync(cancellationToken);
+        
+        if(refreshToken is null || !refreshToken.IsActive)
         {
-            var (newAccessToken, newRefreshToken) = await tokenService.RefreshTokenAsync(
-                request.AccessToken, 
-                request.RefreshToken, 
-                request.IpAddress);
-            
-            return GenericResponseModel<AuthResponse>.Success(new AuthResponse
+            return GenericResponseModel<AuthResponse>.Failure("Invalid refresh token", new List<ErrorResponseModel>
             {
-                Token = newAccessToken,
-                RefreshToken = newRefreshToken,
-                ExpiresAt = tokenService.GetTokenExpiration()
+                ErrorResponseModel.Create("RefreshToken", "Invalid or expired refresh token")
             });
         }
-        catch (SecurityTokenException ex)
+        var (newAccessToken, newRefreshToken) = await tokenService.RefreshTokenAsync(
+            refreshToken);
+        return GenericResponseModel<AuthResponse>.Success(new AuthResponse
         {
-            return GenericResponseModel<AuthResponse>.Failure(
-                "Invalid token", 
-                [ErrorResponseModel.Create("Token", ex.Message)]);
-        }
-        catch (Exception ex)
-        {
-            return GenericResponseModel<AuthResponse>.Failure(
-                "Failed to refresh token", 
-                [ErrorResponseModel.Create("Token", ex.Message)]);
-        }
+            Token = newAccessToken,
+            RefreshToken = newRefreshToken,
+            ExpiresAt = tokenService.GetTokenExpiration()
+        });
+
     }
 }

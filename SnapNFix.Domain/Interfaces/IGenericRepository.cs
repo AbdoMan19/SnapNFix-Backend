@@ -25,6 +25,7 @@ public interface IGenericRepository<TEntity> where TEntity : class
 	Task UpdateRange(IEnumerable<TEntity> entity);
 
 	TEntity? Delete(Guid id);
+	public Task DeleteAll(Expression<Func<TEntity, bool>> predicate);
 
 	Task<IEnumerable<TEntity>> GetData(Expression<Func<TEntity, bool>> predicate);
 

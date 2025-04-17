@@ -64,16 +64,19 @@ public class PhoneVerificationCommandHandler : IRequestHandler<PhoneVerification
                     return GenericResponseModel<AuthResponse>.Failure("Failed to update verification status", errors);
                 }
             }
-
-            var token = await _tokenService.GenerateJwtToken(user);
-            var refreshToken = _tokenService.GenerateRefreshToken();
-
             await _otpService.InvalidateOtpAsync(request.PhoneNumber);
+            
+            _logger.LogInformation("Generating JWT token and refresh token for user {UserId}", user.Id);
+            var token = await _tokenService.GenerateJwtToken(user);
+            var refreshToken = _tokenService.GenerateRefreshToken(user);
+            _unitOfWork.Repository<RefreshToken>().Add(refreshToken);
+            await _unitOfWork.SaveChanges();
 
+            _logger.LogInformation("Phone verification successful for user {UserId}, token generated", user.Id);
             return GenericResponseModel<AuthResponse>.Success(new AuthResponse
             {
                 Token = token,
-                RefreshToken = refreshToken,
+                RefreshToken = refreshToken.Token,
                 ExpiresAt = _tokenService.GetTokenExpiration()
             });
         }

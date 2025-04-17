@@ -22,7 +22,7 @@ namespace SnapNFix.Application.Features.Users.Commands.RegisterUser
                 .Must(phone =>
                     {
                         var existingUser =  unitOfWork.Repository<User>().ExistsByName(u => u.PhoneNumber == phone);
-                        return existingUser;
+                        return !existingUser;
                     }
                 ).WithMessage("Phone number is already registered");
 
@@ -32,7 +32,7 @@ namespace SnapNFix.Application.Features.Users.Commands.RegisterUser
                 .Must( email=>
                     {
                         var existingUser = unitOfWork.Repository<User>().ExistsByName(u => u.Email == email);
-                        return existingUser;
+                        return !existingUser;
                     }
                 ).WithMessage("Email is already registered");
 

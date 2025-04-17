@@ -1,4 +1,6 @@
+using Asp.Versioning;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Auth.LoginWithPhoneOrEmail;
@@ -36,9 +38,10 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("logout")]
-    public async Task<IActionResult> Logout([FromBody] LogoutCommand command)
+    [Authorize("Citizen")]
+    public async Task<IActionResult> Logout()
     {
-        var result = await _mediator.Send(command);
+        var result = await _mediator.Send(new LogoutCommand());
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
 
