@@ -17,18 +17,22 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
     private readonly UserManager<User> _userManager;
     private readonly ITokenService _tokenService;
     private readonly ILogger<LoginWithPhoneOrEmailCommandHandler> _logger;
+    private readonly IUserService _userService;
 
 
     public LoginWithPhoneOrEmailCommandHandler(
         IUnitOfWork unitOfWork, 
         UserManager<User> userManager, 
         ITokenService tokenService,
-        ILogger<LoginWithPhoneOrEmailCommandHandler> logger)
+        ILogger<LoginWithPhoneOrEmailCommandHandler> logger,
+        IUserService userService)
     {
         _unitOfWork = unitOfWork;
         _userManager = userManager;
         _tokenService = tokenService;
         _logger = logger;
+        _userService = userService;
+        
     }
 
     public async Task<GenericResponseModel<AuthResponse>> Handle(LoginWithPhoneOrEmailCommand request, CancellationToken cancellationToken)
@@ -37,21 +41,8 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
         {
             ErrorResponseModel.Create("Authentication", "Invalid credentials")
         };
-        User user = null;
-        var isEmail = false;
-        var isPhone = false;
+        (var isEmail , var isPhone , var user) = await _userService.IsEmailOrPhone(request.EmailOrPhone);
 
-        if (request.EmailOrPhone.Contains("@"))
-        {
-            isEmail = true;
-            user = await _userManager.FindByEmailAsync(request.EmailOrPhone);
-        }
-        else
-        {
-            isPhone = true;
-            user = await _userManager.Users
-                .FirstOrDefaultAsync(u => u.PhoneNumber == request.EmailOrPhone, cancellationToken);
-        }
         if (user == null)
         {
             _logger.LogWarning("Login attempt failed: User not found for identifier {Identifier}", nameof(request.EmailOrPhone));

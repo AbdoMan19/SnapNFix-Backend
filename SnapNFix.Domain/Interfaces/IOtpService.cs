@@ -1,8 +1,10 @@
+using SnapNFix.Domain.Enums;
+
 namespace SnapNFix.Domain.Interfaces;
 
 public interface IOtpService
 {
-    Task<string> GenerateOtpAsync(string phoneNumber);
-    Task<bool> VerifyOtpAsync(string phoneNumber, string otp);
-    Task InvalidateOtpAsync(string phoneNumber);
+    public Task<string> GenerateOtpAsync(string emailOrPhoneNumber, OtpPurpose otpPurpose);
+    public Task<bool> VerifyOtpAsync(string emailOrPhoneNumber, string otp, OtpPurpose purpose);
+    public Task InvalidateOtpAsync(string emailOrPhoneNumber, OtpPurpose purpose);
 }

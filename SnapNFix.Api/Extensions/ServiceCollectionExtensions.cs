@@ -43,11 +43,17 @@ public static class ServiceCollectionExtensions
                 options.Password.RequireUppercase = true;
                 options.Password.RequireNonAlphanumeric = true;
                 options.User.RequireUniqueEmail = true;
+                
                 options.Lockout.MaxFailedAccessAttempts = 3;
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromSeconds(10);
             })
             .AddEntityFrameworkStores<SnapNFixContext>()
             .AddDefaultTokenProviders();
+        
+        services.Configure<DataProtectionTokenProviderOptions>(options =>
+        {
+            options.TokenLifespan = TimeSpan.FromHours(1);
+        });
 
 
         /*services.AddApiVersioning(options =>

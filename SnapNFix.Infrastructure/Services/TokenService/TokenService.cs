@@ -108,4 +108,6 @@ public class TokenService : ITokenService
         }*/
         return DateTime.UtcNow.AddDays(daysToExpire);
     }
+
+    public async Task<string> GeneratePasswordResetToken(User user) => await _userManager.GeneratePasswordResetTokenAsync(user);
 }

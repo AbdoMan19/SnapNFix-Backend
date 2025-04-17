@@ -2,9 +2,9 @@ using FluentValidation;
 
 namespace SnapNFix.Application.Features.Auth.ForgetPassword.RequestForgetPasswordOtp;
 
-public class ForgetPasswordCommandValidator : AbstractValidator<RequestForgetPasswordCommand>
+public class RequestForgetPasswordOtpCommandValidator : AbstractValidator<RequestForgetPasswordOtpCommand>
 {
-    public ForgetPasswordCommandValidator()
+    public RequestForgetPasswordOtpCommandValidator()
     {
         RuleFor(f => f.EmailOrPhoneNumber)
             .NotEmpty()

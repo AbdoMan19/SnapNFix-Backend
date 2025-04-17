@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Interfaces;
 using SnapNFix.Domain.Entities;
+using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Application.Features.Users.Commands.RegisterUser;
@@ -63,7 +64,7 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
 
         await _userManager.AddToRoleAsync(user, citizenRoleName);
         
-        await _otpService.GenerateOtpAsync(request.PhoneNumber);
+        await _otpService.GenerateOtpAsync(request.PhoneNumber , OtpPurpose.Registration);
         _logger.LogInformation("OTP sent to phone number {PhoneNumber}", request.PhoneNumber);
         
         _logger.LogInformation("User {UserId} registered successfully", user.Id);

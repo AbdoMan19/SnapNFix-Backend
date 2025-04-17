@@ -6,6 +6,7 @@ using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Auth.Dtos;
 using SnapNFix.Application.Interfaces;
 using SnapNFix.Domain.Entities;
+using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Application.Features.Users.Commands.PhoneVerification;
@@ -46,7 +47,7 @@ public class PhoneVerificationCommandHandler : IRequestHandler<PhoneVerification
             return GenericResponseModel<AuthResponse>.Failure("User not found");
         }
 
-        var valid = await _otpService.VerifyOtpAsync(request.PhoneNumber, request.Otp);
+        var valid = await _otpService.VerifyOtpAsync(request.PhoneNumber, request.Otp , OtpPurpose.Registration);
         
         if (valid)
         {
@@ -64,7 +65,7 @@ public class PhoneVerificationCommandHandler : IRequestHandler<PhoneVerification
                     return GenericResponseModel<AuthResponse>.Failure("Failed to update verification status", errors);
                 }
             }
-            await _otpService.InvalidateOtpAsync(request.PhoneNumber);
+            await _otpService.InvalidateOtpAsync(request.PhoneNumber , OtpPurpose.Registration);
             
             _logger.LogInformation("Generating JWT token and refresh token for user {UserId}", user.Id);
             var token = await _tokenService.GenerateJwtToken(user);

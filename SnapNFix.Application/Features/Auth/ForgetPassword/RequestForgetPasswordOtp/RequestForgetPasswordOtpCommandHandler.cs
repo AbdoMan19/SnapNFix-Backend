@@ -6,33 +6,20 @@ using Microsoft.VisualBasic;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Auth.Dtos;
 using SnapNFix.Domain.Entities;
+using SnapNFix.Domain.Interfaces;
 using Constants = SnapNFix.Application.Utilities.Constants;
 
 namespace SnapNFix.Application.Features.Auth.ForgetPassword.RequestForgetPasswordOtp;
 
-public class ForgetPasswordCommandHandler(UserManager<User> userManager , ILogger<ForgetPasswordCommandHandler> logger) : IRequestHandler<RequestForgetPasswordOtpCommand, GenericResponseModel<bool>>
+public class RequestForgetPasswordOtpCommandHandler(UserManager<User> userManager , ILogger<RequestForgetPasswordOtpCommandHandler> logger , IUserService userService) : IRequestHandler<RequestForgetPasswordOtpCommand, GenericResponseModel<bool>>
 {
     public async Task<GenericResponseModel<bool>> Handle(RequestForgetPasswordOtpCommand request, CancellationToken cancellationToken)
     {
         var invalidCredentialsError = new List<ErrorResponseModel>
         {
-            ErrorResponseModel.Create("Authentication", "Invalid credentials")
+            ErrorResponseModel.Create(nameof(request.EmailOrPhoneNumber), "Invalid Email or Phone Number")
         };
-        User user = null;
-        var isEmail = false;
-        var isPhone = false;
-
-        if (request.EmailOrPhoneNumber.Contains("@"))
-        {
-            isEmail = true;
-            user = await userManager.FindByEmailAsync(request.EmailOrPhoneNumber);
-        }
-        else
-        {
-            isPhone = true;
-            user = await userManager.Users
-                .FirstOrDefaultAsync(u => u.PhoneNumber == request.EmailOrPhoneNumber, cancellationToken);
-        }
+        (var isEmail , var isPhone , var user) = await userService.IsEmailOrPhone(request.EmailOrPhoneNumber);
         if (user == null)
         {
             logger.LogWarning("Login attempt failed: User not found for identifier {Identifier}", nameof(request.EmailOrPhoneNumber));
@@ -43,7 +30,7 @@ public class ForgetPasswordCommandHandler(UserManager<User> userManager , ILogge
         {
             
         }
-        else
+        else if(isPhone)
         {
             
         }

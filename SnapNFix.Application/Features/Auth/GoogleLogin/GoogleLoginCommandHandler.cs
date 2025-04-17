@@ -37,7 +37,7 @@ public class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCommand, Gen
             Audience = new[] { _configuration["Authentication:Google:ClientId"] }
         };
         var payload = await GoogleJsonWebSignature.ValidateAsync(request.IdToken, settings);
-        
+        //check if te eeemail is verfied from google first
         var user = await _userManager.FindByEmailAsync(payload.Email);
         if (user == null)
         {

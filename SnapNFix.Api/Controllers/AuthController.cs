@@ -2,11 +2,9 @@ using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Auth.LoginWithPhoneOrEmail;
 using SnapNFix.Application.Features.Auth.Logout;
 using SnapNFix.Application.Features.Auth.RefreshToken;
-using SnapNFix.Application.Features.Auth.Dtos;
 using SnapNFix.Application.Features.Users.Commands.RegisterUser;
 
 namespace SnapNFix.Api.Controllers;

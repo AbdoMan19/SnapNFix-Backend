@@ -1,6 +1,7 @@
 namespace SnapNFix.Domain.Enums;
 
-public class OtpPurpose
+public enum OtpPurpose
 {
-    
+    Registration,
+    ForgotPassword
 }

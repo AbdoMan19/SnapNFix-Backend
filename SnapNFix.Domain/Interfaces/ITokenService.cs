@@ -15,4 +15,8 @@ public interface ITokenService
     RefreshToken GenerateRefreshToken(User user);
     Task<(string JwtToken, string RefreshToken)> RefreshTokenAsync(RefreshToken refresh);
     public DateTime GetRefreshTokenExpirationDays();
+    
+    
+    //Forget
+    Task<string> GeneratePasswordResetToken(User user);
 }
