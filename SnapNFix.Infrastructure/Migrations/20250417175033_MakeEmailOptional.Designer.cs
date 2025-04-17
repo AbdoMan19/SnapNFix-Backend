@@ -13,8 +13,8 @@ using SnapNFix.Infrastructure.Context;
 namespace SnapNFix.Infrastructure.Migrations
 {
     [DbContext(typeof(SnapNFixContext))]
-    [Migration("20250417010045_initialMigration")]
-    partial class initialMigration
+    [Migration("20250417175033_MakeEmailOptional")]
+    partial class MakeEmailOptional
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

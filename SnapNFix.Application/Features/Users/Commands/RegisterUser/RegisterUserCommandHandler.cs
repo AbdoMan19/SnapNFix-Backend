@@ -15,19 +15,22 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
     private readonly ILogger<RegisterUserCommandHandler> _logger;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IOtpService _otpService;
+    private readonly ISmsService _smsService;
 
     public RegisterUserCommandHandler(
         UserManager<User> userManager,
         RoleManager<IdentityRole<Guid>> _roleManager,
         ILogger<RegisterUserCommandHandler> logger,
         IUnitOfWork unitOfWork,
-        IOtpService otpService)
+        IOtpService otpService,
+        ISmsService smsService)
     {
         _userManager = userManager;
         this._roleManager = _roleManager;
         _logger = logger;
         _unitOfWork = unitOfWork;
         _otpService = otpService;
+        _smsService = smsService;
     }
 
     public async Task<GenericResponseModel<Guid>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
@@ -39,9 +42,10 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
             FirstName = request.FirstName,
             LastName = request.LastName,
             PhoneNumber = request.PhoneNumber,
-            Email = request.Email,
-            UserName = Guid.NewGuid().ToString(), 
+            UserName = Guid.NewGuid().ToString(),
             PhoneNumberConfirmed = false,
+            Email = string.Empty,
+            NormalizedEmail = string.Empty,
             EmailConfirmed = false,       
             IsDeleted = false
         };
@@ -62,12 +66,22 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
         }
 
         await _userManager.AddToRoleAsync(user, citizenRoleName);
+
+        // send otp to user phone number
+        var otp = await _otpService.GenerateOtpAsync(user.PhoneNumber);
+        _logger.LogInformation("Generated OTP for phone number {PhoneNumber}", request.PhoneNumber);
         
-        await _otpService.GenerateOtpAsync(request.PhoneNumber);
+        
+        var isSmsSent = await _smsService.SendSmsAsync(user.PhoneNumber, otp);
+
+        if (!isSmsSent)
+        {
+            _logger.LogWarning("Failed to send OTP to phone number {PhoneNumber}", request.PhoneNumber);
+            return GenericResponseModel<Guid>.Failure("Failed to send OTP. Please try again later.");
+        }
+
         _logger.LogInformation("OTP sent to phone number {PhoneNumber}", request.PhoneNumber);
-        
-        _logger.LogInformation("User {UserId} registered successfully", user.Id);
+
         return GenericResponseModel<Guid>.Success(user.Id);
-    
     }
 }

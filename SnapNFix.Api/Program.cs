@@ -29,6 +29,8 @@ public class Program
             .AddApplication()
             .AddInfrastructure(builder.Configuration)
             .AddCustomSwagger();
+
+
         
 
         builder.Services.AddControllers()
