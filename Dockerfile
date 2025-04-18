@@ -4,12 +4,14 @@ WORKDIR /source
 # Copy everything at once
 COPY . .
 
+# List directories to debug
+RUN ls -la
+
 # Restore as distinct layers
 RUN dotnet restore "SnapNFix-Backend.sln"
 
-# Build and publish
-WORKDIR /source/SnapnFix.Api
-RUN dotnet publish -c Release -o /app
+# Build and publish the API project directly using its csproj file
+RUN dotnet publish "SnapnFix.Api/SnapnFix.Api.csproj" -c Release -o /app
 
 # Final stage/image
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
