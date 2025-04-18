@@ -4,14 +4,15 @@ WORKDIR /source
 # Copy everything at once
 COPY . .
 
-# List directories to debug
-RUN ls -la
+# Print all project files to see the exact paths
+RUN find . -name "*.csproj"
 
 # Restore as distinct layers
-RUN dotnet restore "SnapNFix-Backend.sln"
+RUN dotnet restore
 
-# Build and publish the API project directly using its csproj file
-RUN dotnet publish "SnapnFix.Api/SnapnFix.Api.csproj" -c Release -o /app
+# Build and publish directly from the solution
+# This approach builds all projects and publishes the startup project
+RUN dotnet publish -c Release -o /app
 
 # Final stage/image
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
