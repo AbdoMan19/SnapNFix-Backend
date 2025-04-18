@@ -2,10 +2,13 @@ using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SnapNFix.Application.Features.Auth.ForgetPassword.RequestForgetPasswordOtp;
 using SnapNFix.Application.Features.Auth.LoginWithPhoneOrEmail;
 using SnapNFix.Application.Features.Auth.Logout;
 using SnapNFix.Application.Features.Auth.RefreshToken;
 using SnapNFix.Application.Features.Users.Commands.RegisterUser;
+using SnapNFix.Application.Features.Auth.ForgetPassword.VerifyForgetPasswordOtp;
+using SnapNFix.Application.Features.Auth.ResetPassword;
 
 namespace SnapNFix.Api.Controllers;
 
@@ -21,14 +24,15 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
+    [AllowAnonymous]
     public async Task<IActionResult> Login([FromBody] LoginWithPhoneOrEmailCommand command)
     {
         var result = await _mediator.Send(command);
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
 
-
     [HttpPost("refresh-token")]
+    [AllowAnonymous]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenCommand command)
     {
         var result = await _mediator.Send(command);
@@ -44,10 +48,34 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
+    [AllowAnonymous]
     public async Task<ActionResult> Register(RegisterUserCommand command)
     {
         var result = await _mediator.Send(command);
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
 
+    [HttpPost("forget-password/request-otp")]
+    [AllowAnonymous]
+    public async Task<IActionResult> RequestForgetPasswordOtp([FromBody] RequestForgetPasswordOtpCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
+    }
+
+    [HttpPost("forget-password/verify-otp")]
+    [AllowAnonymous]
+    public async Task<IActionResult> VerifyForgetPasswordOtp([FromBody] VerifyForgetPasswordOtpCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
+    }
+
+    [HttpPost("forget-password/reset")]
+    [AllowAnonymous]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
+    }
 }

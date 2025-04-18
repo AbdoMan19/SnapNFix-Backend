@@ -7,7 +7,7 @@ using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Infrastructure.Services.UserService;
 
-public class UserService(UserManager<User> userManager , CancellationToken cancellationToken) : IUserService
+public class UserService(UserManager<User> userManager) : IUserService
 {
     public async  Task<(bool isEmail, bool isPhone, User? user)> IsEmailOrPhone(string emailOrPhone)
     {
@@ -24,7 +24,7 @@ public class UserService(UserManager<User> userManager , CancellationToken cance
         {
             isPhone = true;
             user = await userManager.Users
-                .FirstOrDefaultAsync(u => u.PhoneNumber ==emailOrPhone, cancellationToken);
+                .FirstOrDefaultAsync(u => u.PhoneNumber ==emailOrPhone);
         }
 
         return (isEmail, isPhone, user);

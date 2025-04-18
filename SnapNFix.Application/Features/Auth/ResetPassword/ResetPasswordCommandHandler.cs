@@ -13,9 +13,15 @@ bool>>
 {
     private readonly UserManager<User> _userManager;
     private readonly IUserService _userService;
-    private readonly Logger<ResetPasswordCommandHandler> _logger;
-    
-    
+    private readonly ILogger<ResetPasswordCommandHandler> _logger;
+
+    public ResetPasswordCommandHandler(UserManager<User> userManager, IUserService userService, ILogger<ResetPasswordCommandHandler> logger)
+    {
+        _userManager = userManager;
+        _userService = userService;
+        _logger = logger;
+    }
+
     public async Task<GenericResponseModel<bool>> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
     {
         var invalidCredentialsError = new List<ErrorResponseModel>
@@ -35,6 +41,9 @@ bool>>
             _logger.LogWarning("Reset password failed for user {UserId} with {ErrorCount} errors", user.Id, errors.Count);
             return GenericResponseModel<bool>.Failure("Reset password failed", errors);
         }
+
+        if (isEmail) ;
+        if (isPhone) ;
 
         _logger.LogInformation("Password reset successfully for user {UserId}", user.Id);
         return GenericResponseModel<bool>.Success(true);

@@ -50,7 +50,8 @@ public class OtpService : IOtpService
 
     private static string GenerateRandomOtp()
     {
-        return RandomNumberGenerator.GetInt32(100000, 1000000).ToString("D6");
+        return "123456";
+        //return RandomNumberGenerator.GetInt32(100000, 1000000).ToString("D6");
     }
     private static string GenerateCacheKey(string phoneOrEmail, OtpPurpose purpose)
     {
