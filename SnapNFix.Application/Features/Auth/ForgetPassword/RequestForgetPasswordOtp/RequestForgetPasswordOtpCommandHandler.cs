@@ -6,12 +6,13 @@ using Microsoft.VisualBasic;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Auth.Dtos;
 using SnapNFix.Domain.Entities;
+using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
 using Constants = SnapNFix.Application.Utilities.Constants;
 
 namespace SnapNFix.Application.Features.Auth.ForgetPassword.RequestForgetPasswordOtp;
 
-public class RequestForgetPasswordOtpCommandHandler(UserManager<User> userManager , ILogger<RequestForgetPasswordOtpCommandHandler> logger , IUserService userService) : IRequestHandler<RequestForgetPasswordOtpCommand, GenericResponseModel<bool>>
+public class RequestForgetPasswordOtpCommandHandler(UserManager<User> userManager , ILogger<RequestForgetPasswordOtpCommandHandler> logger , IUserService userService , IOtpService otpService) : IRequestHandler<RequestForgetPasswordOtpCommand, GenericResponseModel<bool>>
 {
     public async Task<GenericResponseModel<bool>> Handle(RequestForgetPasswordOtpCommand request, CancellationToken cancellationToken)
     {
@@ -26,6 +27,7 @@ public class RequestForgetPasswordOtpCommandHandler(UserManager<User> userManage
             return GenericResponseModel<bool>.Failure(Constants.FailureMessage, invalidCredentialsError);
         }
 
+        await otpService.GenerateOtpAsync(request.EmailOrPhoneNumber , OtpPurpose.ForgotPassword);
         if (isEmail)
         {
             
