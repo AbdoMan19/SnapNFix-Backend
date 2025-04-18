@@ -19,3 +19,18 @@ COPY . .
 
 # Build and publish
 RUN dotnet publish -c Release -o /app --no-restore
+
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
+WORKDIR /app
+COPY --from=build /app ./
+
+# Set environment variables
+ENV ASPNETCORE_URLS=http://+:10000
+ENV ASPNETCORE_ENVIRONMENT=Production
+
+# Expose the port
+EXPOSE 10000
+
+# Set the entry point
+ENTRYPOINT ["dotnet", "SnapNFix.Api.dll"]
