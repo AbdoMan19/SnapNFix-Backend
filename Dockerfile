@@ -1,18 +1,13 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /source
 
-# Copy csproj files and restore dependencies
-COPY *.sln .
-COPY SnapnFix/*.csproj ./SnapnFix/
-COPY SnapnFix.Api/*.csproj ./SnapnFix.Api/
-COPY SnapNFix.Domain/*.csproj ./SnapNFix.Domain/
-COPY SnapNFix.Application/*.csproj ./SnapNFix.Application/
-COPY SnapNFix.Infrastructure/*.csproj ./SnapNFix.Infrastructure/
-
-RUN dotnet restore
-
-# Copy everything else and build the project
+# Copy everything at once
 COPY . .
+
+# Restore as distinct layers
+RUN dotnet restore "SnapNFix-Backend.sln"
+
+# Build and publish
 WORKDIR /source/SnapnFix.Api
 RUN dotnet publish -c Release -o /app
 
