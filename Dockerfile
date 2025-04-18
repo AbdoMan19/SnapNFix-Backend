@@ -4,6 +4,7 @@ WORKDIR /source
 # Copy csproj files and restore dependencies
 COPY *.sln .
 COPY SnapnFix/*.csproj ./SnapnFix/
+COPY SnapnFix.Api/*.csproj ./SnapnFix.Api/
 COPY SnapNFix.Domain/*.csproj ./SnapNFix.Domain/
 COPY SnapNFix.Application/*.csproj ./SnapNFix.Application/
 COPY SnapNFix.Infrastructure/*.csproj ./SnapNFix.Infrastructure/
@@ -12,7 +13,7 @@ RUN dotnet restore
 
 # Copy everything else and build the project
 COPY . .
-WORKDIR /source/SnapnFix
+WORKDIR /source/SnapnFix.Api
 RUN dotnet publish -c Release -o /app
 
 # Final stage/image
@@ -21,4 +22,4 @@ WORKDIR /app
 COPY --from=build /app .
 EXPOSE 8080
 ENV ASPNETCORE_URLS=http://+:8080
-ENTRYPOINT ["dotnet", "SnapnFix.dll"]
+ENTRYPOINT ["dotnet", "SnapnFix.Api.dll"]
