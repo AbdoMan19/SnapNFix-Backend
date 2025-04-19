@@ -39,8 +39,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasForeignKey(r => r.UserId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasMany(u => u.RefreshTokens)
-            .WithOne(r => r.User)
-            .HasForeignKey(r => r.UserId);
+        builder.HasOne(u => u.RefreshToken)
+            .WithOne(r => r.User);
     }
 }

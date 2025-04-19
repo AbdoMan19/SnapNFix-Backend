@@ -83,7 +83,6 @@ public class TokenService : ITokenService
 
     public async Task<(string JwtToken, string RefreshToken)> RefreshTokenAsync(RefreshToken refreshToken)
     {
-        // Generate new tokens
         var user = refreshToken.User;
         var newAccessToken = await GenerateJwtToken(user);
         var newRefreshToken = GenerateRefreshToken();

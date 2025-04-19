@@ -233,7 +233,8 @@ namespace SnapNFix.Infrastructure.Migrations
                     b.HasIndex("Token")
                         .IsUnique();
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("RefreshToken");
                 });
@@ -323,7 +324,8 @@ namespace SnapNFix.Infrastructure.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("ImagePath")
                         .IsRequired()
@@ -334,7 +336,8 @@ namespace SnapNFix.Infrastructure.Migrations
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -354,10 +357,15 @@ namespace SnapNFix.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("RefreshTokenId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
@@ -384,6 +392,9 @@ namespace SnapNFix.Infrastructure.Migrations
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
+
+                    b.HasIndex("PhoneNumber")
+                        .IsUnique();
 
                     b.HasIndex("FirstName", "LastName");
 
@@ -474,8 +485,8 @@ namespace SnapNFix.Infrastructure.Migrations
             modelBuilder.Entity("SnapNFix.Domain.Entities.RefreshToken", b =>
                 {
                     b.HasOne("SnapNFix.Domain.Entities.User", "User")
-                        .WithMany("RefreshTokens")
-                        .HasForeignKey("UserId")
+                        .WithOne("RefreshToken")
+                        .HasForeignKey("SnapNFix.Domain.Entities.RefreshToken", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -510,7 +521,8 @@ namespace SnapNFix.Infrastructure.Migrations
                 {
                     b.Navigation("FastReports");
 
-                    b.Navigation("RefreshTokens");
+                    b.Navigation("RefreshToken")
+                        .IsRequired();
 
                     b.Navigation("SnapReports");
                 });
