@@ -18,7 +18,6 @@ ENV PATH="${PATH}:/root/.dotnet/tools"
 
 # migration script
 # RUN dotnet ef migrations add DockerMigration --project SnapNFix.Infrastructure --startup-project SnapNFix.Api
-RUN dotnet ef database update --project SnapNFix.Infrastructure --startup-project SnapNFix.Api
 
 RUN dotnet publish -c Release -o /app --no-restore
 
@@ -30,6 +29,9 @@ ENV ASPNETCORE_URLS=http://+:10000
 ENV ASPNETCORE_ENVIRONMENT=Production
 
 ENV ConnectionStrings__DefaultConnection="Host=dpg-d01e5sadbo4c738mad7g-a;Port=5432;Database=snapnfix_db;Username=snapnfix_db_user;Password=of1ADH97CszGA6B4rwUGWrCKZAha3wPX;SSL Mode=Require;"
+
+
+RUN dotnet ef database update --project SnapNFix.Infrastructure --startup-project SnapNFix.Api
 
 EXPOSE 10000
 
