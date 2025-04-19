@@ -15,6 +15,6 @@ public class User : IdentityUser<Guid>
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public virtual ICollection<SnapReport> SnapReports { get; set; } = [];
     public virtual ICollection<FastReport> FastReports { get; set; } = [];
-    public RefreshToken RefreshToken { get; set; }
-    public string RefreshTokenId { get; set; } 
+    public RefreshToken? RefreshToken { get; set; }
+    public string? RefreshTokenId { get; set; } 
 }

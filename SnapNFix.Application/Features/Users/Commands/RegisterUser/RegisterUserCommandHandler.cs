@@ -47,7 +47,7 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
             PhoneNumberConfirmed = false,
             Email = string.Empty,
             NormalizedEmail = string.Empty,
-            EmailConfirmed = false,       
+            EmailConfirmed = false,
             IsDeleted = false
         };
         

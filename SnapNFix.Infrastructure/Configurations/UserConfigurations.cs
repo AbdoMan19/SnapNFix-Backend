@@ -40,6 +40,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(u => u.RefreshToken)
-            .WithOne(r => r.User);
+            .WithOne(r => r.User)
+            .IsRequired(false);
     }
 }
