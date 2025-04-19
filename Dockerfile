@@ -16,8 +16,6 @@ COPY . .
 RUN dotnet tool install --global dotnet-ef
 ENV PATH="${PATH}:/root/.dotnet/tools"
 
-# Create migration script
-RUN dotnet ef migrations add DockerMigration --project SnapNFix.Infrastructure --startup-project SnapNFix.Api
 
 RUN dotnet publish -c Release -o /app --no-restore
 
