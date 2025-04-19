@@ -16,5 +16,5 @@ public class User : IdentityUser<Guid>
     public virtual ICollection<SnapReport> SnapReports { get; set; } = [];
     public virtual ICollection<FastReport> FastReports { get; set; } = [];
     public RefreshToken? RefreshToken { get; set; }
-    public string? RefreshTokenId { get; set; } 
+    public Guid? RefreshTokenId { get; set; } 
 }

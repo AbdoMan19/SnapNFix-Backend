@@ -83,33 +83,18 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
 
         if (oldRefreshToken != null)
         {
-            // Store the ID before deleting
             var tokenIdToDelete = oldRefreshToken.Id;
-
-            // Clear the reference first
-            user.RefreshToken = null;
-            user.RefreshTokenId = null;
-            await _unitOfWork.Repository<User>().Update(user);
-            await _unitOfWork.SaveChanges();
-
-            // Now it's safe to delete
             _unitOfWork.Repository<Domain.Entities.RefreshToken>().Delete(tokenIdToDelete);
             await _unitOfWork.SaveChanges();
         }
-
-        // Add new token
+        
         _unitOfWork.Repository<Domain.Entities.RefreshToken>().Add(newRefreshToken);
-        await _unitOfWork.SaveChanges(); // Save to get the new ID
-
-        // Now link it to the user with both navigation property and ID
-        user.RefreshToken = newRefreshToken;
-        user.RefreshTokenId = newRefreshToken.Id.ToString(); // Set the string ID
+        user.RefreshTokenId = newRefreshToken.Id;
         await _unitOfWork.Repository<User>().Update(user);
-        await _unitOfWork.SaveChanges();
+        await _unitOfWork.SaveChanges(); // Save to get the new ID
 
         _logger.LogInformation("User {UserId} logged in successfully", user.Id);
 
-        // Create the LoginResponse with nested Tokens and User information
         return GenericResponseModel<LoginResponse>.Success(new LoginResponse
         {
             Tokens = new AuthResponse
