@@ -12,22 +12,19 @@ RUN dotnet restore
 
 COPY . .
 
+# Add EF Core tools
 RUN dotnet tool install --global dotnet-ef
 ENV PATH="${PATH}:/root/.dotnet/tools"
+
+# migration script
+# RUN dotnet ef migrations add DockerMigration --project SnapNFix.Infrastructure --startup-project SnapNFix.Api
+RUN dotnet ef database update --project SnapNFix.Infrastructure --startup-project SnapNFix.Api
 
 RUN dotnet publish -c Release -o /app --no-restore
 
-# Runtime image with SDK for migrations
-FROM mcr.microsoft.com/dotnet/sdk:9.0
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
 COPY --from=build /app ./
-COPY --from=build /source ./source/
-COPY --from=build /source/entrypoint.sh ./
-RUN chmod +x ./entrypoint.sh
-
-# Install EF Core tools
-RUN dotnet tool install --global dotnet-ef
-ENV PATH="${PATH}:/root/.dotnet/tools"
 
 ENV ASPNETCORE_URLS=http://+:10000
 ENV ASPNETCORE_ENVIRONMENT=Production
@@ -36,4 +33,4 @@ ENV ConnectionStrings__DefaultConnection="Host=dpg-d01e5sadbo4c738mad7g-a;Port=5
 
 EXPOSE 10000
 
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["dotnet", "SnapNFix.Api.dll"]
