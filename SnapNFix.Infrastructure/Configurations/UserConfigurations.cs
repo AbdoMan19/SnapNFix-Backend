@@ -41,6 +41,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.HasOne(u => u.RefreshToken)
             .WithOne(r => r.User)
-            .IsRequired(false);
+            .HasForeignKey<RefreshToken>(r => r.UserId)
+            .OnDelete(DeleteBehavior.SetNull);
+
     }
 }

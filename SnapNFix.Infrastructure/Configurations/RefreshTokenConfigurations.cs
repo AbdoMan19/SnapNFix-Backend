@@ -12,6 +12,7 @@ public class RefreshTokenConfigurations : IEntityTypeConfiguration<RefreshToken>
         builder.Property(u => u.Token).HasMaxLength(200);
         builder.HasIndex(u => u.Token).IsUnique();
         builder.HasOne(u => u.User)
-            .WithOne(u => u.RefreshToken);
+            .WithOne(u => u.RefreshToken)
+            .HasForeignKey<User>(u => u.RefreshTokenId);
     }
 }
