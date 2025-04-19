@@ -75,13 +75,13 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
 
         _logger.LogInformation("Generated OTP for phone number {PhoneNumber}", request.PhoneNumber);
         
-        var isSmsSent = await _smsService.SendSmsAsync(user.PhoneNumber, otp);
+        // var isSmsSent = await _smsService.SendSmsAsync(user.PhoneNumber, otp);
 
-        if (!isSmsSent)
-        {
-            _logger.LogWarning("Failed to send OTP to phone number {PhoneNumber}", request.PhoneNumber);
-            return GenericResponseModel<Guid>.Failure("Failed to send OTP. Please try again later.");
-        }
+        // if (!isSmsSent)
+        // {
+        //     _logger.LogWarning("Failed to send OTP to phone number {PhoneNumber}", request.PhoneNumber);
+        //     return GenericResponseModel<Guid>.Failure("Failed to send OTP. Please try again later.");
+        // }
 
         _logger.LogInformation("OTP sent to phone number {PhoneNumber}", request.PhoneNumber);
 
