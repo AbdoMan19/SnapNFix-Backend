@@ -65,7 +65,6 @@ public class TokenService : ITokenService
         {
             Token = GenerateRefreshToken(),
             UserId = user.Id,
-            Id = Guid.NewGuid(),
             Expires = GetRefreshTokenExpirationDays()
         };
         return refreshToken;
