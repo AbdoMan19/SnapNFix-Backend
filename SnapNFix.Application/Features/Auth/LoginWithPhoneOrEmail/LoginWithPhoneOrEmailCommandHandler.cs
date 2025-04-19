@@ -12,7 +12,7 @@ using Constants = SnapNFix.Application.Utilities.Constants;
 
 namespace SnapNFix.Application.Features.Auth.LoginWithPhoneOrEmail;
 
-public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhoneOrEmailCommand, GenericResponseModel<AuthResponse>>
+public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhoneOrEmailCommand, GenericResponseModel<LoginResponse>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly UserManager<User> _userManager;
@@ -20,7 +20,6 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
     private readonly ILogger<LoginWithPhoneOrEmailCommandHandler> _logger;
     private readonly IUserService _userService;
     private readonly IUserValidationService _userValidationService;
-
 
     public LoginWithPhoneOrEmailCommandHandler(
         IUnitOfWork unitOfWork, 
@@ -39,17 +38,19 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
         
     }
 
-    public async Task<GenericResponseModel<AuthResponse>> Handle(LoginWithPhoneOrEmailCommand request, CancellationToken cancellationToken)
+    public async Task<GenericResponseModel<LoginResponse>> Handle(LoginWithPhoneOrEmailCommand request, CancellationToken cancellationToken)
     {
         var invalidCredentialsError = new List<ErrorResponseModel>
         {
             ErrorResponseModel.Create("Authentication", "Invalid credentials")
         };
-        var(user,error) = await _userValidationService.ValidateUserAsync<AuthResponse>(request.EmailOrPhoneNumber);
-        if(error != null)
+        var (user, error) = await _userValidationService.ValidateUserAsync<LoginResponse>(request.EmailOrPhoneNumber);
+
+        if (error != null)
         {
             return error;
         }
+
         var passwordValid = await _userManager.CheckPasswordAsync(user, request.Password);
         if (!passwordValid)
         {
@@ -57,14 +58,14 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
             
             await _userManager.AccessFailedAsync(user);
             
-            return GenericResponseModel<AuthResponse>.Failure(Constants.FailureMessage, invalidCredentialsError);
+            return GenericResponseModel<LoginResponse>.Failure(Constants.FailureMessage, invalidCredentialsError);
         }
         var isEmail = request.EmailOrPhoneNumber.Contains("@");
         if (isEmail && !user.EmailConfirmed ||
             !isEmail && !user.PhoneNumberConfirmed)
         {
             _logger.LogWarning("Login attempt with unconfirmed email for user {UserId}", user.Id);
-            return GenericResponseModel<AuthResponse>.Failure(
+            return GenericResponseModel<LoginResponse>.Failure(
                 Constants.FailureMessage,
                 new List<ErrorResponseModel>{ ErrorResponseModel.Create("Authentication", "EmailOrPhoneNumber not confirmed") });
         }
@@ -79,11 +80,25 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
 
         _logger.LogInformation("User {UserId} logged in successfully", user.Id);
 
-        return GenericResponseModel<AuthResponse>.Success(new AuthResponse
+        // Create the LoginResponse with nested Tokens and User information
+        return GenericResponseModel<LoginResponse>.Success(new LoginResponse
         {
-            Token = token,
-            RefreshToken = refreshToken.Token,
-            ExpiresAt = _tokenService.GetTokenExpiration(),
+            Tokens = new AuthResponse
+            {
+                Token = token,
+                RefreshToken = refreshToken.Token,
+                ExpiresAt = _tokenService.GetTokenExpiration()
+            },
+            User = new LoginResponse.UserInfo
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                EmailConfirmed = user.EmailConfirmed,
+                PhoneNumberConfirmed = user.PhoneNumberConfirmed
+            }
         });
     }
 }
