@@ -28,7 +28,7 @@ bool>>
         {
             ErrorResponseModel.Create(nameof(request.EmailOrPhoneNumber), "Invalid Email or Phone Number")
         };
-        (var isEmail , var isPhone , var user) = await _userService.IsEmailOrPhone(request.EmailOrPhoneNumber);
+        (var isEmail , var isPhone , var user) = await _userService.GetUserByEmailOrPhoneNumber(request.EmailOrPhoneNumber);
         if (user == null)
         {
             _logger.LogWarning("Login attempt failed: User not found for identifier {Identifier}", nameof(request.EmailOrPhoneNumber));

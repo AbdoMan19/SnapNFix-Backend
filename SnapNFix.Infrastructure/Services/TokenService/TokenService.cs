@@ -72,12 +72,12 @@ public class TokenService : ITokenService
 
     public DateTime GetTokenExpiration()
     {
-        double hoursToExpire = 1;
-        if (double.TryParse(_configuration["Jwt:TokenExpirationHours"], out double configHours))
+        double minutesToExpire = 5;
+        if (double.TryParse(_configuration["Jwt:TokenExpirationMinutes"], out double configMinutes))
         {
-            hoursToExpire = configHours;
+            minutesToExpire = configMinutes;
         }
-        return DateTime.UtcNow.AddHours(hoursToExpire);
+        return DateTime.UtcNow.AddHours(minutesToExpire);
     }
     
 
@@ -102,10 +102,10 @@ public class TokenService : ITokenService
     public DateTime GetRefreshTokenExpirationDays()
     {
         int daysToExpire = 7;
-        /*if (int.TryParse(_configuration["Jwt:RefreshTokenExpirationDays"], out int configDays))
+        if (int.TryParse(_configuration["Jwt:RefreshTokenExpirationDays"], out int configDays))
         {
             daysToExpire = configDays;
-        }*/
+        }
         return DateTime.UtcNow.AddDays(daysToExpire);
     }
 

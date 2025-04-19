@@ -37,7 +37,6 @@ public class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCommand, Gen
             Audience = new[] { _configuration["Authentication:Google:ClientId"] }
         };
         var payload = await GoogleJsonWebSignature.ValidateAsync(request.IdToken, settings);
-        //check if te eeemail is verfied from google first
         var user = await _userManager.FindByEmailAsync(payload.Email);
         if (user == null)
         {
@@ -46,17 +45,20 @@ public class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCommand, Gen
                 Email = payload.Email,
                 FirstName = payload.GivenName,
                 LastName = payload.FamilyName,
-                EmailConfirmed = payload.EmailVerified,
-                PhoneNumberConfirmed = false,
-                //PasswordHash = 
+                EmailConfirmed = payload.EmailVerified
             };
-            await _userManager.AddToRoleAsync(user , "Citizen");
-            var result = await _userManager.CreateAsync(user);
-            if (!result.Succeeded)
-            {
-                var errors = result.Errors.Select(e => ErrorResponseModel.Create(e.Code , e.Description)).ToList();
-                return GenericResponseModel<AuthResponse>.Failure(Constants.FailureMessage, errors);
 
+            var randomPassword = PasswordGenerator.GenerateStrongPassword();
+            var result = await _userManager.CreateAsync(user, randomPassword);
+            
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, "Citizen");
+            }
+            else
+            {
+                var errors = result.Errors.Select(e => ErrorResponseModel.Create(e.Code, e.Description)).ToList();
+                return GenericResponseModel<AuthResponse>.Failure(Constants.FailureMessage, errors);
             }
         }
         

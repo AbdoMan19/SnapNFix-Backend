@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SnapNFix.Application.Common.ResponseModel;
@@ -7,11 +8,11 @@ using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Infrastructure.Services.UserService;
 
-public class UserService(UserManager<User> userManager) : IUserService
+public class UserService(UserManager<User> userManager , IHttpContextAccessor contextAccessor) : IUserService
 {
-    public async  Task<(bool isEmail, bool isPhone, User? user)> IsEmailOrPhone(string emailOrPhone)
+    public async  Task<(bool isEmail, bool isPhone, User? user)> GetUserByEmailOrPhoneNumber(string emailOrPhone)
     {
-        User user = null;
+        User user;
         var isEmail = false;
         var isPhone = false;
 
@@ -23,10 +24,16 @@ public class UserService(UserManager<User> userManager) : IUserService
         else
         {
             isPhone = true;
-            user = await userManager.Users
-                .FirstOrDefaultAsync(u => u.PhoneNumber ==emailOrPhone);
+            user = await userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber ==emailOrPhone);
         }
 
         return (isEmail, isPhone, user);
+    }
+    public async Task<User?> GetCurrentUserAsync()
+    {
+        var userId = userManager.GetUserId( contextAccessor.HttpContext?.User);
+        var user = await userManager.Users
+            .FirstOrDefaultAsync(u => u.Id.ToString() == userId);
+        return user;
     }
 }

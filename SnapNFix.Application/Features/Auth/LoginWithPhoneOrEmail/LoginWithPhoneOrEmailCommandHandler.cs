@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Application.Common.Services;
 using SnapNFix.Application.Features.Auth.Dtos;
 using SnapNFix.Application.Interfaces;
 using SnapNFix.Domain.Entities;
@@ -18,6 +19,7 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
     private readonly ITokenService _tokenService;
     private readonly ILogger<LoginWithPhoneOrEmailCommandHandler> _logger;
     private readonly IUserService _userService;
+    private readonly IUserValidationService _userValidationService;
 
 
     public LoginWithPhoneOrEmailCommandHandler(
@@ -25,13 +27,15 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
         UserManager<User> userManager, 
         ITokenService tokenService,
         ILogger<LoginWithPhoneOrEmailCommandHandler> logger,
-        IUserService userService)
+        IUserService userService,
+        IUserValidationService userValidationService)
     {
         _unitOfWork = unitOfWork;
         _userManager = userManager;
         _tokenService = tokenService;
         _logger = logger;
         _userService = userService;
+        _userValidationService = userValidationService;
         
     }
 
@@ -41,22 +45,11 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
         {
             ErrorResponseModel.Create("Authentication", "Invalid credentials")
         };
-        (var isEmail , var isPhone , var user) = await _userService.IsEmailOrPhone(request.EmailOrPhone);
-
-        if (user == null)
+        var(user,error) = await _userValidationService.ValidateUserAsync<AuthResponse>(request.EmailOrPhoneNumber);
+        if(error != null)
         {
-            _logger.LogWarning("Login attempt failed: User not found for identifier {Identifier}", nameof(request.EmailOrPhone));
-            return GenericResponseModel<AuthResponse>.Failure(Constants.FailureMessage, invalidCredentialsError);
+            return error;
         }
-
-        if (await _userManager.IsLockedOutAsync(user))
-        {
-            _logger.LogWarning("Login attempt for locked account: {UserId}", user.Id);
-            return GenericResponseModel<AuthResponse>.Failure(
-                Constants.FailureMessage, 
-                new List<ErrorResponseModel>{ ErrorResponseModel.Create("Authentication", "Account is temporarily locked") });
-        }
-
         var passwordValid = await _userManager.CheckPasswordAsync(user, request.Password);
         if (!passwordValid)
         {
@@ -66,14 +59,14 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
             
             return GenericResponseModel<AuthResponse>.Failure(Constants.FailureMessage, invalidCredentialsError);
         }
-
+        var isEmail = request.EmailOrPhoneNumber.Contains("@");
         if (isEmail && !user.EmailConfirmed ||
-            isPhone && !user.PhoneNumberConfirmed)
+            !isEmail && !user.PhoneNumberConfirmed)
         {
             _logger.LogWarning("Login attempt with unconfirmed email for user {UserId}", user.Id);
             return GenericResponseModel<AuthResponse>.Failure(
                 Constants.FailureMessage,
-                new List<ErrorResponseModel>{ ErrorResponseModel.Create("Authentication", "EmailOrPhone not confirmed") });
+                new List<ErrorResponseModel>{ ErrorResponseModel.Create("Authentication", "EmailOrPhoneNumber not confirmed") });
         }
 
         await _userManager.ResetAccessFailedCountAsync(user);

@@ -10,7 +10,7 @@ public class LoginWithPhoneOrEmailCommandValidator : AbstractValidator<LoginWith
 {
     public LoginWithPhoneOrEmailCommandValidator()
     {
-        RuleFor(x => x.EmailOrPhone)
+        RuleFor(x => x.EmailOrPhoneNumber)
             .NotEmpty().WithMessage("Either Email or Phone Number must be provided");
         /*RuleFor(x => x.Password)
             .NotEmpty()

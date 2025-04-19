@@ -32,10 +32,14 @@ public class VerifyForgetPasswordOtpCommandHandler : IRequestHandler<VerifyForge
         {
             ErrorResponseModel.Create(nameof(request.EmailOrPhoneNumber), "Invalid Email or Phone Number")
         };
-        (var isEmail , var isPhone , var user) = await _userService.IsEmailOrPhone(request.EmailOrPhoneNumber);
+        var invalidOtpError = new List<ErrorResponseModel>
+        {
+            ErrorResponseModel.Create(nameof(request.EmailOrPhoneNumber), "Invalid OTP")
+        };
+        (var isEmail , var isPhone , var user) = await _userService.GetUserByEmailOrPhoneNumber(request.EmailOrPhoneNumber);
         if (user == null)
         {
-            _logger.LogWarning("Login attempt failed: User not found for identifier {Identifier}", nameof(request.EmailOrPhoneNumber));
+            _logger.LogWarning("Verify ForgetPassword Otp attempt failed: User not found for identifier {Identifier}", nameof(request.EmailOrPhoneNumber));
             return GenericResponseModel<string>.Failure(Constants.FailureMessage, invalidCredentialsError);
         }
 
@@ -43,7 +47,7 @@ public class VerifyForgetPasswordOtpCommandHandler : IRequestHandler<VerifyForge
         if(!isOtpValid)
         {
             _logger.LogWarning("Verify ForgetPassword Otp attempt failed: Invalid OTP for identifier {Identifier}", nameof(request.EmailOrPhoneNumber));
-            return GenericResponseModel<string>.Failure(Constants.FailureMessage, invalidCredentialsError);
+            return GenericResponseModel<string>.Failure(Constants.FailureMessage, invalidOtpError);
         }
         await _otpService.InvalidateOtpAsync(request.EmailOrPhoneNumber, OtpPurpose.ForgotPassword);
         await _userManager.UpdateSecurityStampAsync(user);

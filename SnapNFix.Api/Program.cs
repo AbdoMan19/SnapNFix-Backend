@@ -63,11 +63,11 @@ public class Program
 
         var app = builder.Build();
         
-        using (var scope = app.Services.CreateScope())
+        /*using (var scope = app.Services.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<SnapNFixContext>();
             dbContext.Database.Migrate();
-        }
+        }*/
 
         app.UseWebApiMiddleware();
 
