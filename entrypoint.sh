@@ -1,10 +1,14 @@
 #!/bin/bash
+set -e
 
-# Wait for the database to be ready (optional)
-sleep 5
+# Install EF Core tools if not already installed
+dotnet tool install --global dotnet-ef || true
+export PATH="$PATH:/root/.dotnet/tools"
 
-# Apply database migrations
-dotnet ef database update --project SnapNFix.Infrastructure --startup-project SnapNFix.Api
+# Create migration and update database
+cd /app
+dotnet ef migrations add DeploymentMigration --project ../source/SnapNFix.Infrastructure --startup-project ../source/SnapNFix.Api
+dotnet ef database update --project ../source/SnapNFix.Infrastructure --startup-project ../source/SnapNFix.Api
 
 # Start the application
 exec dotnet SnapNFix.Api.dll
