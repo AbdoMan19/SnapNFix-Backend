@@ -87,11 +87,15 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
             _unitOfWork.Repository<Domain.Entities.RefreshToken>().Delete(tokenIdToDelete);
             await _unitOfWork.SaveChanges();
         }
-        
+
+
         _unitOfWork.Repository<Domain.Entities.RefreshToken>().Add(newRefreshToken);
-        user.RefreshTokenId = newRefreshToken.Id;
+        await _unitOfWork.SaveChanges(); 
+
+        user.RefreshToken = newRefreshToken;
+        user.RefreshTokenId = newRefreshToken.Id; 
         await _unitOfWork.Repository<User>().Update(user);
-        await _unitOfWork.SaveChanges(); // Save to get the new ID
+        await _unitOfWork.SaveChanges();
 
         _logger.LogInformation("User {UserId} logged in successfully", user.Id);
 
