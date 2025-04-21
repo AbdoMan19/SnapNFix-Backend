@@ -5,18 +5,17 @@ namespace SnapNFix.Domain.Interfaces;
 
 public interface ITokenService
 {
-    //AccessToken
-    Task<string> GenerateJwtToken(User user);
+    // Access Token
+    Task<string> GenerateJwtToken(User user , UserDevice device);
     DateTime GetTokenExpiration();
     
-    
-    //RefreshToken
+    // Refresh Token
     string GenerateRefreshToken();
-    RefreshToken GenerateRefreshToken(User user);
-    Task<(string JwtToken, string RefreshToken)> RefreshTokenAsync(RefreshToken refresh);
-    public DateTime GetRefreshTokenExpirationDays();
+    RefreshToken GenerateRefreshToken(UserDevice userDevice);
+    Task<(string JwtToken, string RefreshToken)> RefreshTokenAsync(RefreshToken refreshToken);
+    DateTime GetRefreshTokenExpirationDays();
+    Task<bool> RevokeDeviceTokensAsync(Guid userId, string deviceId);
     
-    
-    //Forget
+    // Password Reset
     Task<string> GeneratePasswordResetToken(User user);
 }

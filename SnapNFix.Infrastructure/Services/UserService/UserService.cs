@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Auth.Dtos;
+using SnapNFix.Application.Interfaces;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Infrastructure.Services.UserService;
 
-public class UserService(UserManager<User> userManager , IHttpContextAccessor contextAccessor) : IUserService
+public class UserService(UserManager<User> userManager , IHttpContextAccessor contextAccessor , IUnitOfWork unitOfWork) : IUserService
 {
     public async  Task<(bool isEmail, bool isPhone, User? user)> GetUserByEmailOrPhoneNumber(string emailOrPhone)
     {
@@ -36,4 +37,13 @@ public class UserService(UserManager<User> userManager , IHttpContextAccessor co
             .FirstOrDefaultAsync(u => u.Id.ToString() == userId);
         return user;
     }
+    public async Task<User?> GetUserByIdAsync(Guid userId)
+    {
+        var user = await userManager.Users
+            .FirstOrDefaultAsync(u => u.Id == userId);
+        return user;
+    }
+    
+    
+
 }

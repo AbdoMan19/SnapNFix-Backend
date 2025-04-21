@@ -42,9 +42,6 @@ bool>>
             return GenericResponseModel<bool>.Failure("Reset password failed", errors);
         }
 
-        if (isEmail) ;
-        if (isPhone) ;
-
         _logger.LogInformation("Password reset successfully for user {UserId}", user.Id);
         return GenericResponseModel<bool>.Success(true);
     }

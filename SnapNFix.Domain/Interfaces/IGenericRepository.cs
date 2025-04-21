@@ -16,7 +16,7 @@ public interface IGenericRepository<TEntity> where TEntity : class
 
 	Task<List<TEntity>> GetByIds(Expression<Func<TEntity, bool>> wherePredicate, Guid[] ids, string columnName, List<string> include);
 
-	TEntity Add(TEntity myObject);
+	public Task<TEntity> Add(TEntity entity);
 
 	Task AddRange(IEnumerable<TEntity> entityList);
 

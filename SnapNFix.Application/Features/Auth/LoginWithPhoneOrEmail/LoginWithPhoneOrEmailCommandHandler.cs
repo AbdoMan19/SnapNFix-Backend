@@ -18,7 +18,6 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
     private readonly UserManager<User> _userManager;
     private readonly ITokenService _tokenService;
     private readonly ILogger<LoginWithPhoneOrEmailCommandHandler> _logger;
-    private readonly IUserService _userService;
     private readonly IUserValidationService _userValidationService;
 
     public LoginWithPhoneOrEmailCommandHandler(
@@ -33,9 +32,7 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
         _userManager = userManager;
         _tokenService = tokenService;
         _logger = logger;
-        _userService = userService;
         _userValidationService = userValidationService;
-        
     }
 
     public async Task<GenericResponseModel<LoginResponse>> Handle(LoginWithPhoneOrEmailCommand request, CancellationToken cancellationToken)
@@ -44,67 +41,96 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
         {
             ErrorResponseModel.Create("Authentication", "Invalid credentials")
         };
+
+        // Validate user
         var (user, error) = await _userValidationService.ValidateUserAsync<LoginResponse>(request.EmailOrPhoneNumber);
+        if (error != null) return error;
 
-        if (error != null)
-        {
-            return error;
-        }
-
-        
-
+        // Check password
         var passwordValid = await _userManager.CheckPasswordAsync(user, request.Password);
         if (!passwordValid)
         {
             _logger.LogWarning("Invalid password attempt for user {UserId}", user.Id);
-            
             await _userManager.AccessFailedAsync(user);
-            
             return GenericResponseModel<LoginResponse>.Failure(Constants.FailureMessage, invalidCredentialsError);
         }
 
+        // Check confirmation status
         var isEmail = request.EmailOrPhoneNumber.Contains("@");
-        if (isEmail && !user.EmailConfirmed ||
-            !isEmail && !user.PhoneNumberConfirmed)
+        if ((isEmail && !user.EmailConfirmed) || (!isEmail && !user.PhoneNumberConfirmed))
         {
-            _logger.LogWarning("Login attempt with unconfirmed email for user {UserId}", user.Id);
+            _logger.LogWarning("Login attempt with unconfirmed {Type} for user {UserId}", 
+                isEmail ? "email" : "phone", user.Id);
             return GenericResponseModel<LoginResponse>.Failure(
                 Constants.FailureMessage,
-                new List<ErrorResponseModel>{ ErrorResponseModel.Create("Authentication", "EmailOrPhoneNumber not confirmed") });
+                new List<ErrorResponseModel>{ 
+                    ErrorResponseModel.Create("Authentication", $"{(isEmail ? "Email" : "Phone number")} not confirmed") 
+                });
         }
 
         await _userManager.ResetAccessFailedCountAsync(user);
 
-        var newAccesstoken = await _tokenService.GenerateJwtToken(user);
-        var newRefreshToken = _tokenService.GenerateRefreshToken(user);
-        
-        var oldRefreshToken = await _unitOfWork.Repository<Domain.Entities.RefreshToken>().FindBy(u => u.UserId == user.Id)
-            .FirstOrDefaultAsync(cancellationToken: cancellationToken);
+        // Handle device information
+        var userDevice = await _unitOfWork.Repository<UserDevice>()
+            .FindBy(d => d.UserId == user.Id && d.DeviceId == request.DeviceId)
+            .Include(u => u.RefreshToken)
+            .FirstOrDefaultAsync(cancellationToken);
 
-        if (oldRefreshToken != null)
+        if (userDevice == null)
         {
-            var tokenIdToDelete = oldRefreshToken.Id;
-            _unitOfWork.Repository<Domain.Entities.RefreshToken>().Delete(tokenIdToDelete);
-            await _unitOfWork.SaveChanges();
+            userDevice = new UserDevice
+            {
+                UserId = user.Id,
+                DeviceId = request.DeviceId,
+                DeviceName = request.DeviceName,
+                DeviceType = request.DeviceType,
+                Platform = request.Platform,
+                LastUsedAt = DateTime.UtcNow,
+            };
+            await _unitOfWork.Repository<UserDevice>().Add(userDevice);
+        }
+        else
+        {
+            userDevice.LastUsedAt = DateTime.UtcNow;
+            await _unitOfWork.Repository<UserDevice>().Update(userDevice);
         }
 
+        // Check for active refresh token
+        if (userDevice.RefreshToken != null && userDevice.RefreshToken.IsActive)
+        {
+            _logger.LogWarning("User device already exists with active refresh token for user {UserId}", user.Id);
+            return GenericResponseModel<LoginResponse>.Failure("Device already logged in");
+        }
 
-        _unitOfWork.Repository<Domain.Entities.RefreshToken>().Add(newRefreshToken);
-        await _unitOfWork.SaveChanges(); 
+        // Generate new tokens
+        var accessToken = await _tokenService.GenerateJwtToken(user, userDevice);
+        var refreshToken = _tokenService.GenerateRefreshToken(userDevice);
 
-        user.RefreshToken = newRefreshToken;
-        user.RefreshTokenId = newRefreshToken.Id; 
-        await _unitOfWork.Repository<User>().Update(user);
+        if (userDevice.RefreshToken != null)
+        {
+            // Update existing refresh token
+            userDevice.RefreshToken.Token = refreshToken.Token;
+            userDevice.RefreshToken.Expires = _tokenService.GetRefreshTokenExpirationDays();
+            await _unitOfWork.Repository<Domain.Entities.RefreshToken>().Update(userDevice.RefreshToken);
+        }
+        else
+        {
+            // Add new refresh token
+            userDevice.RefreshToken = refreshToken;
+            await _unitOfWork.Repository<Domain.Entities.RefreshToken>().Add(refreshToken);
+        }
+
+        // Single database call
         await _unitOfWork.SaveChanges();
-
-        _logger.LogInformation("User {UserId} logged in successfully", user.Id);
+        _logger.LogInformation("User {UserId} logged in successfully from device {DeviceId}", 
+            user.Id, request.DeviceId);
 
         return GenericResponseModel<LoginResponse>.Success(new LoginResponse
         {
             Tokens = new AuthResponse
             {
-                Token = newAccesstoken,
-                RefreshToken = newRefreshToken.Token,
+                Token = accessToken,
+                RefreshToken = refreshToken.Token,
                 ExpiresAt = _tokenService.GetTokenExpiration()
             },
             User = new LoginResponse.UserInfo

@@ -11,7 +11,7 @@ using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Application.Features.Users.Commands.PhoneVerification;
 
-public class PhoneVerificationCommandHandler : IRequestHandler<PhoneVerificationCommand, GenericResponseModel<AuthResponse>>
+public class PhoneVerificationCommandHandler : IRequestHandler<PhoneVerificationCommand, GenericResponseModel<bool>>
 {
     private readonly ITokenService _tokenService;
     private readonly IUnitOfWork _unitOfWork;
@@ -33,7 +33,7 @@ public class PhoneVerificationCommandHandler : IRequestHandler<PhoneVerification
         _logger = logger;
     }
 
-    public async Task<GenericResponseModel<AuthResponse>> Handle(PhoneVerificationCommand request, CancellationToken cancellationToken)
+    public async Task<GenericResponseModel<bool>> Handle(PhoneVerificationCommand request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Processing phone verification for {PhoneNumber}", request.PhoneNumber);
         
@@ -44,7 +44,7 @@ public class PhoneVerificationCommandHandler : IRequestHandler<PhoneVerification
         if (user is null)
         {
             _logger.LogWarning("Phone verification failed: User not found for {PhoneNumber}", request.PhoneNumber);
-            return GenericResponseModel<AuthResponse>.Failure("User not found");
+            return GenericResponseModel<bool>.Failure("User not found");
         }
 
         var valid = await _otpService.VerifyOtpAsync(request.PhoneNumber, request.Otp , OtpPurpose.Registration);
@@ -62,27 +62,15 @@ public class PhoneVerificationCommandHandler : IRequestHandler<PhoneVerification
                 {
                     var errors = updateResult.Errors.Select(e => ErrorResponseModel.Create(e.Code, e.Description)).ToList();
                     _logger.LogWarning("Failed to update verification status for user {UserId} with {ErrorCount} errors", user.Id, errors.Count);
-                    return GenericResponseModel<AuthResponse>.Failure("Failed to update verification status", errors);
+                    return GenericResponseModel<bool>.Failure("Failed to update verification status", errors);
                 }
             }
             await _otpService.InvalidateOtpAsync(request.PhoneNumber , OtpPurpose.Registration);
-            
-            _logger.LogInformation("Generating JWT token and refresh token for user {UserId}", user.Id);
-            var token = await _tokenService.GenerateJwtToken(user);
-            var refreshToken = _tokenService.GenerateRefreshToken(user);
-            _unitOfWork.Repository<RefreshToken>().Add(refreshToken);
-            await _unitOfWork.SaveChanges();
-
-            _logger.LogInformation("Phone verification successful for user {UserId}, token generated", user.Id);
-            return GenericResponseModel<AuthResponse>.Success(new AuthResponse
-            {
-                Token = token,
-                RefreshToken = refreshToken.Token,
-                ExpiresAt = _tokenService.GetTokenExpiration()
-            });
+            _logger.LogInformation("Phone verification successful for user {UserId}", user.Id);
+            return GenericResponseModel<bool>.Success(true);
         }
 
         _logger.LogWarning("Phone verification failed: Invalid OTP for {PhoneNumber}", request.PhoneNumber);
-        return GenericResponseModel<AuthResponse>.Failure("Invalid verification code");
+        return GenericResponseModel<bool>.Failure("Invalid verification code");
     }
 }

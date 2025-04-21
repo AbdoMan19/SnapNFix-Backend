@@ -1,30 +1,58 @@
 using System.Security.Claims;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Interfaces;
 using SnapNFix.Application.Utilities;
-using SnapNFix.Domain.Interfaces;
+using SnapNFix.Domain.Entities;
 
 namespace SnapNFix.Application.Features.Auth.Logout;
 
-public class LogoutCommandHandler(ITokenService tokenService  , IUnitOfWork unitOfWork , IHttpContextAccessor httpContextAccessor) 
+public class LogoutCommandHandler
     : IRequestHandler<LogoutCommand, GenericResponseModel<bool>>
 {
+    private readonly IUnitOfWork _unitOfWork;
+
+    private readonly ILogger<LogoutCommandHandler> _logger;
+    private readonly IDeviceManager _deviceManager;
+
+    public LogoutCommandHandler(IUnitOfWork unitOfWork, IDeviceManager deviceManager, ILogger<LogoutCommandHandler> logger)
+    {
+        _unitOfWork = unitOfWork;
+        _logger = logger;
+        _deviceManager = deviceManager;
+    }
+
     public async Task<GenericResponseModel<bool>> Handle(LogoutCommand request, CancellationToken cancellationToken)
-    { 
-        var currentUserId = httpContextAccessor?.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
-       if (!Guid.TryParse(currentUserId, out var userId))
+    {
+        var currentDeviceId = _deviceManager.GetCurrentDeviceId();
+       if (currentDeviceId == null)
        {
+           _logger.LogWarning("Logout attempt without a valid device ID");
            return GenericResponseModel<bool>.Failure(Constants.FailureMessage , 
-               new List<ErrorResponseModel> { new() { Message = "Invalid user ID" } });
+               new List<ErrorResponseModel> {ErrorResponseModel.Create("DeviceId", "Invalid Device Id")});
        }
 
-       await unitOfWork.Repository<Domain.Entities.RefreshToken>()
-           .DeleteAll(r => r.UserId == userId);
-       await unitOfWork.SaveChanges();
+       var refreshToken = await _unitOfWork.Repository<Domain.Entities.RefreshToken>()
+           .FindBy(r => r.UserDeviceId == currentDeviceId && r.IsActive)
+           .FirstOrDefaultAsync(cancellationToken);
+       if (refreshToken != null)
+       {
+           refreshToken.Revoked = DateTime.UtcNow;
+           await _unitOfWork.Repository<Domain.Entities.RefreshToken>().Update(refreshToken);
+           await _unitOfWork.SaveChanges();
+       }
+       else
+       {
+              _logger.LogWarning("No active refresh token found for device {DeviceId}", currentDeviceId);
+       }
        
        return GenericResponseModel<bool>.Success(true);
+       
+
         
         
     }

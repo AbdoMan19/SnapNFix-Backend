@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SnapNFix.Application.Interfaces;
 using SnapNFix.Infrastructure.Context;
 
-namespace SnapNFix.Infrastructure.Repositories;
+namespace SnapNFix.Infrastructure.GenericRepository;
 
 public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
 {
@@ -49,9 +49,9 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
                 .Where(x => ids.Contains(EF.Property<Guid>(x, idName))).Where(wherePredicate)
                 .ToList();
         }
-        public TEntity Add(TEntity entity)
+        public async Task<TEntity> Add(TEntity entity)
         {
-            return _dbSet.Add(entity).Entity;
+            return (await _dbSet.AddAsync(entity)).Entity;
         }
 
         public async Task AddRange(IEnumerable<TEntity> entityList)

@@ -2,7 +2,7 @@ using System.Collections;
 using Microsoft.EntityFrameworkCore;
 using SnapNFix.Application.Interfaces;
 using SnapNFix.Infrastructure.Context;
-using SnapNFix.Infrastructure.Repositories;
+using SnapNFix.Infrastructure.GenericRepository;
 using IsolationLevel = System.Data.IsolationLevel;
 
 namespace SnapNFix.Infrastructure.UnitOfWork;

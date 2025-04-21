@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SnapNFix.Application.Interfaces;
@@ -16,18 +17,45 @@ public class TokenService : ITokenService
     private readonly IConfiguration _configuration;
     private readonly UserManager<User> _userManager;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IDeviceManager _deviceManager;
 
     public TokenService(
         IConfiguration configuration,
         UserManager<User> userManager,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        IDeviceManager deviceManager)
     {
         _configuration = configuration;
         _userManager = userManager;
         _unitOfWork = unitOfWork;
+        _deviceManager = deviceManager;
     }
 
-    public async Task<string> GenerateJwtToken(User user)
+    public async Task<(string AccessToken, string RefreshToken)> GenerateTokensForDeviceAsync(
+        User user, 
+        string deviceId, 
+        string deviceName, 
+        string platform, 
+        string deviceType)
+    {
+        var userDevice = await _deviceManager.RegisterDeviceAsync(
+            user.Id, 
+            deviceId, 
+            deviceName, 
+            platform, 
+            deviceType);
+
+        var accessToken = await GenerateJwtToken(user, userDevice);
+        var refreshToken = GenerateRefreshToken(userDevice);
+
+        userDevice.RefreshToken = refreshToken;
+        await _unitOfWork.Repository<UserDevice>().Update(userDevice);
+        await _unitOfWork.SaveChanges();
+
+        return (accessToken, refreshToken.Token);
+    }
+
+    public async Task<string> GenerateJwtToken(User user, UserDevice device)
     {
         var claims = new List<Claim>
         {
@@ -38,6 +66,12 @@ public class TokenService : ITokenService
         
         var roles = await _userManager.GetRolesAsync(user);
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+        claims.AddRange(new[]
+        {
+            new Claim("DeviceId", device.DeviceId),
+            new Claim("DeviceName", device.DeviceName),
+            new Claim("Platform", device.Platform)
+        });
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -59,13 +93,14 @@ public class TokenService : ITokenService
         return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
     }
 
-    public RefreshToken GenerateRefreshToken(User user)
+    public RefreshToken GenerateRefreshToken(UserDevice userDevice)
     {
         var refreshToken = new RefreshToken
         {
             Token = GenerateRefreshToken(),
-            UserId = user.Id,
-            Expires = GetRefreshTokenExpirationDays()
+            UserDeviceId = userDevice.Id,
+            Expires = GetRefreshTokenExpirationDays(),
+            Created = DateTime.UtcNow
         };
         return refreshToken;
     }
@@ -83,20 +118,50 @@ public class TokenService : ITokenService
 
     public async Task<(string JwtToken, string RefreshToken)> RefreshTokenAsync(RefreshToken refreshToken)
     {
-        var user = refreshToken.User;
-        var newAccessToken = await GenerateJwtToken(user);
-        var newRefreshToken = GenerateRefreshToken();
-        refreshToken.Token = newRefreshToken;
-        refreshToken.Expires = GetRefreshTokenExpirationDays(); 
+        if (refreshToken.IsExpired || refreshToken.IsRevoked)
+        {
+            throw new SecurityTokenException("Invalid refresh token");
+        }
+
+        var userDevice = await _unitOfWork.Repository<UserDevice>()
+            .FindBy(d => d.Id == refreshToken.UserDeviceId)
+            .Include(d => d.User)
+            .FirstOrDefaultAsync();
+
+        var user = userDevice?.User;
+        var newAccessToken = await GenerateJwtToken(user, userDevice);
+        var newRefreshToken = GenerateRefreshToken(userDevice);
+
+        refreshToken.Token = newRefreshToken.Token;
+        refreshToken.Expires = GetRefreshTokenExpirationDays();
         
+        userDevice.LastUsedAt = DateTime.UtcNow;
+        await _unitOfWork.Repository<UserDevice>().Update(userDevice);
         await _unitOfWork.Repository<RefreshToken>().Update(refreshToken);
         await _unitOfWork.SaveChanges();
         
-        return (newAccessToken, newRefreshToken);
+        return (newAccessToken, newRefreshToken.Token);
     }
-
-
     
+    
+    public async Task<bool> RevokeDeviceTokensAsync(Guid userId, string deviceId)
+    {
+        var userDevice = await _unitOfWork.Repository<UserDevice>()
+            .FindBy(d => d.UserId == userId && d.DeviceId == deviceId)
+            .Include(d => d.RefreshToken)
+            .FirstOrDefaultAsync();
+
+        if (userDevice?.RefreshToken == null)
+        {
+            return false;
+        }
+
+        userDevice.RefreshToken.Revoked = DateTime.UtcNow;
+        await _unitOfWork.Repository<RefreshToken>().Update(userDevice.RefreshToken);
+        await _unitOfWork.SaveChanges();
+        
+        return true;
+    }
     
     public DateTime GetRefreshTokenExpirationDays()
     {

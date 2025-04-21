@@ -8,7 +8,7 @@
 
     <ItemGroup>
       <Folder Include="Common\Exceptions\" />
-      <Folder Include="Common\Mapping\" />
+      <Folder Include="Interfaces\" />
     </ItemGroup>
 
     <ItemGroup>
@@ -19,6 +19,8 @@
       <PackageReference Include="FluentValidation" Version="12.0.0-preview1" />
       <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0-preview1" />
       <PackageReference Include="Google.Apis.Auth" Version="1.69.0" />
+      <PackageReference Include="Mapster" Version="7.4.2-pre02" />
+      <PackageReference Include="Mapster.DependencyInjection" Version="1.0.3-pre02" />
       <PackageReference Include="MediatR" Version="12.4.1" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.3" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.3" />

@@ -8,4 +8,4 @@ public sealed record PhoneVerificationCommand
     (
         string PhoneNumber,
         string Otp
-        ):IRequest<GenericResponseModel<AuthResponse>>;
+        ):IRequest<GenericResponseModel<bool>>;

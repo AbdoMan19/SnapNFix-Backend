@@ -8,4 +8,12 @@ public class LoginWithPhoneOrEmailCommand : IRequest<GenericResponseModel<LoginR
 {
     public string EmailOrPhoneNumber { get; set; }
     public string Password { get; set; }
+    
+    public string DeviceId { get; set; }
+    
+    public string DeviceName { get; set; }
+    
+    public string DeviceType { get; set; }
+    
+    public string Platform { get; set; }
 }

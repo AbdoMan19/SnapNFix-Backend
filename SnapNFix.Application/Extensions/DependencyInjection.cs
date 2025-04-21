@@ -1,5 +1,7 @@
 using System.Reflection;
 using FluentValidation;
+using Mapster;
+using MapsterMapper;
 using Microsoft.Extensions.DependencyInjection;
 using SnapNFix.Application.Common.Behaviors;
 
@@ -17,10 +19,10 @@ public static class DependencyInjection
             cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
             cfg.AddOpenBehavior(typeof(ExceptionBehavior<,>));
         });
-        /*var config = TypeAdapterConfig.GlobalSettings;
+        var config = TypeAdapterConfig.GlobalSettings;
         config.Scan(Assembly.GetExecutingAssembly());
         services.AddSingleton(config);
-        services.AddScoped<IMapper, ServiceMapper>();*/
+        services.AddScoped<IMapper, ServiceMapper>();
         return services;
     }
 }

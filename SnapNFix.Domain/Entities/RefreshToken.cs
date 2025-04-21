@@ -10,6 +10,6 @@ public class RefreshToken
     public bool IsExpired => DateTime.UtcNow >= Expires;
     public bool IsRevoked => Revoked != null;
     public bool IsActive => !IsRevoked && !IsExpired;
-    public Guid UserId { get; set; }
-    public User User { get; set; }
+    public Guid UserDeviceId { get; set; }
+    public UserDevice UserDevice { get; set; }
 }

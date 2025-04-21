@@ -49,6 +49,7 @@ public class VerifyForgetPasswordOtpCommandHandler : IRequestHandler<VerifyForge
             _logger.LogWarning("Verify ForgetPassword Otp attempt failed: Invalid OTP for identifier {Identifier}", nameof(request.EmailOrPhoneNumber));
             return GenericResponseModel<string>.Failure(Constants.FailureMessage, invalidOtpError);
         }
+        _logger.LogInformation("Verify ForgetPassword Otp attempt successful for identifier {Identifier}", nameof(request.EmailOrPhoneNumber));
         await _otpService.InvalidateOtpAsync(request.EmailOrPhoneNumber, OtpPurpose.ForgotPassword);
         await _userManager.UpdateSecurityStampAsync(user);
         var token = await _tokenService.GeneratePasswordResetToken(user);
