@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace SnapNFix.Application.Features.Users.Commands.PhoneVerification;
+namespace SnapNFix.Application.Features.Auth.PhoneVerification.VerifyPhoneVerificationOtp;
 
 public class PhoneVerificationCommandValidator : AbstractValidator<PhoneVerificationCommand>
 {

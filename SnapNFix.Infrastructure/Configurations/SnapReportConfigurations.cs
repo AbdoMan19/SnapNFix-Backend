@@ -17,7 +17,7 @@ public class SnapReportConfiguration : IEntityTypeConfiguration<SnapReport>
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(r => r.Issue)
-            .WithMany()
+            .WithMany( i => i.AssociatedSnapReports)
             .HasForeignKey(r => r.IssueId)
             .OnDelete(DeleteBehavior.Restrict);
 

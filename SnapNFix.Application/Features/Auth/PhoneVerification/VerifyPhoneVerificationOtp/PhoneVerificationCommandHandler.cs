@@ -9,7 +9,7 @@ using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
 
-namespace SnapNFix.Application.Features.Users.Commands.PhoneVerification;
+namespace SnapNFix.Application.Features.Auth.PhoneVerification.VerifyPhoneVerificationOtp;
 
 public class PhoneVerificationCommandHandler : IRequestHandler<PhoneVerificationCommand, GenericResponseModel<bool>>
 {

@@ -1,16 +1,16 @@
-﻿using NetTopologySuite.Geometries;
+using NetTopologySuite.Geometries;
+using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
-namespace SnapNFix.Domain.Entities;
 
-public class SnapReport
+namespace SnapNFix.Application.Features.SnapReport.DTOs;
+
+public class ReportDetailsDto
 {
     public Guid Id { get; set; }
     
     public Guid UserId { get; set; }
-    public virtual User User { get; set; }
     
     public Guid IssueId { get; set; }
-    public virtual Issue Issue { get; set; }
     
     public string? Comment { get; set; }
 
@@ -22,10 +22,9 @@ public class SnapReport
     
     //dates
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime? DeletedAt { get; set; }
 
 
 
     public ReportCategory Category { get; set; }
-    
+
 }

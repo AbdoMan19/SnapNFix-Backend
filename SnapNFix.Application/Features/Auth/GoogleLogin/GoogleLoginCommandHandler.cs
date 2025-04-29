@@ -130,7 +130,6 @@ public class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCommand, Gen
                     LastName = user.LastName,
                     Email = user.Email,
                     PhoneNumber = user.PhoneNumber,
-                    EmailConfirmed = user.EmailConfirmed,
                     PhoneNumberConfirmed = user.PhoneNumberConfirmed
                 }
             });

@@ -37,12 +37,13 @@ public class UserService(UserManager<User> userManager , IHttpContextAccessor co
             .FirstOrDefaultAsync(u => u.Id.ToString() == userId);
         return user;
     }
-    public async Task<User?> GetUserByIdAsync(Guid userId)
+    
+    public  Task<Guid> GetCurrentUserIdAsync()
     {
-        var user = await userManager.Users
-            .FirstOrDefaultAsync(u => u.Id == userId);
-        return user;
+        var userId =  userManager.GetUserId( contextAccessor.HttpContext?.User);
+        return userId != null ? Task.FromResult(Guid.Parse(userId)) : Task.FromResult(Guid.Empty);
     }
+   
     
     
 

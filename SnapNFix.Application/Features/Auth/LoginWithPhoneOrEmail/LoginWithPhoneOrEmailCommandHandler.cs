@@ -61,6 +61,7 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
         {
             _logger.LogWarning("Login attempt with unconfirmed {Type} for user {UserId}", 
                 isEmail ? "email" : "phone", user.Id);
+            
             return GenericResponseModel<LoginResponse>.Failure(
                 Constants.FailureMessage,
                 new List<ErrorResponseModel>{ 
@@ -104,20 +105,21 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
 
         // Generate new tokens
         var accessToken = await _tokenService.GenerateJwtToken(user, userDevice);
-        var refreshToken = _tokenService.GenerateRefreshToken(userDevice);
+        var refreshToken = _tokenService.GenerateRefreshToken();
 
         if (userDevice.RefreshToken != null)
         {
             // Update existing refresh token
-            userDevice.RefreshToken.Token = refreshToken.Token;
+            userDevice.RefreshToken.Token = refreshToken;
             userDevice.RefreshToken.Expires = _tokenService.GetRefreshTokenExpirationDays();
             await _unitOfWork.Repository<Domain.Entities.RefreshToken>().Update(userDevice.RefreshToken);
         }
         else
         {
+            var refreshTokenObj = _tokenService.GenerateRefreshToken(userDevice);
             // Add new refresh token
-            userDevice.RefreshToken = refreshToken;
-            await _unitOfWork.Repository<Domain.Entities.RefreshToken>().Add(refreshToken);
+            userDevice.RefreshToken = refreshTokenObj;
+            await _unitOfWork.Repository<Domain.Entities.RefreshToken>().Add(refreshTokenObj);
         }
 
         // Single database call
@@ -130,7 +132,7 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
             Tokens = new AuthResponse
             {
                 Token = accessToken,
-                RefreshToken = refreshToken.Token,
+                RefreshToken = refreshToken,
                 ExpiresAt = _tokenService.GetTokenExpiration()
             },
             User = new LoginResponse.UserInfo
@@ -140,7 +142,6 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
                 LastName = user.LastName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
-                EmailConfirmed = user.EmailConfirmed,
                 PhoneNumberConfirmed = user.PhoneNumberConfirmed
             }
         });
