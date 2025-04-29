@@ -25,7 +25,7 @@ public class UserService(UserManager<User> userManager , IHttpContextAccessor co
         else
         {
             isPhone = true;
-            user = await userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber ==emailOrPhone);
+            user = await userManager.Users.AsNoTracking().FirstOrDefaultAsync(u => u.PhoneNumber ==emailOrPhone);
         }
 
         return (isEmail, isPhone, user);
@@ -33,7 +33,7 @@ public class UserService(UserManager<User> userManager , IHttpContextAccessor co
     public async Task<User?> GetCurrentUserAsync()
     {
         var userId = userManager.GetUserId( contextAccessor.HttpContext?.User);
-        var user = await userManager.Users
+        var user = await userManager.Users.AsNoTracking()
             .FirstOrDefaultAsync(u => u.Id.ToString() == userId);
         return user;
     }
