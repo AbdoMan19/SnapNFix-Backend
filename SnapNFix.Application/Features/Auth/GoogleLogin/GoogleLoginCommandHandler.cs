@@ -134,6 +134,5 @@ public class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCommand, Gen
                 }
             });
         
-       
     }
 }

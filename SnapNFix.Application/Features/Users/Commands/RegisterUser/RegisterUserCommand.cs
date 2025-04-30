@@ -3,7 +3,7 @@ using SnapNFix.Application.Common.ResponseModel;
 
 namespace SnapNFix.Application.Features.Users.Commands.RegisterUser;
 
-public class RegisterUserCommand : IRequest<GenericResponseModel<Guid>>
+public class RegisterUserCommand : IRequest<GenericResponseModel<RegisterUserResponse>>
 {
     public string FirstName { get; set; }
     public string LastName { get; set; }

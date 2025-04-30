@@ -9,12 +9,15 @@ public class PhoneVerificationCommandValidator : AbstractValidator<PhoneVerifica
         RuleFor(x => x.PhoneNumber)
             .Cascade(CascadeMode.Stop)
             .NotEmpty().WithMessage("Phone number is required")
-            .Matches(@"^\+?[0-9]{10,15}$").WithMessage("Phone number is not valid");
+            .Matches(@"^(\+20|0)?1[0125][0-9]{8}$").WithMessage("{PropertyName} must be a valid Egyptian phone number");
 
         RuleFor(x => x.Otp)
             .Cascade(CascadeMode.Stop)
             .NotEmpty().WithMessage("OTP is required")
             .Length(6).WithMessage("OTP must be 6 digits")
             .Matches("^[0-9]+$").WithMessage("OTP must contain only numbers");
+            
+        RuleFor(x => x.VerificationToken)
+            .NotEmpty().WithMessage("Verification token is required");
     }
 }

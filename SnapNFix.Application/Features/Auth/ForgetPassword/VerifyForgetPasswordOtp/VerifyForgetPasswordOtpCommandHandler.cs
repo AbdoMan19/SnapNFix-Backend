@@ -50,7 +50,7 @@ public class VerifyForgetPasswordOtpCommandHandler : IRequestHandler<VerifyForge
             return GenericResponseModel<string>.Failure(Constants.FailureMessage, invalidOtpError);
         }
         _logger.LogInformation("Verify ForgetPassword Otp attempt successful for identifier {Identifier}", nameof(request.EmailOrPhoneNumber));
-        await _otpService.InvalidateOtpAsync(request.EmailOrPhoneNumber, OtpPurpose.ForgotPassword);
+        await _otpService.InvalidateOtpAsync(request.EmailOrPhoneNumber, OtpPurpose.ForgotPassword); // will be reomved i think (i made invalidation already during the verification)
         await _userManager.UpdateSecurityStampAsync(user);
         var token = await _tokenService.GeneratePasswordResetToken(user);
         return GenericResponseModel<string>.Success(token);

@@ -9,6 +9,8 @@ using SnapNFix.Application.Features.Auth.RefreshToken;
 using SnapNFix.Application.Features.Users.Commands.RegisterUser;
 using SnapNFix.Application.Features.Auth.ForgetPassword.VerifyForgetPasswordOtp;
 using SnapNFix.Application.Features.Auth.ResetPassword;
+using SnapNFix.Application.Features.Auth.PhoneVerification.RequestPhoneVerificationOtp;
+using SnapNFix.Application.Features.Auth.PhoneVerification.VerifyPhoneVerificationOtp;
 
 namespace SnapNFix.Api.Controllers;
 
@@ -50,6 +52,22 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     [AllowAnonymous]
     public async Task<ActionResult> Register(RegisterUserCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
+    }
+
+    [HttpPost("verify-phone/request-otp")]
+    [AllowAnonymous]
+    public async Task<IActionResult> RequestPhoneVerificationOtp([FromBody] RequestPhoneVerificationOtpCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
+    }
+
+    [HttpPost("verify-phone/verify-otp")]
+    [AllowAnonymous]
+    public async Task<IActionResult> VerifyPhoneVerificationOtp([FromBody] PhoneVerificationCommand command)
     {
         var result = await _mediator.Send(command);
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);

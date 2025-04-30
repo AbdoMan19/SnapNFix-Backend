@@ -7,5 +7,6 @@ namespace SnapNFix.Application.Features.Auth.PhoneVerification.VerifyPhoneVerifi
 public sealed record PhoneVerificationCommand
     (
         string PhoneNumber,
-        string Otp
-        ):IRequest<GenericResponseModel<bool>>;
+        string Otp,
+        string VerificationToken
+    ):IRequest<GenericResponseModel<bool>>;
