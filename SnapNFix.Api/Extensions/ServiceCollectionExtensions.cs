@@ -96,7 +96,16 @@ public static class ServiceCollectionExtensions
         services.AddAuthorization(options =>
         {
             options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+            
             options.AddPolicy("Citizen", policy => policy.RequireRole("Citizen"));
+
+            options.AddPolicy("RequirePhoneVerification", policy =>
+                    policy.RequireClaim("purpose", "registration")
+                    .RequireClaim("phone"));
+            
+            options.AddPolicy("RequireOtpVerification", policy =>
+                policy.RequireClaim("purpose", "otp_request")
+                    .RequireClaim("phone"));
         });
         services.AddProblemDetails();
 

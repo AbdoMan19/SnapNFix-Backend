@@ -174,20 +174,19 @@ public class TokenService : ITokenService
     }
 
     public async Task<string> GeneratePasswordResetToken(User user) => await _userManager.GeneratePasswordResetTokenAsync(user);
-
-    public async Task<string> GeneratePhoneVerificationTokenAsync(User user)
+    
+    public async Task<string> GenerateOtpRequestToken(string phoneNumber)
     {
         var claims = new List<Claim>
         {
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new("phone", user.PhoneNumber ?? string.Empty),
-            new("purpose", "phone_verification")
+            new("phone", phoneNumber),
+            new("purpose", "otp_request"),
+            new("issued_at", DateTime.UtcNow.ToString("O"))
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        
-        var expires = DateTime.UtcNow.AddMinutes(10);
+        var expires = DateTime.UtcNow.AddMinutes(5); // Short-lived token
 
         var token = new JwtSecurityToken(
             issuer: _configuration["Jwt:Issuer"],
@@ -199,38 +198,29 @@ public class TokenService : ITokenService
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-
-    public async Task<bool> ValidatePhoneVerificationTokenAsync(string phoneNumber, string token)
+    public async Task<string> GenerateRegistrationToken(string phoneNumber)
     {
-        try
+        var claims = new List<Claim>
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            
-            var validationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = key,
-                ValidateIssuer = true,
-                ValidIssuer = _configuration["Jwt:Issuer"],
-                ValidateAudience = true,
-                ValidAudience = _configuration["Jwt:Audience"],
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero
-            };
+            new("phone", phoneNumber),
+            new("purpose", "registration"),
+            new("issued_at", DateTime.UtcNow.ToString("O"))
+        };
 
-            var principal = tokenHandler.ValidateToken(token, validationParameters, out _);
-            
-            var purposeClaim = principal.FindFirst(c => c.Type == "purpose");
-            if (purposeClaim == null || purposeClaim.Value != "phone_verification")
-                return false;
-            
-            var phoneClaim = principal.FindFirst(c => c.Type == "phone");
-            return phoneClaim != null && phoneClaim.Value == phoneNumber;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var expires = DateTime.UtcNow.AddHours(1); // Give them some time to register
+
+        var token = new JwtSecurityToken(
+            issuer: _configuration["Jwt:Issuer"],
+            audience: _configuration["Jwt:Audience"],
+            claims: claims,
+            expires: expires,
+            signingCredentials: credentials
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
+    
+    
 }

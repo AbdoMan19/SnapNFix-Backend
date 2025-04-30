@@ -50,7 +50,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    [AllowAnonymous]
+    [Authorize("RequirePhoneVerification")]
     public async Task<ActionResult> Register(RegisterUserCommand command)
     {
         var result = await _mediator.Send(command);
@@ -66,7 +66,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("verify-phone/verify-otp")]
-    [AllowAnonymous]
+    [Authorize("RequireOtpVerification")]
     public async Task<IActionResult> VerifyPhoneVerificationOtp([FromBody] PhoneVerificationCommand command)
     {
         var result = await _mediator.Send(command);
@@ -90,10 +90,10 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("forget-password/reset")]
-    [AllowAnonymous]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand command)
     {
         var result = await _mediator.Send(command);
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
+    
 }

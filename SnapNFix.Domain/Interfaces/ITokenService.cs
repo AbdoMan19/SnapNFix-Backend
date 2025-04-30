@@ -21,6 +21,7 @@ public interface ITokenService
 
     // Phone number verification
     
-    Task<string> GeneratePhoneVerificationTokenAsync(User user);
-    Task<bool> ValidatePhoneVerificationTokenAsync(string phoneNumber, string token);
+    Task<string> GenerateOtpRequestToken(string phoneNumber);
+    Task<string> GenerateRegistrationToken(string phoneNumber);
+
 }

@@ -1,7 +1,9 @@
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Application.Features.Auth.Dtos;
 using SnapNFix.Application.Interfaces;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
@@ -9,44 +11,42 @@ using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Application.Features.Users.Commands.RegisterUser;
 
-public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, GenericResponseModel<RegisterUserResponse>>
+public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, GenericResponseModel<LoginResponse>>
 {
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<IdentityRole<Guid>> _roleManager;
     private readonly ILogger<RegisterUserCommandHandler> _logger;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IOtpService _otpService;
-    private readonly ISmsService _smsService;
     private readonly ITokenService _tokenService;
 
     public RegisterUserCommandHandler(
         UserManager<User> userManager,
         RoleManager<IdentityRole<Guid>> roleManager,
         ILogger<RegisterUserCommandHandler> logger,
+        IHttpContextAccessor httpContextAccessor,
         IUnitOfWork unitOfWork,
-        IOtpService otpService, 
-        ISmsService smsService,
         ITokenService tokenService)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _logger = logger;
+        _httpContextAccessor = httpContextAccessor;
         _unitOfWork = unitOfWork;
-        _otpService = otpService;
-        _smsService = smsService;
         _tokenService = tokenService;
     }
 
-    public async Task<GenericResponseModel<RegisterUserResponse>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+    public async Task<GenericResponseModel<LoginResponse>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Starting registration process for phone number {PhoneNumber}", request.PhoneNumber);
+        var phoneNumber = _httpContextAccessor.HttpContext?.User.FindFirst("phone")?.Value;
+
+        _logger.LogInformation("Starting registration process for phone number {PhoneNumber}", phoneNumber);
         
         var user = new User
         {
             FirstName = request.FirstName,
             LastName = request.LastName,
-            PhoneNumber = request.PhoneNumber,
-            UserName = request.PhoneNumber,
+            PhoneNumber = phoneNumber,
         };
         
         var result = await _userManager.CreateAsync(user, request.Password);
@@ -54,7 +54,7 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
         {
             var errors = result.Errors.Select(e => ErrorResponseModel.Create(e.Code, e.Description)).ToList();
             _logger.LogWarning("User registration failed with {ErrorCount} errors", errors.Count);
-            return GenericResponseModel<RegisterUserResponse>.Failure("Registration failed", errors);
+            return GenericResponseModel<LoginResponse>.Failure("Registration failed", errors);
         }
 
         var citizenRoleName = "Citizen";
@@ -66,27 +66,47 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
 
         await _userManager.AddToRoleAsync(user, citizenRoleName);
         
-        var otp = await _otpService.GenerateOtpAsync(request.PhoneNumber, OtpPurpose.PhoneVerification);
-        _logger.LogInformation("Generated OTP for phone number {PhoneNumber}", request.PhoneNumber);
-        
-        var phoneNumberVerificationToken = await _tokenService.GeneratePhoneVerificationTokenAsync(user);
-        _logger.LogInformation("Generated verification token for user {UserId}", user.Id);
-
-        // Uncomment when ready to actually send SMS
-        
-        // var isSmsSent = await _smsService.SendSmsAsync(user.PhoneNumber, otp);
-        // if (!isSmsSent)
-        // {
-        //     _logger.LogWarning("Failed to send OTP to phone number {PhoneNumber}", request.PhoneNumber);
-        //     return GenericResponseModel<RegisterUserResponse>.Failure("Failed to send OTP. Please try again later.");
-        // }
-
-        _logger.LogInformation("OTP sent to phone number {PhoneNumber}", request.PhoneNumber);
-
-        return GenericResponseModel<RegisterUserResponse>.Success(new RegisterUserResponse
+        //add user device to the user and generate the tokens
+        var userDevice = new UserDevice
         {
-            UserId = user.Id,
-            VerificationToken = phoneNumberVerificationToken
+            DeviceId = request.DeviceId,
+            DeviceName = request.DeviceName,
+            DeviceType = request.DeviceType,
+            Platform = request.Platform,
+            UserId = user.Id //55
+        };
+        
+        // Generate new tokens
+        var accessToken = await _tokenService.GenerateJwtToken(user, userDevice);
+        var refreshTokenObj = _tokenService.GenerateRefreshToken(userDevice);
+        // Add new refresh token
+        userDevice.RefreshToken = refreshTokenObj;
+        await _unitOfWork.Repository<UserDevice>().Add(userDevice);
+        await _unitOfWork.Repository<Domain.Entities.RefreshToken>().Add(refreshTokenObj);
+        
+
+        // Single database call
+        await _unitOfWork.SaveChanges();
+        _logger.LogInformation("User {UserId} logged in successfully from device {DeviceId}", 
+            user.Id, request.DeviceId);
+
+        return GenericResponseModel<LoginResponse>.Success(new LoginResponse
+        {
+            Tokens = new AuthResponse
+            {
+                Token = accessToken,
+                RefreshToken = refreshTokenObj.Token,
+                ExpiresAt = _tokenService.GetTokenExpiration()
+            },
+            User = new LoginResponse.UserInfo
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                PhoneNumberConfirmed = user.PhoneNumberConfirmed
+            }
         });
     }
 }

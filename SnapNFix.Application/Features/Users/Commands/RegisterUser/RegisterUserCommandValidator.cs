@@ -16,15 +16,6 @@ namespace SnapNFix.Application.Features.Users.Commands.RegisterUser
                 .NotEmpty().WithMessage("{PropertyName} is required")
                 .MaximumLength(50).WithMessage("{PropertyName} must not exceed 50 characters");
 
-            RuleFor(x => x.PhoneNumber)
-                .NotEmpty().WithMessage("{PropertyName} is required")
-                .Matches(@"^(\+20|0)?1[0125][0-9]{8}$").WithMessage("{PropertyName} must be a valid Egyptian phone number")
-                .Must((_, phone, context) =>
-                {
-                    var existingUser = unitOfWork.Repository<User>().ExistsByName(u => u.PhoneNumber == phone);
-                    return !existingUser;
-                }).WithMessage("{PropertyName} is already registered");
-
             RuleFor(x => x.Password)
                 .NotEmpty().WithMessage("{PropertyName} is required")
                 .MinimumLength(8).WithMessage("{PropertyName} must be at least 8 characters")
@@ -36,6 +27,16 @@ namespace SnapNFix.Application.Features.Users.Commands.RegisterUser
             RuleFor(x => x.ConfirmPassword)
                 .NotEmpty().WithMessage("{PropertyName} is required")
                 .Equal(x => x.Password).WithMessage("Passwords do not match");
+
+            RuleFor(x => x.DeviceId)
+                .NotEmpty();
+            RuleFor(x => x.DeviceName)
+                .NotEmpty();
+            RuleFor(x => x.DeviceType)
+                .NotEmpty();
+            RuleFor(x => x.Platform)
+                .NotEmpty();
+            
         }
     }
 }
