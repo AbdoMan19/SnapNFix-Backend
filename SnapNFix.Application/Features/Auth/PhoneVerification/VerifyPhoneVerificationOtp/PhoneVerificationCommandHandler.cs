@@ -36,6 +36,22 @@ public class PhoneVerificationCommandHandler : IRequestHandler<PhoneVerification
     public async Task<GenericResponseModel<bool>> Handle(PhoneVerificationCommand request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Processing phone verification for {PhoneNumber}", request.PhoneNumber);
+
+        var user = await _unitOfWork.Repository<User>()
+            .FindBy(u => u.PhoneNumber == request.PhoneNumber)
+            .FirstOrDefaultAsync(cancellationToken);
+            
+        if (user == null)
+        {
+            _logger.LogWarning("Phone verification failed: User not found for {PhoneNumber}", request.PhoneNumber);
+            return GenericResponseModel<bool>.Failure("User not found");
+        }
+
+        if (user.PhoneNumberConfirmed)
+        {
+            _logger.LogInformation("Phone number {PhoneNumber} is already verified", request.PhoneNumber);
+            return GenericResponseModel<bool>.Failure("Phone number is already verified");
+        }
         
         var tokenValid = await _tokenService.ValidatePhoneVerificationTokenAsync(request.PhoneNumber, request.VerificationToken);
         if (!tokenValid)
@@ -51,15 +67,7 @@ public class PhoneVerificationCommandHandler : IRequestHandler<PhoneVerification
             return GenericResponseModel<bool>.Failure("Invalid OTP");
         }
         
-        var user = await _unitOfWork.Repository<User>()
-            .FindBy(u => u.PhoneNumber == request.PhoneNumber)
-            .FirstOrDefaultAsync(cancellationToken);
-            
-        if (user == null)
-        {
-            _logger.LogWarning("Phone verification failed: User not found for {PhoneNumber}", request.PhoneNumber);
-            return GenericResponseModel<bool>.Failure("User not found");
-        }
+        
         
         user.PhoneNumberConfirmed = true;
         await _unitOfWork.Repository<User>().Update(user);
