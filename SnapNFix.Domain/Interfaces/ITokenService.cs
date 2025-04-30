@@ -18,6 +18,9 @@ public interface ITokenService
 
     // Password Reset
     Task<string> GeneratePasswordResetToken(User user);
+    Task<string> GeneratePasswordResetRequestTokenAsync(User user);
+    Task<bool> ValidatePasswordResetRequestTokenAsync(User user, string token);
+    bool ValidatePasswordResetTokenAsync(User user, string token);
 
     // Phone number verification
     

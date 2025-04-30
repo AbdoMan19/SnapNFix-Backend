@@ -47,6 +47,8 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
             FirstName = request.FirstName,
             LastName = request.LastName,
             PhoneNumber = phoneNumber,
+            UserName = phoneNumber,
+            PhoneNumberConfirmed = true,
         };
         
         var result = await _userManager.CreateAsync(user, request.Password);

@@ -82,7 +82,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("forget-password/verify-otp")]
-    [AllowAnonymous]
+    [Authorize(Policy = "RequestResetPassword")]
     public async Task<IActionResult> VerifyForgetPasswordOtp([FromBody] VerifyForgetPasswordOtpCommand command)
     {
         var result = await _mediator.Send(command);
@@ -90,6 +90,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("forget-password/reset")]
+    [Authorize(Policy = "ResetPassword")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand command)
     {
         var result = await _mediator.Send(command);

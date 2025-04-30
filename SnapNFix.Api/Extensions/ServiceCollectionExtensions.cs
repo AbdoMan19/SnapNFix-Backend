@@ -106,6 +106,8 @@ public static class ServiceCollectionExtensions
             options.AddPolicy("RequireOtpVerification", policy =>
                 policy.RequireClaim("purpose", "otp_request")
                     .RequireClaim("phone"));
+            options.AddPolicy("RequestResetPassword", policy => policy.RequireClaim("purpose", "password_reset_request"));
+            options.AddPolicy("ResetPassword", policy => policy.RequireClaim("purpose", "password_reset"));
         });
         services.AddProblemDetails();
 

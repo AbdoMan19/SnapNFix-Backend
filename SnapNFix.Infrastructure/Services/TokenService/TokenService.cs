@@ -32,17 +32,17 @@ public class TokenService : ITokenService
     }
 
     public async Task<(string AccessToken, string RefreshToken)> GenerateTokensForDeviceAsync(
-        User user, 
-        string deviceId, 
-        string deviceName, 
-        string platform, 
+        User user,
+        string deviceId,
+        string deviceName,
+        string platform,
         string deviceType)
     {
         var userDevice = await _deviceManager.RegisterDeviceAsync(
-            user.Id, 
-            deviceId, 
-            deviceName, 
-            platform, 
+            user.Id,
+            deviceId,
+            deviceName,
+            platform,
             deviceType);
 
         var accessToken = await GenerateJwtToken(user, userDevice);
@@ -63,7 +63,7 @@ public class TokenService : ITokenService
             new(ClaimTypes.Email, user.Email ?? string.Empty),
             new(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
         };
-        
+
         var roles = await _userManager.GetRolesAsync(user);
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
         claims.AddRange(new[]
@@ -87,7 +87,7 @@ public class TokenService : ITokenService
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-    
+
     public string GenerateRefreshToken()
     {
         return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
@@ -114,7 +114,7 @@ public class TokenService : ITokenService
         }
         return DateTime.UtcNow.AddHours(minutesToExpire);
     }
-    
+
 
     public async Task<(string JwtToken, string RefreshToken)> RefreshTokenAsync(RefreshToken refreshToken)
     {
@@ -134,16 +134,16 @@ public class TokenService : ITokenService
 
         refreshToken.Token = newRefreshToken.Token;
         refreshToken.Expires = GetRefreshTokenExpirationDays();
-        
+
         userDevice.LastUsedAt = DateTime.UtcNow;
         await _unitOfWork.Repository<UserDevice>().Update(userDevice);
         await _unitOfWork.Repository<RefreshToken>().Update(refreshToken);
         await _unitOfWork.SaveChanges();
-        
+
         return (newAccessToken, newRefreshToken.Token);
     }
-    
-    
+
+
     public async Task<bool> RevokeDeviceTokensAsync(Guid userId, string deviceId)
     {
         var userDevice = await _unitOfWork.Repository<UserDevice>()
@@ -159,10 +159,10 @@ public class TokenService : ITokenService
         userDevice.RefreshToken.Revoked = DateTime.UtcNow;
         await _unitOfWork.Repository<RefreshToken>().Update(userDevice.RefreshToken);
         await _unitOfWork.SaveChanges();
-        
+
         return true;
     }
-    
+
     public DateTime GetRefreshTokenExpirationDays()
     {
         int daysToExpire = 7;
@@ -173,8 +173,8 @@ public class TokenService : ITokenService
         return DateTime.UtcNow.AddDays(daysToExpire);
     }
 
-    public async Task<string> GeneratePasswordResetToken(User user) => await _userManager.GeneratePasswordResetTokenAsync(user);
     
+
     public async Task<string> GenerateOtpRequestToken(string phoneNumber)
     {
         var claims = new List<Claim>
@@ -221,6 +221,132 @@ public class TokenService : ITokenService
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-    
-    
+
+
+    public async Task<string> GeneratePasswordResetRequestTokenAsync(User user)
+    {
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Email, user.Email ?? string.Empty),
+            new(ClaimTypes.MobilePhone, user.PhoneNumber ?? string.Empty),
+            new("purpose", "password_reset_request")
+        };
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var expires = DateTime.UtcNow.AddMinutes(10);
+
+        var token = new JwtSecurityToken(
+            issuer: _configuration["Jwt:Issuer"],
+            audience: _configuration["Jwt:Audience"],
+            claims: claims,
+            expires: expires,
+            signingCredentials: credentials
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public async Task<bool> ValidatePasswordResetRequestTokenAsync(User user, string token)
+    {
+        try
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = key,
+                ValidateIssuer = true,
+                ValidIssuer = _configuration["Jwt:Issuer"],
+                ValidateAudience = true,
+                ValidAudience = _configuration["Jwt:Audience"],
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero
+            };
+
+            var principal = tokenHandler.ValidateToken(token, validationParameters, out _);
+
+            var purposeClaim = principal.FindFirst(c => c.Type == "purpose");
+            if (purposeClaim == null || purposeClaim.Value != "password_reset_request")
+                return false;
+
+            var userIdClaim = principal.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
+            if (userIdClaim == null || userIdClaim.Value != user.Id.ToString())
+                return false;
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
+
+    public async Task<string> GeneratePasswordResetToken(User user)
+    {
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new("email", user.Email ?? string.Empty),
+            new("purpose", "password_reset")
+        };
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        
+        var expires = DateTime.UtcNow.AddMinutes(10);
+
+        var token = new JwtSecurityToken(
+            issuer: _configuration["Jwt:Issuer"],
+            audience: _configuration["Jwt:Audience"],
+            claims: claims,
+            expires: expires,
+            signingCredentials: credentials
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public bool ValidatePasswordResetTokenAsync(User user, string token)
+    {
+        try
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = key,
+                ValidateIssuer = true,
+                ValidIssuer = _configuration["Jwt:Issuer"],
+                ValidateAudience = true,
+                ValidAudience = _configuration["Jwt:Audience"],
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero
+            };
+
+            var principal = tokenHandler.ValidateToken(token, validationParameters, out _);
+
+            var purposeClaim = principal.FindFirst(c => c.Type == "purpose");
+            if (purposeClaim == null || purposeClaim.Value != "password_reset")
+                return false;
+
+            var userIdClaim = principal.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
+            if (userIdClaim == null || userIdClaim.Value != user.Id.ToString())
+                return false;
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
+
+
 }
