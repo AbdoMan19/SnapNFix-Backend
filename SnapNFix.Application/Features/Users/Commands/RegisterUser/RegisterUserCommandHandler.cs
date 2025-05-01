@@ -84,7 +84,7 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
         // Add new refresh token
         userDevice.RefreshToken = refreshTokenObj;
         await _unitOfWork.Repository<UserDevice>().Add(userDevice);
-        await _unitOfWork.Repository<Domain.Entities.RefreshToken>().Add(refreshTokenObj);
+        await _unitOfWork.Repository<RefreshToken>().Add(refreshTokenObj);
         
 
         // Single database call

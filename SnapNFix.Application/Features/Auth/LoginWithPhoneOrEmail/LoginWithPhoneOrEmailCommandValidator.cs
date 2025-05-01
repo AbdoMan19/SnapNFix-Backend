@@ -16,6 +16,14 @@ public class LoginWithPhoneOrEmailCommandValidator : AbstractValidator<LoginWith
             .WithMessage("Email or Phone Number is required.")
             .Matches(@"(^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)|(^(\+20|0)?1[0125][0-9]{8}$)")
             .WithMessage("Input must be a valid email or Egyptian phone number.");
+
+        RuleFor(x => x.Password)
+                .NotEmpty().WithMessage("{PropertyName} is required")
+                .MinimumLength(8).WithMessage("{PropertyName} must be at least 8 characters")
+                .Matches("[A-Z]").WithMessage("{PropertyName} must contain at least one uppercase letter")
+                .Matches("[a-z]").WithMessage("{PropertyName} must contain at least one lowercase letter")
+                .Matches("[0-9]").WithMessage("{PropertyName} must contain at least one number")
+                .Matches("[^a-zA-Z0-9]").WithMessage("{PropertyName} must contain at least one special character");
         
         RuleFor(x => x.DeviceId)
             .NotEmpty()

@@ -42,25 +42,24 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
             ErrorResponseModel.Create("Authentication", "Invalid credentials")
         };
 
-        // Validate user
         var (user, error) = await _userValidationService.ValidateUserAsync<LoginResponse>(request.EmailOrPhoneNumber);
         if (error != null) return error;
 
-        // Check password
-        var passwordValid = await _userManager.CheckPasswordAsync(user, request.Password);
+        var identityUser = await _userManager.FindByIdAsync(user.Id.ToString());
+        
+        var passwordValid = await _userManager.CheckPasswordAsync(identityUser, request.Password);
         if (!passwordValid)
         {
-            _logger.LogWarning("Invalid password attempt for user {UserId}", user.Id);
-            await _userManager.AccessFailedAsync(user);
+            _logger.LogWarning("Invalid password attempt for user {UserId}", identityUser.Id);
+            await _userManager.AccessFailedAsync(identityUser);
             return GenericResponseModel<LoginResponse>.Failure(Constants.FailureMessage, invalidCredentialsError);
         }
 
-        // Check confirmation status
         var isEmail = request.EmailOrPhoneNumber.Contains("@");
-        if ((isEmail && !user.EmailConfirmed) || (!isEmail && !user.PhoneNumberConfirmed))
+        if ((isEmail && !identityUser.EmailConfirmed) || (!isEmail && !identityUser.PhoneNumberConfirmed))
         {
             _logger.LogWarning("Login attempt with unconfirmed {Type} for user {UserId}", 
-                isEmail ? "email" : "phone", user.Id);
+                isEmail ? "email" : "phone", identityUser.Id);
             
             return GenericResponseModel<LoginResponse>.Failure(
                 Constants.FailureMessage,
@@ -69,11 +68,10 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
                 });
         }
 
-        await _userManager.ResetAccessFailedCountAsync(user);
+        await _userManager.ResetAccessFailedCountAsync(identityUser);
 
-        // Handle device information
         var userDevice = await _unitOfWork.Repository<UserDevice>()
-            .FindBy(d => d.UserId == user.Id && d.DeviceId == request.DeviceId)
+            .FindBy(d => d.UserId == identityUser.Id && d.DeviceId == request.DeviceId)
             .Include(u => u.RefreshToken)
             .FirstOrDefaultAsync(cancellationToken);
 
@@ -81,7 +79,7 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
         {
             userDevice = new UserDevice
             {
-                UserId = user.Id,
+                UserId = identityUser.Id,
                 DeviceId = request.DeviceId,
                 DeviceName = request.DeviceName,
                 DeviceType = request.DeviceType,
@@ -95,16 +93,16 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
             userDevice.LastUsedAt = DateTime.UtcNow;
             await _unitOfWork.Repository<UserDevice>().Update(userDevice);
         }
+        
+        // why we have single user device?
 
-        // Check for active refresh token
-        if (userDevice.RefreshToken != null && userDevice.RefreshToken.IsActive)
-        {
-            _logger.LogWarning("User device already exists with active refresh token for user {UserId}", user.Id);
-            return GenericResponseModel<LoginResponse>.Failure("Device already logged in");
-        }
+        // if (userDevice.RefreshToken != null && userDevice.RefreshToken.IsActive)
+        // {
+        //     _logger.LogWarning("User device already exists with active refresh token for user {UserId}", identityUser.Id);
+        //     return GenericResponseModel<LoginResponse>.Failure("Device already logged in");
+        // }
 
-        // Generate new tokens
-        var accessToken = await _tokenService.GenerateJwtToken(user, userDevice);
+        var accessToken = await _tokenService.GenerateJwtToken(identityUser, userDevice);
         var refreshToken = _tokenService.GenerateRefreshToken();
 
         if (userDevice.RefreshToken != null)
@@ -125,7 +123,7 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
         // Single database call
         await _unitOfWork.SaveChanges();
         _logger.LogInformation("User {UserId} logged in successfully from device {DeviceId}", 
-            user.Id, request.DeviceId);
+            identityUser.Id, request.DeviceId);
 
         return GenericResponseModel<LoginResponse>.Success(new LoginResponse
         {
@@ -137,12 +135,12 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
             },
             User = new LoginResponse.UserInfo
             {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                PhoneNumber = user.PhoneNumber,
-                PhoneNumberConfirmed = user.PhoneNumberConfirmed
+                Id = identityUser.Id,
+                FirstName = identityUser.FirstName,
+                LastName = identityUser.LastName,
+                Email = identityUser.Email,
+                PhoneNumber = identityUser.PhoneNumber,
+                PhoneNumberConfirmed = identityUser.PhoneNumberConfirmed
             }
         });
     }
