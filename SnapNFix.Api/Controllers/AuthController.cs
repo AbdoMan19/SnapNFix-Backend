@@ -11,6 +11,8 @@ using SnapNFix.Application.Features.Auth.ForgetPassword.VerifyForgetPasswordOtp;
 using SnapNFix.Application.Features.Auth.ResetPassword;
 using SnapNFix.Application.Features.Auth.PhoneVerification.RequestPhoneVerificationOtp;
 using SnapNFix.Application.Features.Auth.PhoneVerification.VerifyPhoneVerificationOtp;
+using SnapNFix.Application.Features.Auth.ForgetPassword.ResendForgetPasswordOtp;
+using SnapNFix.Application.Features.Auth.PhoneVerification.ResendPhoneVerificationOtp;
 
 namespace SnapNFix.Api.Controllers;
 
@@ -73,6 +75,14 @@ public class AuthController : ControllerBase
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
 
+    [HttpPost("verify-phone/resend-otp")]
+    [Authorize("RequireOtpVerification")]
+    public async Task<IActionResult> ResendPhoneVerificationOtp([FromBody] ResendPhoneVerificationOtpCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
+    }
+
     [HttpPost("forget-password/request-otp")]
     [AllowAnonymous]
     public async Task<IActionResult> RequestForgetPasswordOtp([FromBody] RequestForgetPasswordOtpCommand command)
@@ -84,6 +94,14 @@ public class AuthController : ControllerBase
     [HttpPost("forget-password/verify-otp")]
     [Authorize(Policy = "RequestResetPassword")]
     public async Task<IActionResult> VerifyForgetPasswordOtp([FromBody] VerifyForgetPasswordOtpCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
+    }
+
+    [HttpPost("forget-password/resend-otp")]
+    [Authorize(Policy = "RequestResetPassword")]
+    public async Task<IActionResult> ResendForgetPasswordOtp([FromBody] ResendForgetPasswordOtpCommand command)
     {
         var result = await _mediator.Send(command);
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);

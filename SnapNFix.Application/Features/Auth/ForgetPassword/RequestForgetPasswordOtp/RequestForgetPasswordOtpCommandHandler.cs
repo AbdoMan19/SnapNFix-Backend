@@ -27,7 +27,9 @@ public class RequestForgetPasswordOtpCommandHandler(
             return error;
         }
         
-        await otpService.GenerateOtpAsync(request.EmailOrPhoneNumber, OtpPurpose.ForgotPassword);
+        var otp = await otpService.GenerateOtpAsync(request.EmailOrPhoneNumber, OtpPurpose.ForgotPassword);
+
+        // TODO : Send OTP to user via SMS
         
         var resetRequestToken = await tokenService.GeneratePasswordResetRequestTokenAsync(user);
         

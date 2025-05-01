@@ -33,12 +33,12 @@ public class OtpService : IOtpService
         if (string.IsNullOrWhiteSpace(emailOrPhoneNumber))
             throw new ArgumentException("Email or phone number cannot be empty", nameof(emailOrPhoneNumber));
 
-        if (IsRateLimitExceeded(emailOrPhoneNumber, otpPurpose))
-        {
-            _logger.LogWarning("Rate limit exceeded for {Identifier} with purpose {Purpose}", 
-                emailOrPhoneNumber, otpPurpose);
-            throw new InvalidOperationException("Rate limit exceeded. Please try again later.");
-        }
+        // if (IsRateLimitExceeded(emailOrPhoneNumber, otpPurpose))
+        // {
+        //     _logger.LogWarning("Rate limit exceeded for {Identifier} with purpose {Purpose}", 
+        //         emailOrPhoneNumber, otpPurpose);
+        //     throw new InvalidOperationException("Rate limit exceeded. Please try again later.");
+        // }
 
         string otp = GenerateRandomOtp();
         var cacheKey = GenerateCacheKey(emailOrPhoneNumber, otpPurpose);
@@ -136,22 +136,22 @@ public class OtpService : IOtpService
         return $"OTP:{purpose}:{phoneOrEmail}";
     }
 
-    private bool IsRateLimitExceeded(string emailOrPhoneNumber, OtpPurpose purpose)
-    {
-        string rateLimitKey = $"RateLimit:{purpose}:{emailOrPhoneNumber}";
+    // private bool IsRateLimitExceeded(string emailOrPhoneNumber, OtpPurpose purpose)
+    // {
+    //     string rateLimitKey = $"RateLimit:{purpose}:{emailOrPhoneNumber}";
         
-        if (!_cache.TryGetValue(rateLimitKey, out int requestCount))
-        {
-            _cache.Set(rateLimitKey, 1, TimeSpan.FromMinutes(_options.RateLimitWindowMinutes));
-            return false;
-        }
+    //     if (!_cache.TryGetValue(rateLimitKey, out int requestCount))
+    //     {
+    //         _cache.Set(rateLimitKey, 1, TimeSpan.FromMinutes(_options.RateLimitWindowMinutes));
+    //         return false;
+    //     }
         
-        if (requestCount >= _options.MaxRequestsPerWindow)
-        {
-            return true;
-        }
+    //     if (requestCount >= _options.MaxRequestsPerWindow)
+    //     {
+    //         return true;
+    //     }
         
-        _cache.Set(rateLimitKey, requestCount + 1, TimeSpan.FromMinutes(_options.RateLimitWindowMinutes));
-        return false;
-    }
+    //     _cache.Set(rateLimitKey, requestCount + 1, TimeSpan.FromMinutes(_options.RateLimitWindowMinutes));
+    //     return false;
+    // }
 }
