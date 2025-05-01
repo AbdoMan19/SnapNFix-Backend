@@ -1,8 +1,11 @@
+using System.Security.Claims;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Application.Common.Services;
 using SnapNFix.Application.Interfaces;
+using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
 
@@ -14,30 +17,36 @@ public class ResendForgetPasswordOtpCommandHandler : IRequestHandler<ResendForge
     private readonly IOtpService _otpService;
     private readonly ILogger<ResendForgetPasswordOtpCommandHandler> _logger;
     
+    private readonly IUserValidationService _userValidationService;
     private readonly IHttpContextAccessor httpContextAccessor;
 
   public ResendForgetPasswordOtpCommandHandler(
   IUnitOfWork unitOfWork,
   IOtpService otpService,
   ILogger<ResendForgetPasswordOtpCommandHandler> logger,
-  IHttpContextAccessor httpContextAccessor)
+  IHttpContextAccessor httpContextAccessor,
+  IUserValidationService userValidationService
+  )
   {
     _unitOfWork = unitOfWork;
     _otpService = otpService;
     _logger = logger;
     this.httpContextAccessor = httpContextAccessor;
+    _userValidationService = userValidationService;
   }
 
   public async Task<GenericResponseModel<bool>> Handle(ResendForgetPasswordOtpCommand request, CancellationToken cancellationToken)
   {
 
-    var phoneNumber = httpContextAccessor.HttpContext?.User.FindFirst("phone")?.Value;
+    var phoneNumber = httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.MobilePhone)?.Value;
+    
     if (string.IsNullOrEmpty(phoneNumber))
     {
-        _logger.LogWarning("Phone number not found in the request");
-        return GenericResponseModel<bool>.Failure("Phone number not found");
+      _logger.LogWarning("Phone number not found in the request");
+      return GenericResponseModel<bool>.Failure("Phone number not found");
     }
 
+    
     await _otpService.InvalidateOtpAsync(phoneNumber, OtpPurpose.ForgotPassword);
 
     var otp = await _otpService.GenerateOtpAsync(phoneNumber, OtpPurpose.ForgotPassword);

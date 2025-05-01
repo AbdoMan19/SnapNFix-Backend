@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -40,7 +41,7 @@ public class PhoneVerificationCommandHandler : IRequestHandler<PhoneVerification
 
     public async Task<GenericResponseModel<string>> Handle(PhoneVerificationCommand request, CancellationToken cancellationToken)
     {
-        var phoneNumber = _httpContextAccessor.HttpContext?.User.FindFirst("phone")?.Value;
+        var phoneNumber = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.MobilePhone)?.Value;
 
         _logger.LogInformation("Processing phone verification for {PhoneNumber}", phoneNumber);
         var isOtpValid = await _otpService.VerifyOtpAsync(phoneNumber, request.Otp, OtpPurpose.PhoneVerification);

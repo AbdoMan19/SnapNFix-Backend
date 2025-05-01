@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -26,7 +27,7 @@ public class ResendPhoneVerificationOtpCommandHandler : IRequestHandler<ResendPh
 
     public async Task<GenericResponseModel<bool>> Handle(ResendPhoneVerificationOtpCommand request, CancellationToken cancellationToken)
     {
-        var phoneNumber = _httpContextAccessor.HttpContext?.User.FindFirst("phone")?.Value;
+        var phoneNumber = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.MobilePhone)?.Value;
         if (string.IsNullOrEmpty(phoneNumber))
         {
             _logger.LogWarning("Phone number not found in the request token");

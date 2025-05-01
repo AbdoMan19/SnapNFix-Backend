@@ -22,10 +22,11 @@ public class RequestForgetPasswordOtpCommandHandler(
     {
         var (user, error) = await userValidationService.ValidateUserAsync<string>(request.EmailOrPhoneNumber);
 
-        if (error != null)
+        if (error != null )
         {
             return error;
         }
+
         
         var otp = await otpService.GenerateOtpAsync(request.EmailOrPhoneNumber, OtpPurpose.ForgotPassword);
 
