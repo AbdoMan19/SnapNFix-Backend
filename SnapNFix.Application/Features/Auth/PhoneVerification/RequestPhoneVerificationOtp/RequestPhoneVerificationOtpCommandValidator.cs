@@ -13,8 +13,7 @@ public class RequestPhoneVerificationOtpCommandValidator : AbstractValidator<Req
             .Matches(@"^(\+20|0)?1[0125][0-9]{8}$").WithMessage("{PropertyName} must be a valid Egyptian phone number")
             .Must((_, r) =>
             {
-                var exist = unitOfWork.Repository<User>().ExistsByName(u => u.PhoneNumber == r && u.PhoneNumberConfirmed == true);
-                return !exist;
+                return unitOfWork.Repository<User>().ExistsByName(u => u.PhoneNumber != r);
             });
     }
 }
