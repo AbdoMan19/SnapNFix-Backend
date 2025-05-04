@@ -173,7 +173,6 @@ public class TokenService : ITokenService
         return DateTime.UtcNow.AddDays(daysToExpire);
     }
 
-    
 
     public async Task<string> GenerateOtpRequestToken(string phoneNumber)
     {
@@ -297,7 +296,7 @@ public class TokenService : ITokenService
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        
+
         var expires = DateTime.UtcNow.AddMinutes(10);
 
         var token = new JwtSecurityToken(
@@ -347,6 +346,7 @@ public class TokenService : ITokenService
             return false;
         }
     }
+
 
 
 }

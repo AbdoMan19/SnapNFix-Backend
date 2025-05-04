@@ -22,7 +22,7 @@ public class RequestForgetPasswordOtpCommandHandler(
     {
         var (user, error) = await userValidationService.ValidateUserAsync<string>(request.EmailOrPhoneNumber);
 
-        if (error != null )
+        if (error != null)
         {
             return error;
         }
@@ -31,6 +31,7 @@ public class RequestForgetPasswordOtpCommandHandler(
         var otp = await otpService.GenerateOtpAsync(request.EmailOrPhoneNumber, OtpPurpose.ForgotPassword);
 
         // TODO : Send OTP to user via SMS
+        
         
         var resetRequestToken = await tokenService.GeneratePasswordResetRequestTokenAsync(user);
         
