@@ -6,7 +6,7 @@ namespace SnapNFix.Application.Features.Auth.GoogleLogin;
 
 public class GoogleLoginCommand : IRequest<GenericResponseModel<LoginResponse>>
 {
-    public string IdToken { get; set; }
+    public string AccessToken { get; set; }
     public string DeviceId { get; set; }
     
     public string DeviceName { get; set; }

@@ -44,7 +44,7 @@ public class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCommand, Gen
             Audience = new[] { _configuration["Authentication:Google:ClientId"] }
         };
         
-        var payload = await GoogleJsonWebSignature.ValidateAsync(request.IdToken, settings);
+        var payload = await GoogleJsonWebSignature.ValidateAsync(request.AccessToken, settings);
         if (payload == null)
         {
             _logger.LogWarning("Google authentication failed - invalid token");

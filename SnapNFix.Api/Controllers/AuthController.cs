@@ -13,6 +13,7 @@ using SnapNFix.Application.Features.Auth.PhoneVerification.RequestPhoneVerificat
 using SnapNFix.Application.Features.Auth.PhoneVerification.VerifyPhoneVerificationOtp;
 using SnapNFix.Application.Features.Auth.ForgetPassword.ResendForgetPasswordOtp;
 using SnapNFix.Application.Features.Auth.PhoneVerification.ResendPhoneVerificationOtp;
+using SnapNFix.Application.Features.Auth.GoogleLogin;
 
 namespace SnapNFix.Api.Controllers;
 
@@ -110,6 +111,14 @@ public class AuthController : ControllerBase
     [HttpPost("forget-password/reset")]
     [Authorize(Policy = "ResetPassword")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
+    }
+
+    [HttpPost("google/login")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginCommand command)
     {
         var result = await _mediator.Send(command);
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);

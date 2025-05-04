@@ -6,7 +6,7 @@ public class GoogleLoginCommandValidator : AbstractValidator<GoogleLoginCommand>
 {
     public GoogleLoginCommandValidator()
     {
-        RuleFor(x => x.IdToken).NotEmpty();
+        RuleFor(x => x.AccessToken).NotEmpty();
         RuleFor(x => x.DeviceId)
             .NotEmpty()
             .WithMessage("Device Id is required.");
