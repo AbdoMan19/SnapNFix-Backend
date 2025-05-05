@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using SnapNFix.Application.Interfaces;
+using SnapNFix.Domain.Interfaces;
 using SnapNFix.Infrastructure.Context;
 
 namespace SnapNFix.Infrastructure.GenericRepository;

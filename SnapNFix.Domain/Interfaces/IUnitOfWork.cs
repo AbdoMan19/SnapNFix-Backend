@@ -1,8 +1,9 @@
 ﻿using System.Data;
+using SnapNFix.Domain.Interfaces.ServiceLifetime;
 
-namespace SnapNFix.Application.Interfaces;
+namespace SnapNFix.Domain.Interfaces;
 
-public interface IUnitOfWork
+public interface IUnitOfWork : IScoped
 {
     public IGenericRepository<TEntity> Repository<TEntity>() where TEntity : class;
     

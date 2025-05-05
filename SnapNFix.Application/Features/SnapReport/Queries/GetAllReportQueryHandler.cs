@@ -2,7 +2,7 @@ using Mapster;
 using MediatR;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.SnapReport.DTOs;
-using SnapNFix.Application.Interfaces;
+using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Application.Features.SnapReport.Queries;
 

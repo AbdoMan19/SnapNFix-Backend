@@ -22,13 +22,14 @@ public static class MiddlewareExtension
         app.UseHsts();
         app.UseExceptionHandler();
         app.UseHttpsRedirection();
-        app.UseRateLimiter();
+        //app.UseMiddleware<IpRateLimitingMiddleware>();
+        //app.UseRateLimiter();
         app.UseCors("DefaultPolicy");
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
-        app.MapHealthChecks("/health");
+       // app.MapHealthChecks("/health");
 
         return app;
     }

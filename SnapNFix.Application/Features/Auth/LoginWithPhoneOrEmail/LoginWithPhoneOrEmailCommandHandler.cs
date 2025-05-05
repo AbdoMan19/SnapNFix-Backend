@@ -3,9 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
-using SnapNFix.Application.Common.Services;
+using SnapNFix.Application.Common.Services.UserValidationServices;
 using SnapNFix.Application.Features.Auth.Dtos;
-using SnapNFix.Application.Interfaces;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
 using Constants = SnapNFix.Application.Utilities.Constants;
@@ -85,8 +84,7 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
                 DeviceId = request.DeviceId,
                 DeviceName = request.DeviceName,
                 DeviceType = request.DeviceType,
-                Platform = request.Platform,
-                LastUsedAt = DateTime.UtcNow,
+                Platform = request.Platform
             };
             await _unitOfWork.Repository<UserDevice>().Add(userDevice);
         }

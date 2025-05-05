@@ -9,8 +9,8 @@ public class SnapReport
     public Guid UserId { get; set; }
     public virtual User User { get; set; }
     
-    public Guid IssueId { get; set; }
-    public virtual Issue Issue { get; set; }
+    public Guid? IssueId { get; set; }
+    public virtual Issue? Issue { get; set; }
     
     public string? Comment { get; set; }
 
@@ -18,7 +18,13 @@ public class SnapReport
     
     //location
     public Point Location { get; set; }
-    public ReportStatus Status { get; set; } = ReportStatus.Pending;
+    
+    //ai response
+    public ReportStatus ReportStatus { get; set; } = ReportStatus.Pending;
+    public string TaskId { get; set; }
+    
+    //report category
+    public ReportCategory ReportCategory { get; set; } = ReportCategory.NotSpecified;
     
     //dates
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

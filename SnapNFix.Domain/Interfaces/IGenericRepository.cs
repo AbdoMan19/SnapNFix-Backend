@@ -1,8 +1,9 @@
 ﻿using System.Linq.Expressions;
+using SnapNFix.Domain.Interfaces.ServiceLifetime;
 
-namespace SnapNFix.Application.Interfaces;
+namespace SnapNFix.Domain.Interfaces;
 
-public interface IGenericRepository<TEntity> where TEntity : class
+public interface IGenericRepository<TEntity>: IScoped where TEntity : class 
 {
     Task<IEnumerable<TEntity>> GetAll();
 

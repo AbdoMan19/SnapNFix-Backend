@@ -6,10 +6,10 @@ using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.SnapReport.DTOs;
-using SnapNFix.Application.Interfaces;
 using SnapNFix.Application.Utilities;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
+using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Application.Features.SnapReport.Commands.CreateSnapReport;
 public class CreateSnapReportCommandHandler : IRequestHandler<CreateSnapReportCommand, GenericResponseModel<ReportDetailsDto>>

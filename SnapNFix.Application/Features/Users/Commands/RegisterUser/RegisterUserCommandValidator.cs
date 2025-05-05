@@ -1,6 +1,5 @@
 using FluentValidation;
-using SnapNFix.Application.Interfaces;
-using SnapNFix.Domain.Entities;
+using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Application.Features.Users.Commands.RegisterUser
 {

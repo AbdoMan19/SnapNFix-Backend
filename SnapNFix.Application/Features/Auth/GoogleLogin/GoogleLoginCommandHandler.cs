@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Auth.Dtos;
-using SnapNFix.Application.Interfaces;
 using SnapNFix.Application.Utilities;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;

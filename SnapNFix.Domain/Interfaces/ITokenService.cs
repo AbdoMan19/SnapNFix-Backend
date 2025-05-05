@@ -1,9 +1,10 @@
 using System.Security.Claims;
 using SnapNFix.Domain.Entities;
+using SnapNFix.Domain.Interfaces.ServiceLifetime;
 
 namespace SnapNFix.Domain.Interfaces;
 
-public interface ITokenService
+public interface ITokenService : IScoped
 {
     // Access Token
     Task<string> GenerateJwtToken(User user, UserDevice device);

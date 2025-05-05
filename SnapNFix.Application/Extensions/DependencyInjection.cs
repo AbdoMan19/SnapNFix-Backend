@@ -2,8 +2,11 @@ using System.Reflection;
 using FluentValidation;
 using Mapster;
 using MapsterMapper;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using Scrutor;
 using SnapNFix.Application.Common.Behaviors;
+using SnapNFix.Domain.Interfaces.ServiceLifetime;
 
 namespace SnapNFix.Application.Extensions;
 
@@ -11,18 +14,45 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddValidatorsFromAssembly(AssemblyReference.Assembly, includeInternalTypes: true);
+        var assembly = Assembly.GetExecutingAssembly();
+
+        services.RegisterServicesWithLifetime(assembly);
+        services.AddValidatorsFromAssembly(assembly);
 
         services.AddMediatR(cfg =>
         {
-            cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
+            cfg.RegisterServicesFromAssemblies(assembly);
             cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
-            cfg.AddOpenBehavior(typeof(ExceptionBehavior<,>));
         });
+
+        // Register Mapster
         var config = TypeAdapterConfig.GlobalSettings;
-        config.Scan(Assembly.GetExecutingAssembly());
+        config.Scan(assembly);
         services.AddSingleton(config);
         services.AddScoped<IMapper, ServiceMapper>();
+
+        return services;
+    }
+
+    private static IServiceCollection RegisterServicesWithLifetime(
+        this IServiceCollection services,
+        params Assembly[] assemblies)
+    {
+        services.Scan(scan => scan
+            .FromAssemblies(assemblies)
+            .AddClasses(classes => classes
+                .AssignableTo<IScoped>())
+            .AsImplementedInterfaces()
+            .WithScopedLifetime()
+            .AddClasses(classes => classes
+                .AssignableTo<ISingleton>())
+            .AsImplementedInterfaces()
+            .WithSingletonLifetime()
+            .AddClasses(classes => classes
+                .AssignableTo<ITransient>())
+            .AsImplementedInterfaces()
+            .WithTransientLifetime());
+
         return services;
     }
 }

@@ -1,10 +1,8 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Auth.Dtos;
-using SnapNFix.Application.Interfaces;
 using SnapNFix.Application.Utilities;
 using SnapNFix.Domain.Interfaces;
 

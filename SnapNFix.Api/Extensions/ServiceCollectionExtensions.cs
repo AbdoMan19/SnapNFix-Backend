@@ -5,42 +5,32 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using SnapNFix.Api.Handlers;
 using SnapNFix.Domain.Entities;
+using SnapNFix.Domain.Interfaces.ServiceLifetime;
 using SnapNFix.Infrastructure.Context;
 
 namespace SnapNFix.Api.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddWebApiServices(this IServiceCollection services , IConfiguration configuration)
+    public static IServiceCollection AddWebApiServices(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
         services.Configure<ApiBehaviorOptions>(options =>
         {
             options.SuppressModelStateInvalidFilter = true;
         });
-        services.Scan(scan => scan
-            .FromAssemblies(
-                Assembly.GetExecutingAssembly(),
-                Application.AssemblyReference.Assembly,
-                Infrastructure.AssemblyReference.Assembly
-            )
-            .AddClasses()
-            .AsMatchingInterface()
-            .WithScopedLifetime());
-        services.AddDbContext<SnapNFixContext>(options =>
-            options.UseNpgsql(
-                configuration.GetConnectionString("DefaultConnection"),
-                npgsql =>
-                {
-                    npgsql.UseNetTopologySuite();
-                }));
-            
+
+        services.RegisterServicesWithLifetime(Assembly.GetExecutingAssembly());
+
         services.Configure<DataProtectionTokenProviderOptions>(options =>
         {
             options.TokenLifespan = TimeSpan.FromHours(1);
         });
-        
+
         services.AddIdentity<User, IdentityRole<Guid>>(options =>
         {
             options.Password.RequireDigit = true;
@@ -56,26 +46,6 @@ public static class ServiceCollectionExtensions
         .AddDefaultTokenProviders()
         .AddUserValidator<OptionalEmailValidator<User>>();
 
-
-
-        /*services.AddApiVersioning(options =>
-        {
-            options.ReportApiVersions = true;
-            options.AssumeDefaultVersionWhenUnspecified = true;
-            options.DefaultApiVersion = new ApiVersion(1, 0);
-        })*/
-        
-        services.AddRateLimiter(options =>
-        {
-            options.AddFixedWindowLimiter("FixedWindowPolicy", limiterOptions =>
-            {
-                limiterOptions.PermitLimit = 5; // Allow 5 requests
-                limiterOptions.Window = TimeSpan.FromSeconds(10); // Per 10 seconds
-                limiterOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-                limiterOptions.QueueLimit = 2; // Allow 2 requests to queue
-            });
-        });
-
         services.AddCors(options =>
         {
             options.AddPolicy("DefaultPolicy", policy =>
@@ -86,8 +56,8 @@ public static class ServiceCollectionExtensions
             });
         });
 
-        services.AddHealthChecks()
-            .AddDbContextCheck<SnapNFixContext>();
+
+
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddHttpContextAccessor();
 
@@ -107,8 +77,29 @@ public static class ServiceCollectionExtensions
                 policy.RequireClaim("purpose", "otp_request")
                     .RequireClaim("phone"));
         });
+
         services.AddProblemDetails();
 
         return services;
+    }
+
+    private static void RegisterServicesWithLifetime(
+        this IServiceCollection services,
+        params Assembly[] assemblies)
+    {
+        services.Scan(scan => scan
+            .FromAssemblies(assemblies)
+            .AddClasses(classes => classes
+                .AssignableTo<IScoped>())
+            .AsImplementedInterfaces()
+            .WithScopedLifetime()
+            .AddClasses(classes => classes
+                .AssignableTo<ISingleton>())
+            .AsImplementedInterfaces()
+            .WithSingletonLifetime()
+            .AddClasses(classes => classes
+                .AssignableTo<ITransient>())
+            .AsImplementedInterfaces()
+            .WithTransientLifetime());
     }
 }

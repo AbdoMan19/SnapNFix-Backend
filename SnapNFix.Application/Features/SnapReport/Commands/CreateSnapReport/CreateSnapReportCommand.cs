@@ -13,5 +13,6 @@ public class CreateSnapReportCommand : IRequest<GenericResponseModel<ReportDetai
     public double Longitude { get; set; }
     public ReportCategory Category { get; set; }
     public Guid UserId { get; set; }
+
 }
 

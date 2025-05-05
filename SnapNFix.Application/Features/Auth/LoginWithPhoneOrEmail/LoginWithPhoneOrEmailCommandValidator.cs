@@ -1,8 +1,5 @@
 using FluentValidation;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using SnapNFix.Application.Interfaces;
-using SnapNFix.Domain.Entities;
+
 
 namespace SnapNFix.Application.Features.Auth.LoginWithPhoneOrEmail;
 

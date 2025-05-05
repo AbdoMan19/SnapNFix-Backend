@@ -6,6 +6,7 @@ using Microsoft.VisualBasic;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Common.Services;
 using SnapNFix.Application.Features.Auth.Dtos;
+using SnapNFix.Application.Common.Services.UserValidationServices;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;

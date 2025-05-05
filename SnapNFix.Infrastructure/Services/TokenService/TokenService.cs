@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using SnapNFix.Application.Interfaces;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
 

@@ -2,8 +2,8 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using SnapNFix.Application.Interfaces;
 using SnapNFix.Domain.Entities;
+using SnapNFix.Domain.Interfaces;
 
 public class DeviceManager : IDeviceManager
 {
