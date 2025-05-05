@@ -5,6 +5,5 @@ namespace SnapNFix.Application.Features.Auth.ForgetPassword.VerifyForgetPassword
 
 public class VerifyForgetPasswordOtpCommand : IRequest<GenericResponseModel<string>>
 {
-    public string EmailOrPhoneNumber { get; set; }
     public string Otp { get; set; }
 }

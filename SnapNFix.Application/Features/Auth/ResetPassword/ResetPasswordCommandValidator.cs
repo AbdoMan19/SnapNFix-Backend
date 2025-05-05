@@ -7,16 +7,6 @@ public class ResetPasswordCommandValidator : AbstractValidator<ResetPasswordComm
     public ResetPasswordCommandValidator()
     {
 
-        RuleFor(f => f.EmailOrPhoneNumber)
-            .NotEmpty()
-            .WithMessage("Email or Phone Number is required.")
-            .Matches(@"(^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)|(^(\+20|0)?1[0125][0-9]{8}$)")
-            .WithMessage("Input must be a valid email or Egyptian phone number.");
-
-
-        RuleFor(x => x.Token)
-            .NotEmpty();
-        
         RuleFor(x => x.NewPassword)
             .NotEmpty().WithMessage("Password is required")
             .MinimumLength(8).WithMessage("Password must be at least 8 characters")

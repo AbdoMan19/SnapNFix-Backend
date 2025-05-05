@@ -34,23 +34,20 @@ public class RequestPhoneVerificationOtpCommandHandler : IRequestHandler<Request
     {
         _logger.LogInformation("Processing phone verification OTP request for {PhoneNumber}", request.PhoneNumber);
         
-        //check if the phone number already exists
-        
-        
-        
         var otp = await _otpService.GenerateOtpAsync(request.PhoneNumber, OtpPurpose.PhoneVerification);
         _logger.LogInformation("Generated OTP for phone number {PhoneNumber}", request.PhoneNumber);
 
-
-        // Uncomment when ready to actually send SMS
-        // var isSmsSent = await _smsService.SendSmsAsync(request.PhoneNumber, otp);
-        // if (!isSmsSent)
-        // {
-        //     _logger.LogWarning("Failed to send OTP to phone number {PhoneNumber}", request.PhoneNumber);
-        //     return GenericResponseModel<string>.Failure("Failed to send OTP. Please try again later.");
-        // }
+    // TODO: Send OTP to user via SMS
         
-        string token = await _tokenService.GenerateOtpRequestToken(request.PhoneNumber);
+        // Uncomment when ready to actually send SMS
+    // var isSmsSent = await _smsService.SendSmsAsync(request.PhoneNumber, otp);
+    // if (!isSmsSent)
+    // {
+    //     _logger.LogWarning("Failed to send OTP to phone number {PhoneNumber}", request.PhoneNumber);
+    //     return GenericResponseModel<string>.Failure("Failed to send OTP. Please try again later.");
+    // }
+
+    string token = await _tokenService.GenerateOtpRequestToken(request.PhoneNumber);
         _logger.LogInformation("Generated OTP request token for phone number {PhoneNumber}", request.PhoneNumber);
         return GenericResponseModel<string>.Success(token);
     }
