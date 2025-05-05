@@ -1,6 +1,0 @@
-@SnapnFix_HostAddress = http://localhost:5236
-
-GET {{SnapnFix_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

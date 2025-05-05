@@ -1,6 +1,8 @@
-﻿namespace SnapNFix.Application;
+﻿using System.Reflection;
 
-public class AssemblyReference
+namespace SnapNFix.Application;
+
+public static class AssemblyReference
 {
-    
+    public static readonly Assembly Assembly = typeof(AssemblyReference).Assembly;
 }
