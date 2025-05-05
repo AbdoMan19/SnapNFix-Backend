@@ -4,9 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Common.Services.UserValidationServices;
-using SnapNFix.Application.Common.Services;
-using SnapNFix.Application.Interfaces;
-using SnapNFix.Domain.Entities;
+
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
 

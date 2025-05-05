@@ -3,7 +3,6 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
-using SnapNFix.Application.Interfaces;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
 
