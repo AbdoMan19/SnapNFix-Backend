@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
+using System.Security.Claims;
 
 namespace SnapNFix.Infrastructure.Services.UserService;
 
@@ -35,13 +36,9 @@ public class UserService(UserManager<User> userManager , IHttpContextAccessor co
         return user;
     }
     
-    public  Task<Guid> GetCurrentUserIdAsync()
+    public Task<Guid> GetCurrentUserIdAsync()
     {
-        var userId =  userManager.GetUserId( contextAccessor.HttpContext?.User);
+        var userId = contextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
         return userId != null ? Task.FromResult(Guid.Parse(userId)) : Task.FromResult(Guid.Empty);
     }
-   
-    
-    
-
 }

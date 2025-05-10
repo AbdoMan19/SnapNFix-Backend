@@ -21,7 +21,7 @@ public class SnapReportConfiguration : IEntityTypeConfiguration<SnapReport>
             .HasForeignKey(r => r.IssueId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.Property(r => r.ReportStatus).HasConversion<string>();
+        builder.Property(r => r.ImageStatus).HasConversion<string>();
         builder.Property(r => r.ReportCategory).HasConversion<string>();
 
         // Indexes
@@ -29,7 +29,7 @@ public class SnapReportConfiguration : IEntityTypeConfiguration<SnapReport>
             .IsUnique(); 
         builder.HasIndex(r => r.UserId);
         builder.HasIndex(r => r.IssueId);
-        builder.HasIndex(r => r.ReportStatus);
+        builder.HasIndex(r => r.ImageStatus);
         builder.HasIndex(r => r.Category);
         
 

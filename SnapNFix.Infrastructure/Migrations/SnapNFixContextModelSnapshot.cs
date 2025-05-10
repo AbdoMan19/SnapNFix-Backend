@@ -293,7 +293,7 @@ namespace SnapNFix.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("ReportStatus")
+                    b.Property<string>("ImageStatus")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -314,7 +314,7 @@ namespace SnapNFix.Infrastructure.Migrations
 
                     NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Location"), "GIST");
 
-                    b.HasIndex("ReportStatus");
+                    b.HasIndex("ImageStatus");
 
                     b.HasIndex("UserId");
 

@@ -18,7 +18,7 @@ public class ReportDetailsDto
     
     //location
     public Point Location { get; set; }
-    public ReportStatus Status { get; set; } = ReportStatus.Pending;
+    public ImageStatus Status { get; set; } = ImageStatus.Pending;
     
     //dates
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

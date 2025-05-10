@@ -11,8 +11,8 @@ public class SnapReport
     
     public Guid? IssueId { get; set; }
     public virtual Issue? Issue { get; set; }
-    
-    public string? Comment { get; set; }
+
+    public string Comment { get; set; } = string.Empty;
 
     public string ImagePath { get; set; } = string.Empty;
     
@@ -20,8 +20,11 @@ public class SnapReport
     public Point Location { get; set; }
     
     //ai response
-    public ReportStatus ReportStatus { get; set; } = ReportStatus.Pending;
+    public ImageStatus ImageStatus { get; set; } = ImageStatus.Pending;
     public string TaskId { get; set; }
+    
+    //report status
+    public ReportStatus Status { get; set; } = ReportStatus.Pending;
     
     //report category
     public ReportCategory ReportCategory { get; set; } = ReportCategory.NotSpecified;

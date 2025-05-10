@@ -11,8 +11,6 @@ public class CreateSnapReportCommand : IRequest<GenericResponseModel<ReportDetai
     public string ImagePath { get; set; } = string.Empty;
     public double Latitude { get; set; }
     public double Longitude { get; set; }
-    public ReportCategory Category { get; set; }
-    public Guid UserId { get; set; }
 
 }
 
