@@ -1,6 +1,6 @@
 namespace SnapNFix.Domain.Enums;
 
-public enum ReportStatus
+public enum IssueStatus
 {
     Pending,
     InProgress,

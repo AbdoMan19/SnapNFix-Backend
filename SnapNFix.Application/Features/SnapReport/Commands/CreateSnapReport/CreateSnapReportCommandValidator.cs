@@ -10,9 +10,9 @@ public class CreateSnapReportCommandValidator : AbstractValidator<CreateSnapRepo
             .MaximumLength(500)
             .WithMessage("Comment cannot exceed 500 characters.");
 
-        RuleFor(x => x.ImagePath)
+        RuleFor(x => x.Image)
             .NotEmpty()
-            .WithMessage("Image path is required.");
+            .WithMessage("Image required.");
 
         RuleFor(x => x.Latitude)
             .InclusiveBetween(-90, 90)

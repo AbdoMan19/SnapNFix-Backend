@@ -23,9 +23,6 @@ public class SnapReport
     public ImageStatus ImageStatus { get; set; } = ImageStatus.Pending;
     public string TaskId { get; set; }
     
-    //report status
-    public ReportStatus Status { get; set; } = ReportStatus.Pending;
-    
     //report category
     public ReportCategory ReportCategory { get; set; } = ReportCategory.NotSpecified;
     

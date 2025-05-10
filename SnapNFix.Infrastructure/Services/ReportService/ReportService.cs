@@ -34,7 +34,7 @@ public class ReportService : IReportService
             {
                 Location = report.Location,
                 Category = report.Category,
-                Status = ReportStatus.Pending,
+                Status = IssueStatus.Pending,
                 CreatedAt = DateTime.UtcNow
             };
 

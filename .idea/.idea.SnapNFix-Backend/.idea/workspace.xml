@@ -10,7 +10,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="612cad8c-6ee7-4896-9b39-3d1bd72cb61f" name="Changes" comment="" />
+    <list default="true" id="612cad8c-6ee7-4896-9b39-3d1bd72cb61f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/SnapNFix.Domain/Interfaces/IImageProcessingService.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Options/ImageProcessingSettings.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/ImageProcessingService/ImageProcessingService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Api/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Api/appsettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/SnapReport/Commands/CreateSnapReport/CreateSnapReportCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/SnapReport/Commands/CreateSnapReport/CreateSnapReportCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/SnapReport/Commands/CreateSnapReport/CreateSnapReportCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/SnapReport/Commands/CreateSnapReport/CreateSnapReportCommandHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/SnapReport/Commands/CreateSnapReport/CreateSnapReportCommandValidator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/SnapReport/Commands/CreateSnapReport/CreateSnapReportCommandValidator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Domain/Entities/Issue.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Domain/Entities/Issue.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Domain/Entities/SnapReport.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Domain/Entities/SnapReport.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Domain/Enums/ReportStatus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Domain/Enums/IssueStatus.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Domain/Interfaces/IPhotoValidationService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Domain/Interfaces/IPhotoValidationService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Domain/SnapNFix.Domain.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Domain/SnapNFix.Domain.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/AiService/PhotoValidationService/PhotoValidationService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/AiService/PhotoValidationService/PhotoValidationService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/ReportService/ReportService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/ReportService/ReportService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/SnapNFix.Infrastructure.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/SnapNFix.Infrastructure.csproj" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -62,10 +78,10 @@
     <setting file="mock://D:/projects/Graduation Project 2025/SnapNFix-Backend/SnapNFix.Application/Features/Auth/LoginWithPhoneOrEmail/LoginWithPhoneOrEmailCommandHandler.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://D:/projects/Graduation Project 2025/SnapNFix-Backend/SnapnFix.Api/Properties/launchSettings.json" root0="FORCE_HIGHLIGHTING" />
   </component>
-  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
-  <component name="KubernetesApiProvider"><![CDATA[{
-  "isMigrated": true
-}]]></component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
@@ -78,28 +94,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET Launch Settings Profile.SnapNFix.Api: http.executor&quot;: &quot;Run&quot;,
-    &quot;.NET Launch Settings Profile.SnapnFix: http.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;#1 on Development&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;CodeLensConfigurable&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Launch Settings Profile.SnapNFix.Api: http.executor": "Run",
+    ".NET Launch Settings Profile.SnapnFix: http.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "feature/CreateSnapReport",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "CodeLensConfigurable",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;rider.external.source.directories&quot;: [
-      &quot;C:\\Users\\abdel\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache&quot;,
-      &quot;C:\\Users\\abdel\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache&quot;,
-      &quot;C:\\Users\\abdel\\AppData\\Local\\Symbols\\src&quot;
+  "keyToStringList": {
+    "rider.external.source.directories": [
+      "C:\\Users\\abdel\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache",
+      "C:\\Users\\abdel\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache",
+      "C:\\Users\\abdel\\AppData\\Local\\Symbols\\src"
     ]
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.SnapNFix.Api: http">
     <configuration name="SnapNFix.Api: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/SnapNFix.Api/SnapNFix.Api.csproj" />
@@ -165,6 +181,7 @@
       <workItem from="1745834950478" duration="5338000" />
       <workItem from="1745861510472" duration="1420000" />
       <workItem from="1746050677833" duration="4844000" />
+      <workItem from="1746902181816" duration="6923000" />
     </task>
     <task id="LOCAL-00001" summary="setup database">
       <option name="closed" value="true" />

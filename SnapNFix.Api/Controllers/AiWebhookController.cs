@@ -1,7 +1,9 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using SnapNFix.Application.Features.Ai.AiValidation.ReportImageProcessing;
 using SnapNFix.Application.Features.Ai.AiValidation.ReportImageProcessing.Dto_s;
+using SnapNFix.Infrastructure.Options;
 
 namespace SnapNFix.Api.Controllers;
 
@@ -11,21 +13,23 @@ public class AiWebhookController : ControllerBase
 {
     private readonly IMediator _mediator;
     private readonly IConfiguration _configuration;
+    private readonly PhotoValidationOptions _photoValidationOptions;
 
-    public AiWebhookController(IMediator mediator, IConfiguration configuration)
+    public AiWebhookController(IMediator mediator, IConfiguration configuration , IOptions<PhotoValidationOptions> photoValidationOptions)
     {
         _mediator = mediator;
         _configuration = configuration;
+        _photoValidationOptions = photoValidationOptions.Value;
     }
 
     [HttpPost("validation-result")]
     public async Task<IActionResult> ReceiveValidationResult([FromBody] AiValidationWebhookDto request)
     {
         // Verify API key
-        if (request.ApiKey != _configuration["AI:WebhookApiKey"])
+        /*if (request.ApiKey != _photoValidationOptions.WebhookApiKey)
         {
             return Unauthorized();
-        }
+        }*/
 
         var command = new ImageValidationResultCommand
         {

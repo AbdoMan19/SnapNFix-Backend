@@ -18,36 +18,47 @@ public class CreateSnapReportCommandHandler : IRequestHandler<CreateSnapReportCo
     private readonly ILogger<CreateSnapReportCommandHandler> _logger;
     private readonly IUserService _userService;
     private readonly IPhotoValidationService _photoValidationService;
+    private readonly IImageProcessingService _imageProcessingService;
 
     public CreateSnapReportCommandHandler(
-        IUnitOfWork unitOfWork, 
+        IUnitOfWork unitOfWork,
         IUserService userService,
         IPhotoValidationService photoValidationService,
+        IImageProcessingService imageProcessingService,
         ILogger<CreateSnapReportCommandHandler> logger)
     {
         _unitOfWork = unitOfWork;
         _logger = logger;
         _userService = userService;
-        photoValidationService = _photoValidationService;
+        _photoValidationService = photoValidationService;
+        _imageProcessingService = imageProcessingService;
     }
 
     public async Task<GenericResponseModel<ReportDetailsDto>> Handle(CreateSnapReportCommand request, CancellationToken cancellationToken)
     {
         try
         {
+            // Validate image
+            var (isValid, errorMessage) = await _imageProcessingService.ValidateImageAsync(request.Image);
+            if (!isValid)
+            {
+                return GenericResponseModel<ReportDetailsDto>.Failure(errorMessage);
+            }
+
+            // Save image and get path
             var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
             var currentuserId = await _userService.GetCurrentUserIdAsync();
             if (currentuserId == Guid.Empty)
             {
                 return GenericResponseModel<ReportDetailsDto>.Failure("User not found");
             }
-
-            // Create initial report
+            var imagePath = await _imageProcessingService.SaveImageAsync(request.Image, "snapreports");
+            var point = geometryFactory.CreatePoint(new Coordinate(request.Longitude, request.Latitude));
             var snapReport = new Domain.Entities.SnapReport
             {
                 Comment = request.Comment,
-                ImagePath = request.ImagePath,
-                Location = geometryFactory.CreatePoint(new Coordinate(request.Longitude, request.Latitude)),
+                ImagePath = imagePath,
+                Location = point ,
                 UserId = currentuserId,
                 ImageStatus = ImageStatus.Pending,
                 Category = ReportCategory.NotSpecified
@@ -56,14 +67,7 @@ public class CreateSnapReportCommandHandler : IRequestHandler<CreateSnapReportCo
             await _unitOfWork.Repository<Domain.Entities.SnapReport>().Add(snapReport);
             await _unitOfWork.SaveChanges();
 
-            // Send to AI service
-            var taskId = await _photoValidationService.SendImageForValidationAsync(
-                snapReport.ImagePath,
-                cancellationToken);
-            _logger.LogInformation("Image of report {ReportId} sent for validation. TaskId: {TaskId}", taskId , snapReport.Id);
-
-            snapReport.TaskId = taskId;
-            await _unitOfWork.SaveChanges();
+            _photoValidationService.ProcessPhotoValidationInBackgroundAsync(snapReport);
 
             var reportDto = snapReport.Adapt<ReportDetailsDto>();
             return GenericResponseModel<ReportDetailsDto>.Success(reportDto);
@@ -74,5 +78,4 @@ public class CreateSnapReportCommandHandler : IRequestHandler<CreateSnapReportCo
             return GenericResponseModel<ReportDetailsDto>.Failure("Failed to create report");
         }
     }
-    
 }

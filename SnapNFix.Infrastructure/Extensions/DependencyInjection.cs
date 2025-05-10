@@ -7,6 +7,7 @@ using Scrutor;
 using SnapNFix.Domain.Interfaces.ServiceLifetime;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Infrastructure.Context;
+using SnapNFix.Infrastructure.Options;
 using SnapNFix.Infrastructure.Services;
 
 namespace SnapNFix.Infrastructure.Extensions;
@@ -40,6 +41,13 @@ public static class DependencyInjection
             options.Configuration = configuration.GetConnectionString("Redis");
         });*/
         
+        services.AddHttpClient();
+        
+        services.Configure<ImageProcessingSettings>(
+            configuration.GetSection("ImageProcessing"));
+        
+        services.Configure<PhotoValidationOptions>(
+            configuration.GetSection("AI").GetSection("PhotoValidation"));
 
         return services;
     }
