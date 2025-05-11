@@ -13,8 +13,8 @@ using SnapNFix.Infrastructure.Context;
 namespace SnapNFix.Infrastructure.Migrations
 {
     [DbContext(typeof(SnapNFixContext))]
-    [Migration("20250421110203_AddUserDeviceEntity")]
-    partial class AddUserDeviceEntity
+    [Migration("20250510234755_updateConstraintOnTaskId")]
+    partial class updateConstraintOnTaskId
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -168,10 +168,14 @@ namespace SnapNFix.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Comment")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<Guid>("IssueId")
                         .HasColumnType("uuid");
@@ -197,13 +201,36 @@ namespace SnapNFix.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("MainReportId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Point>("Location")
+                        .IsRequired()
+                        .HasColumnType("geography(Point,4326)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MainReportId")
-                        .IsUnique();
+                    b.HasIndex("Category");
+
+                    b.HasIndex("Location");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Location"), "GIST");
+
+                    b.HasIndex("Status");
 
                     b.ToTable("Issue");
                 });
@@ -214,13 +241,12 @@ namespace SnapNFix.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<DateTime>("Expires")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("Revoked")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Token")
@@ -248,15 +274,17 @@ namespace SnapNFix.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Category")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Comment")
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
@@ -265,15 +293,22 @@ namespace SnapNFix.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("IssueId")
+                    b.Property<string>("ImageStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("IssueId")
                         .HasColumnType("uuid");
 
                     b.Property<Point>("Location")
                         .IsRequired()
                         .HasColumnType("geography(Point,4326)");
 
-                    b.Property<string>("Status")
+                    b.Property<string>("ReportCategory")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TaskId")
                         .HasColumnType("text");
 
                     b.Property<Guid>("UserId")
@@ -283,13 +318,13 @@ namespace SnapNFix.Infrastructure.Migrations
 
                     b.HasIndex("Category");
 
+                    b.HasIndex("ImageStatus");
+
                     b.HasIndex("IssueId");
 
                     b.HasIndex("Location");
 
                     NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Location"), "GIST");
-
-                    b.HasIndex("Status");
 
                     b.HasIndex("UserId");
 
@@ -313,7 +348,9 @@ namespace SnapNFix.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
@@ -373,7 +410,9 @@ namespace SnapNFix.Infrastructure.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
@@ -515,17 +554,6 @@ namespace SnapNFix.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("SnapNFix.Domain.Entities.Issue", b =>
-                {
-                    b.HasOne("SnapNFix.Domain.Entities.SnapReport", "MainReport")
-                        .WithOne()
-                        .HasForeignKey("SnapNFix.Domain.Entities.Issue", "MainReportId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("MainReport");
-                });
-
             modelBuilder.Entity("SnapNFix.Domain.Entities.RefreshToken", b =>
                 {
                     b.HasOne("SnapNFix.Domain.Entities.UserDevice", "UserDevice")
@@ -540,10 +568,9 @@ namespace SnapNFix.Infrastructure.Migrations
             modelBuilder.Entity("SnapNFix.Domain.Entities.SnapReport", b =>
                 {
                     b.HasOne("SnapNFix.Domain.Entities.Issue", "Issue")
-                        .WithMany()
+                        .WithMany("AssociatedSnapReports")
                         .HasForeignKey("IssueId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("SnapNFix.Domain.Entities.User", "User")
                         .WithMany("SnapReports")
@@ -570,6 +597,8 @@ namespace SnapNFix.Infrastructure.Migrations
             modelBuilder.Entity("SnapNFix.Domain.Entities.Issue", b =>
                 {
                     b.Navigation("AssociatedFastReports");
+
+                    b.Navigation("AssociatedSnapReports");
                 });
 
             modelBuilder.Entity("SnapNFix.Domain.Entities.User", b =>

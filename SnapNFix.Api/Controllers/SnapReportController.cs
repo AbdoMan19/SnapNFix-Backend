@@ -13,18 +13,18 @@ namespace SnapNFix.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ReportsController : ControllerBase
+public class SnapReportsController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public ReportsController(IMediator mediator, IUserService userService)
+    public SnapReportsController(IMediator mediator, IUserService userService)
     {
         _mediator = mediator;
     }
 
     // User Operations
     [Authorize("Citizen")]
-    [HttpPost]
+    [HttpPost("create")]
     public async Task<ActionResult<GenericResponseModel<ReportDetailsDto>>> CreateReport(
         [FromForm] CreateSnapReportCommand command)
     {

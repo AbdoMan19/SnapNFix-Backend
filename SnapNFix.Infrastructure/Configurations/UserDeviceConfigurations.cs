@@ -8,8 +8,10 @@ public class UserDeviceConfigurations : IEntityTypeConfiguration<UserDevice>
 {
     public void Configure(EntityTypeBuilder<UserDevice> builder)
     {
+        // Primary Key
         builder.HasKey(u => u.Id);
         
+        // Properties
         builder.Property(u => u.DeviceName)
             .IsRequired()
             .HasMaxLength(50);
@@ -26,9 +28,11 @@ public class UserDeviceConfigurations : IEntityTypeConfiguration<UserDevice>
             .IsRequired()
             .HasMaxLength(50);
             
+        // Indexes
         builder.HasIndex(u => new { u.DeviceName, u.DeviceId })
             .IsUnique();
         
+        // Relationships
         builder.HasOne(u => u.User)
             .WithMany(u => u.UserDevices)
             .HasForeignKey(u => u.UserId)

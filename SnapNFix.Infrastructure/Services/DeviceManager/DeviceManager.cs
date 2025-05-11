@@ -66,7 +66,7 @@ public class DeviceManager : IDeviceManager
         var device = await GetDeviceAsync(userId, deviceId);
         if (device?.RefreshToken == null) return false;
 
-        device.RefreshToken.Revoked = DateTime.UtcNow;
+        device.RefreshToken.Expires = DateTime.UtcNow;
         await _unitOfWork.Repository<RefreshToken>().Update(device.RefreshToken);
         await _unitOfWork.SaveChanges();
         return true;

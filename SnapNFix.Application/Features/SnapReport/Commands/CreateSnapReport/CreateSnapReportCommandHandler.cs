@@ -69,7 +69,18 @@ public class CreateSnapReportCommandHandler : IRequestHandler<CreateSnapReportCo
 
             _photoValidationService.ProcessPhotoValidationInBackgroundAsync(snapReport);
 
-            var reportDto = snapReport.Adapt<ReportDetailsDto>();
+            var reportDto = new ReportDetailsDto
+            {
+                Id = snapReport.Id,
+                Comment = snapReport.Comment,
+                ImagePath = snapReport.ImagePath,
+                Latitude = request.Latitude,
+                Longitude = request.Longitude,
+                Status = snapReport.ImageStatus,
+                CreatedAt = snapReport.CreatedAt,
+                Category = snapReport.Category,
+                IssueId = snapReport.IssueId
+            };
             return GenericResponseModel<ReportDetailsDto>.Success(reportDto);
         }
         catch (Exception ex)

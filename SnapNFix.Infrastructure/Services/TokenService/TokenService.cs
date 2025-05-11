@@ -99,7 +99,7 @@ public class TokenService : ITokenService
             Token = GenerateRefreshToken(),
             UserDeviceId = userDevice.Id,
             Expires = GetRefreshTokenExpirationDays(),
-            Created = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow
         };
         return refreshToken;
     }
@@ -117,7 +117,7 @@ public class TokenService : ITokenService
 
     public async Task<(string JwtToken, string RefreshToken)> RefreshTokenAsync(RefreshToken refreshToken)
     {
-        if (refreshToken.IsExpired || refreshToken.IsRevoked)
+        if (refreshToken.IsExpired)
         {
             throw new SecurityTokenException("Invalid refresh token");
         }
@@ -155,7 +155,7 @@ public class TokenService : ITokenService
             return false;
         }
 
-        userDevice.RefreshToken.Revoked = DateTime.UtcNow;
+        userDevice.RefreshToken.Expires = DateTime.UtcNow;
         await _unitOfWork.Repository<RefreshToken>().Update(userDevice.RefreshToken);
         await _unitOfWork.SaveChanges();
 

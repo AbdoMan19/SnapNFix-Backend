@@ -9,8 +9,10 @@ public class IssueConfiguration : IEntityTypeConfiguration<Issue>
 {
     public void Configure(EntityTypeBuilder<Issue> builder)
     {
+        //Primary Key
         builder.HasKey(i => i.Id);
 
+        // Relationships
         builder.HasMany(i => i.AssociatedFastReports)
             .WithOne(f => f.Issue)
             .HasForeignKey(f => f.IssueId)
@@ -20,16 +22,26 @@ public class IssueConfiguration : IEntityTypeConfiguration<Issue>
             .WithOne(s => s.Issue)
             .HasForeignKey(s => s.IssueId)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        // Properties
         builder.Property(i => i.Status).HasConversion<string>();
         builder.Property(i => i.Category).HasConversion<string>();
+        builder.Property(i => i.ImagePath)
+            .IsRequired();
+        builder.Property(i => i.CreatedAt)
+            .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            .ValueGeneratedOnAdd();
+        
+        
         // Indexes
         builder.HasIndex(i => i.Status);
         builder.HasIndex(i => i.Category);
+        builder.HasIndex("Location").HasMethod("GIST");
         
         // PostGIS - Location column (geography point)
         builder.Property<Point>("Location")
             .HasColumnType("geography(Point,4326)");
 
-        builder.HasIndex("Location").HasMethod("GIST");
+        
     }
 }

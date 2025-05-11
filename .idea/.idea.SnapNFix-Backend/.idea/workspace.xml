@@ -11,21 +11,39 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="612cad8c-6ee7-4896-9b39-3d1bd72cb61f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/SnapNFix.Domain/Interfaces/IImageProcessingService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Options/ImageProcessingSettings.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/ImageProcessingService/ImageProcessingService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.SnapNFix-Backend/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SnapNFix-Backend/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Api/Controllers/SnapReportController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Api/Controllers/SnapReportController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Api/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Api/Program.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SnapNFix.Api/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Api/appsettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/SnapReport/Commands/CreateSnapReport/CreateSnapReportCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/SnapReport/Commands/CreateSnapReport/CreateSnapReportCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/Ai/AiValidation/ReportImageProcessing/ImageValidationResultCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Ai/AiValidation/ReportImageProcessing/ImageValidationResultCommandHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/GoogleLogin/GoogleLoginCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/GoogleLogin/GoogleLoginCommandHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/Logout/LogoutCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/Logout/LogoutCommandHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/RefreshToken/RefreshTokenCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/RefreshToken/RefreshTokenCommandHandler.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/SnapReport/Commands/CreateSnapReport/CreateSnapReportCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/SnapReport/Commands/CreateSnapReport/CreateSnapReportCommandHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/SnapReport/Commands/CreateSnapReport/CreateSnapReportCommandValidator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/SnapReport/Commands/CreateSnapReport/CreateSnapReportCommandValidator.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Domain/Entities/Issue.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Domain/Entities/Issue.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/SnapReport/DTOs/ReportDetailsDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/SnapReport/DTOs/ReportDetailsDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Domain/Entities/FastReport.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Domain/Entities/FastReport.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Domain/Entities/RefreshToken.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Domain/Entities/RefreshToken.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SnapNFix.Domain/Entities/SnapReport.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Domain/Entities/SnapReport.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Domain/Enums/ReportStatus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Domain/Enums/IssueStatus.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Domain/Interfaces/IPhotoValidationService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Domain/Interfaces/IPhotoValidationService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Domain/SnapNFix.Domain.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Domain/SnapNFix.Domain.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/FastReportConfigurations.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/FastReportConfigurations.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/IssueConfigurations.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/IssueConfigurations.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/RefreshTokenConfigurations.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/RefreshTokenConfigurations.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/SnapReportConfigurations.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/SnapReportConfigurations.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/UserConfigurations.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/UserConfigurations.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/UserDeviceConfigurations.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/UserDeviceConfigurations.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250419230917_InitialMigration.Designer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250419230917_InitialMigration.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250421110203_AddUserDeviceEntity.Designer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250421110203_AddUserDeviceEntity.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250428104715_UpdateIssueTable.Designer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250428104715_UpdateIssueTable.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250505213737_updateSnapReportWithStatus.Designer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250505213737_updateSnapReportWithStatus.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250510220602_CreateIssueStatus.Designer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250510220602_CreateIssueStatus.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/SnapNFixContextModelSnapshot.cs" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/AiService/PhotoValidationService/PhotoValidationService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/AiService/PhotoValidationService/PhotoValidationService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/ReportService/ReportService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/ReportService/ReportService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/SnapNFix.Infrastructure.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/SnapNFix.Infrastructure.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/DeviceManager/DeviceManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/DeviceManager/DeviceManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/TokenService/TokenService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/TokenService/TokenService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,26 +75,12 @@
 }</component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/b96167fbfe8bd45d94e4dcda42c7d09eb5745459/src/Identity/Extensions.Stores/src/IdentityUser.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/2ce4b3498674491d8b2e8c63bc0bbbbf1de918/14/da57a9dc/ActionMethodExecutor.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/cf568c378b664c59878130d30a31e33119910/50/6071683f/RateLimiterApplicationBuilderExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/df9eda5d85874f5a8568b87d4adcd4ed21930/0b/32210de8/Point.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/f4bc324a395d24ed12db75b0a81536b642509aa14825bf114d9b7c934e2b/Mediator.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/projects/Graduation Project 2025/SnapNFix-Backend/SnapNFix.Api/Controllers/AuthController.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/projects/Graduation Project 2025/SnapNFix-Backend/SnapNFix.Api/Controllers/CitizensController.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/projects/Graduation Project 2025/SnapNFix-Backend/SnapNFix.Api/Controllers/SnapReportController.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/projects/Graduation Project 2025/SnapNFix-Backend/SnapNFix.Api/Extensions/MiddlewareExtension.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/projects/Graduation Project 2025/SnapNFix-Backend/SnapNFix.Api/Extensions/MiddlewareExtension.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/projects/Graduation Project 2025/SnapNFix-Backend/SnapNFix.Api/Extensions/ServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/projects/Graduation Project 2025/SnapNFix-Backend/SnapNFix.Api/Extensions/ServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/projects/Graduation Project 2025/SnapNFix-Backend/SnapNFix.Api/Extensions/SwaggerConfiguration.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/projects/Graduation Project 2025/SnapNFix-Backend/SnapNFix.Api/Handlers/GlobalExceptionHandler.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/SnapNFix.Api/Program.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://D:/projects/Graduation Project 2025/SnapNFix-Backend/SnapNFix.Api/Program.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/projects/Graduation Project 2025/SnapNFix-Backend/SnapNFix.Api/Program.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/projects/Graduation Project 2025/SnapNFix-Backend/SnapNFix.Api/Properties/launchSettings.json" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/SnapNFix.Api/appsettings.json" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://D:/projects/Graduation Project 2025/SnapNFix-Backend/SnapNFix.Application/Features/Auth/LoginWithPhoneOrEmail/LoginWithPhoneOrEmailCommandHandler.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/projects/Graduation Project 2025/SnapNFix-Backend/SnapNFix.Application/Features/Auth/LoginWithPhoneOrEmail/LoginWithPhoneOrEmailCommandHandler.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/projects/Graduation Project 2025/SnapNFix-Backend/SnapnFix.Api/Properties/launchSettings.json" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
@@ -99,7 +103,7 @@
     ".NET Launch Settings Profile.SnapNFix.Api: http.executor": "Run",
     ".NET Launch Settings Profile.SnapnFix: http.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "feature/CreateSnapReport",
+    "git-widget-placeholder": "#1 on Development",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -181,7 +185,8 @@
       <workItem from="1745834950478" duration="5338000" />
       <workItem from="1745861510472" duration="1420000" />
       <workItem from="1746050677833" duration="4844000" />
-      <workItem from="1746902181816" duration="6923000" />
+      <workItem from="1746902181816" duration="16235000" />
+      <workItem from="1746920453466" duration="4888000" />
     </task>
     <task id="LOCAL-00001" summary="setup database">
       <option name="closed" value="true" />

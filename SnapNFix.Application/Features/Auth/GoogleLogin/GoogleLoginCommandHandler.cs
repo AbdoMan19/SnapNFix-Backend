@@ -85,12 +85,6 @@ public class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCommand, Gen
             request.Platform,
             request.DeviceType);
 
-        if (userDevice.RefreshToken != null && userDevice.RefreshToken.IsActive)
-        {
-            _logger.LogWarning("User device already exists with active refresh token for user {UserId}", user.Id);
-            return GenericResponseModel<LoginResponse>.Failure("Device already logged in");
-        }
-
         var accessToken = await _tokenService.GenerateJwtToken(user, userDevice);
         var refreshToken = _tokenService.GenerateRefreshToken(userDevice);
         

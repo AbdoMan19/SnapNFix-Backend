@@ -14,14 +14,14 @@ public class SnapReport
 
     public string Comment { get; set; } = string.Empty;
 
-    public string ImagePath { get; set; } = string.Empty;
+    public string ImagePath { get; set; }
     
     //location
     public Point Location { get; set; }
     
     //ai response
     public ImageStatus ImageStatus { get; set; } = ImageStatus.Pending;
-    public string TaskId { get; set; }
+    public string? TaskId { get; set; }
     
     //report category
     public ReportCategory ReportCategory { get; set; } = ReportCategory.NotSpecified;

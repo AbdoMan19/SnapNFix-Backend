@@ -9,8 +9,10 @@ public class SnapReportConfiguration : IEntityTypeConfiguration<SnapReport>
 {
     public void Configure(EntityTypeBuilder<SnapReport> builder)
     {
+        // Primary Key
         builder.HasKey(r => r.Id);
 
+        // Relationships
         builder.HasOne(r => r.User)
             .WithMany(u => u.SnapReports)
             .HasForeignKey(r => r.UserId)
@@ -21,8 +23,19 @@ public class SnapReportConfiguration : IEntityTypeConfiguration<SnapReport>
             .HasForeignKey(r => r.IssueId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // Properties
         builder.Property(r => r.ImageStatus).HasConversion<string>();
         builder.Property(r => r.ReportCategory).HasConversion<string>();
+        builder.Property(r => r.Comment)
+            .HasMaxLength(500)
+            .IsRequired(false);
+        builder.Property(r => r.ImagePath).IsRequired();
+        builder.Property(r => r.TaskId).IsRequired(false);
+        builder.Property(r => r.CreatedAt)
+            .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            .ValueGeneratedOnAdd();
+        builder.Property(r => r.DeletedAt);
+        
 
         // Indexes
         builder.HasIndex(fr => new { fr.UserId, fr.IssueId })

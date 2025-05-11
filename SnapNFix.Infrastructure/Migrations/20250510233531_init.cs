@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace SnapNFix.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,6 +19,22 @@ namespace SnapNFix.Infrastructure.Migrations
                 .Annotation("Npgsql:PostgresExtension:pg_trgm", ",,")
                 .Annotation("Npgsql:PostgresExtension:postgis", ",,")
                 .Annotation("Npgsql:PostgresExtension:uuid-ossp", ",,");
+
+            migrationBuilder.CreateTable(
+                name: "Issue",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ImagePath = table.Column<string>(type: "text", nullable: false),
+                    Category = table.Column<string>(type: "text", nullable: false),
+                    Location = table.Column<Point>(type: "geography(Point,4326)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    Status = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Issue", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "Roles",
@@ -43,14 +59,13 @@ namespace SnapNFix.Infrastructure.Migrations
                     LastName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     ImagePath = table.Column<string>(type: "text", nullable: false),
                     Username = table.Column<string>(type: "text", nullable: false),
+                    Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    RefreshTokenId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedEmail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     EmailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
                     PasswordHash = table.Column<string>(type: "text", nullable: true),
@@ -90,25 +105,64 @@ namespace SnapNFix.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RefreshToken",
+                name: "FastReport",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Token = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    Expires = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Revoked = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    IssueId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    Comment = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RefreshToken", x => x.Id);
+                    table.PrimaryKey("PK_FastReport", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RefreshToken_Users_UserId",
+                        name: "FK_FastReport_Issue_IssueId",
+                        column: x => x.IssueId,
+                        principalTable: "Issue",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_FastReport_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SnapReport",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    IssueId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Comment = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    ImagePath = table.Column<string>(type: "text", nullable: false),
+                    Location = table.Column<Point>(type: "geography(Point,4326)", nullable: false),
+                    ImageStatus = table.Column<string>(type: "text", nullable: false),
+                    TaskId = table.Column<string>(type: "text", nullable: false),
+                    ReportCategory = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Category = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SnapReport", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SnapReport_Issue_IssueId",
+                        column: x => x.IssueId,
+                        principalTable: "Issue",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_SnapReport_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -130,6 +184,30 @@ namespace SnapNFix.Infrastructure.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserDevice",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    DeviceName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    DeviceId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Platform = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    DeviceType = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    RefreshTokenId = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastUsedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserDevice", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserDevice_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -197,68 +275,24 @@ namespace SnapNFix.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "FastReport",
+                name: "RefreshToken",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    IssueId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Comment = table.Column<string>(type: "text", nullable: true)
+                    Token = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Expires = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    UserDeviceId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FastReport", x => x.Id);
+                    table.PrimaryKey("PK_RefreshToken", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_FastReport_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
+                        name: "FK_RefreshToken_UserDevice_UserDeviceId",
+                        column: x => x.UserDeviceId,
+                        principalTable: "UserDevice",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Issue",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    MainReportId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Issue", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SnapReport",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    IssueId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Comment = table.Column<string>(type: "text", nullable: true),
-                    ImagePath = table.Column<string>(type: "text", nullable: false),
-                    Location = table.Column<Point>(type: "geography(Point,4326)", nullable: false),
-                    Status = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    Category = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SnapReport", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SnapReport_Issue_IssueId",
-                        column: x => x.IssueId,
-                        principalTable: "Issue",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_SnapReport_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -278,10 +312,20 @@ namespace SnapNFix.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Issue_MainReportId",
+                name: "IX_Issue_Category",
                 table: "Issue",
-                column: "MainReportId",
-                unique: true);
+                column: "Category");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Issue_Location",
+                table: "Issue",
+                column: "Location")
+                .Annotation("Npgsql:IndexMethod", "GIST");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Issue_Status",
+                table: "Issue",
+                column: "Status");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RefreshToken_Token",
@@ -290,9 +334,9 @@ namespace SnapNFix.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_RefreshToken_UserId",
+                name: "IX_RefreshToken_UserDeviceId",
                 table: "RefreshToken",
-                column: "UserId",
+                column: "UserDeviceId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -312,6 +356,11 @@ namespace SnapNFix.Infrastructure.Migrations
                 column: "Category");
 
             migrationBuilder.CreateIndex(
+                name: "IX_SnapReport_ImageStatus",
+                table: "SnapReport",
+                column: "ImageStatus");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SnapReport_IssueId",
                 table: "SnapReport",
                 column: "IssueId");
@@ -321,11 +370,6 @@ namespace SnapNFix.Infrastructure.Migrations
                 table: "SnapReport",
                 column: "Location")
                 .Annotation("Npgsql:IndexMethod", "GIST");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SnapReport_Status",
-                table: "SnapReport",
-                column: "Status");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SnapReport_UserId",
@@ -341,6 +385,17 @@ namespace SnapNFix.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_UserClaims_UserId",
                 table: "UserClaims",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserDevice_DeviceName_DeviceId",
+                table: "UserDevice",
+                columns: new[] { "DeviceName", "DeviceId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserDevice_UserId",
+                table: "UserDevice",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -374,31 +429,11 @@ namespace SnapNFix.Infrastructure.Migrations
                 table: "Users",
                 column: "NormalizedUserName",
                 unique: true);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_FastReport_Issue_IssueId",
-                table: "FastReport",
-                column: "IssueId",
-                principalTable: "Issue",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Issue_SnapReport_MainReportId",
-                table: "Issue",
-                column: "MainReportId",
-                principalTable: "SnapReport",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_SnapReport_Issue_IssueId",
-                table: "SnapReport");
-
             migrationBuilder.DropTable(
                 name: "FastReport");
 
@@ -407,6 +442,9 @@ namespace SnapNFix.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");
+
+            migrationBuilder.DropTable(
+                name: "SnapReport");
 
             migrationBuilder.DropTable(
                 name: "UserClaims");
@@ -421,13 +459,13 @@ namespace SnapNFix.Infrastructure.Migrations
                 name: "UserTokens");
 
             migrationBuilder.DropTable(
-                name: "Roles");
+                name: "UserDevice");
 
             migrationBuilder.DropTable(
                 name: "Issue");
 
             migrationBuilder.DropTable(
-                name: "SnapReport");
+                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "Users");

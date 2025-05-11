@@ -32,7 +32,7 @@ public class RefreshTokenCommandHandler
             .ThenInclude(u => u.User)
             .FirstOrDefaultAsync(cancellationToken);
         
-        if(refreshToken is null || !refreshToken.IsActive)
+        if(refreshToken is null || !refreshToken.IsExpired)
         {
             _logger.LogWarning("Invalid refresh token attempt: {Token}", request.RefreshToken);
             return GenericResponseModel<AuthResponse>.Failure(Constants.FailureMessage, new List<ErrorResponseModel>

@@ -11,7 +11,7 @@ public class FastReport
     public Issue Issue { get; set; }
     
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public string? Comment { get; set; }
+    public string Comment { get; set; }
 
     
 }

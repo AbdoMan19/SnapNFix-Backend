@@ -33,11 +33,11 @@ public class LogoutCommandHandler
        }
 
        var refreshToken = await _unitOfWork.Repository<Domain.Entities.RefreshToken>()
-           .FindBy(r => r.UserDeviceId == currentDeviceId && r.IsActive)
+           .FindBy(r => r.UserDeviceId == currentDeviceId && !r.IsExpired)
            .FirstOrDefaultAsync(cancellationToken);
        if (refreshToken != null)
        {
-           refreshToken.Revoked = DateTime.UtcNow;
+           refreshToken.Expires = DateTime.UtcNow;
            await _unitOfWork.Repository<Domain.Entities.RefreshToken>().Update(refreshToken);
            await _unitOfWork.SaveChanges();
        }
