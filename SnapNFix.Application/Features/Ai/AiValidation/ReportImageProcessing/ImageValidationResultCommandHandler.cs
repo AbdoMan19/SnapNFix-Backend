@@ -40,7 +40,7 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
 
             report.ImageStatus = request.ImageStatus;
             report.Category = request.ReportCategory;
-            //report.Threshold = request.Threshold;
+            report.Threshold = request.Threshold;
 
             if (report.ImageStatus == ImageStatus.Approved)
             {

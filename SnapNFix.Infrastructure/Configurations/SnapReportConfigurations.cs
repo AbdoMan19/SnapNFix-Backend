@@ -35,11 +35,15 @@ public class SnapReportConfiguration : IEntityTypeConfiguration<SnapReport>
             .HasDefaultValueSql("CURRENT_TIMESTAMP")
             .ValueGeneratedOnAdd();
         builder.Property(r => r.DeletedAt);
+        builder.Property(r => r.Threshold)
+            .HasPrecision(5, 2)
+            .IsRequired(false);
         
 
         // Indexes
         builder.HasIndex(fr => new { fr.UserId, fr.IssueId })
             .IsUnique(); 
+        builder.HasIndex(r => r.TaskId).IsUnique();
         builder.HasIndex(r => r.UserId);
         builder.HasIndex(r => r.IssueId);
         builder.HasIndex(r => r.ImageStatus);
