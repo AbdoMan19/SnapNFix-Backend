@@ -21,7 +21,8 @@ public class SnapReport
     
     //ai response
     public ImageStatus ImageStatus { get; set; } = ImageStatus.Pending;
-    public string TaskId { get; set; }
+    public string? TaskId { get; set; }
+    public double? Threshold { get; set; }
     
     //report category
     public ReportCategory ReportCategory { get; set; } = ReportCategory.NotSpecified;

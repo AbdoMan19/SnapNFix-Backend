@@ -23,10 +23,24 @@ public class SnapReportConfiguration : IEntityTypeConfiguration<SnapReport>
 
         builder.Property(r => r.ImageStatus).HasConversion<string>();
         builder.Property(r => r.ReportCategory).HasConversion<string>();
+        builder.Property(r => r.Comment)
+            .HasMaxLength(500)
+            .IsRequired(false);
+        builder.Property(r => r.ImagePath).IsRequired();
+        builder.Property(r => r.TaskId).IsRequired(false);
+        builder.Property(r => r.CreatedAt)
+            .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            .ValueGeneratedOnAdd();
+        builder.Property(r => r.DeletedAt);
+        builder.Property(r => r.Threshold)
+            .HasPrecision(5, 2)
+            .IsRequired(false);
+        
 
         // Indexes
         builder.HasIndex(fr => new { fr.UserId, fr.IssueId })
             .IsUnique(); 
+        builder.HasIndex(r => r.TaskId).IsUnique();
         builder.HasIndex(r => r.UserId);
         builder.HasIndex(r => r.IssueId);
         builder.HasIndex(r => r.ImageStatus);
