@@ -12,38 +12,12 @@
   <component name="ChangeListManager">
     <list default="true" id="612cad8c-6ee7-4896-9b39-3d1bd72cb61f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SnapNFix-Backend/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SnapNFix-Backend/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Api/Controllers/SnapReportController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Api/Controllers/SnapReportController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SnapNFix.Api/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Api/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Api/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Api/appsettings.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/Ai/AiValidation/ReportImageProcessing/ImageValidationResultCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Ai/AiValidation/ReportImageProcessing/ImageValidationResultCommandHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/GoogleLogin/GoogleLoginCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/GoogleLogin/GoogleLoginCommandHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/Logout/LogoutCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/Logout/LogoutCommandHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/RefreshToken/RefreshTokenCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/Auth/RefreshToken/RefreshTokenCommandHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/SnapReport/Commands/CreateSnapReport/CreateSnapReportCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/SnapReport/Commands/CreateSnapReport/CreateSnapReportCommandHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Application/Features/SnapReport/DTOs/ReportDetailsDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Application/Features/SnapReport/DTOs/ReportDetailsDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Domain/Entities/FastReport.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Domain/Entities/FastReport.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Domain/Entities/RefreshToken.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Domain/Entities/RefreshToken.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SnapNFix.Domain/Entities/SnapReport.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Domain/Entities/SnapReport.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/FastReportConfigurations.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/FastReportConfigurations.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/IssueConfigurations.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/IssueConfigurations.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/RefreshTokenConfigurations.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/RefreshTokenConfigurations.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/SnapReportConfigurations.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/SnapReportConfigurations.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/UserConfigurations.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/UserConfigurations.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/UserDeviceConfigurations.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Configurations/UserDeviceConfigurations.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250419230917_InitialMigration.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250419230917_InitialMigration.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250421110203_AddUserDeviceEntity.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250421110203_AddUserDeviceEntity.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250428104715_UpdateIssueTable.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250428104715_UpdateIssueTable.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250505213737_updateSnapReportWithStatus.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250505213737_updateSnapReportWithStatus.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250510220602_CreateIssueStatus.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/20250510220602_CreateIssueStatus.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/SnapNFixContextModelSnapshot.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/SnapNFixContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Migrations/SnapNFixContextModelSnapshot.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/AiService/PhotoValidationService/PhotoValidationService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/AiService/PhotoValidationService/PhotoValidationService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/DeviceManager/DeviceManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/DeviceManager/DeviceManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/TokenService/TokenService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SnapNFix.Infrastructure/Services/TokenService/TokenService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -98,6 +72,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
+
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Launch Settings Profile.SnapNFix.Api: http.executor": "Run",
+    ".NET Launch Settings Profile.SnapnFix: http.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "feature/CreateSnapReport",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "CodeLensConfigurable",
+    "vue.rearranger.settings.migration": "true"
+
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;.NET Launch Settings Profile.SnapNFix.Api: http.executor&quot;: &quot;Run&quot;,
@@ -111,6 +100,7 @@
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;CodeLensConfigurable&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+
   },
   &quot;keyToStringList&quot;: {
     &quot;rider.external.source.directories&quot;: [
@@ -187,6 +177,12 @@
       <workItem from="1746050677833" duration="4844000" />
       <workItem from="1746902181816" duration="16235000" />
       <workItem from="1746920453466" duration="4888000" />
+
+      <workItem from="1746902181816" duration="6923000" />
+      <workItem from="1746902181816" duration="16235000" />
+      <workItem from="1746920453466" duration="5077000" />
+      <workItem from="1747093333170" duration="3178000" />
+
     </task>
     <task id="LOCAL-00001" summary="setup database">
       <option name="closed" value="true" />
