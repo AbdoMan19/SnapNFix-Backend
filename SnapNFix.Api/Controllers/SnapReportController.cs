@@ -5,8 +5,9 @@ using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.SnapReport.Commands.CreateSnapReport;
 
 using SnapNFix.Application.Features.SnapReport.DTOs;
-
+using SnapNFix.Application.Features.SnapReport.Queries;
 using SnapNFix.Domain.Interfaces;
+using SnapNFix.Infrastructure.Services.UserService;
 
 
 namespace SnapNFix.Api.Controllers;
@@ -17,12 +18,15 @@ public class SnapReportsController : ControllerBase
 {
     private readonly IMediator _mediator;
 
+    private readonly IUserService UserService;
+
     public SnapReportsController(IMediator mediator, IUserService userService)
     {
         _mediator = mediator;
+        UserService = userService;
     }
 
-    // User Operations
+
     [Authorize("Citizen")]
     [HttpPost("create")]
     public async Task<ActionResult<GenericResponseModel<ReportDetailsDto>>> CreateReport(
@@ -33,36 +37,17 @@ public class SnapReportsController : ControllerBase
         return Ok(result);
     }
 
-    /*[Authorize("Citizen")]
+
+    [Authorize("Citizen")]
     [HttpGet("my-reports")]
     public async Task<ActionResult<GenericResponseModel<List<ReportDetailsDto>>>> GetMyReports(
         [FromQuery] GetUserReportsQuery query)
     {
-        query.UserId = (await _userService.GetCurrentUserAsync()).Id;
+        query.UserId = (await UserService.GetCurrentUserAsync()).Id;
         return Ok(await _mediator.Send(query));
-    }*/
+    }
 
-    /*[Authorize("Citizen")]
-    [HttpPut("{id}/comment")]
-    public async Task<ActionResult<GenericResponseModel<ReportDetailsDto>>> UpdateReportComment(
-        Guid id, [FromBody] UpdateReportCommentCommand command)
-    {
-        command.ReportId = id;
-        command.UserId = (await _userService.GetCurrentUserAsync()).Id;
-        return Ok(await _mediator.Send(command));
-    }*/
 
-    /*[Authorize("Citizen")]
-    [HttpDelete("{id}")]
-    public async Task<ActionResult<GenericResponseModel<bool>>> DeleteReport(Guid id)
-    {
-        var command = new DeleteReportCommand 
-        { 
-            ReportId = id,
-            UserId = (await _userService.GetCurrentUserAsync()).Id
-        };
-        return Ok(await _mediator.Send(command));
-    }*/
 
     // Admin Operations
     /*[Authorize("Admin")]
@@ -73,14 +58,6 @@ public class SnapReportsController : ControllerBase
         return Ok(await _mediator.Send(query));
     }
 
-    [Authorize("Admin")]
-    [HttpPut("{id}/status")]
-    public async Task<ActionResult<GenericResponseModel<ReportDetailsDto>>> UpdateReportStatus(
-        Guid id, [FromBody] UpdateReportStatusCommand command)
-    {
-        command.ReportId = id;
-        return Ok(await _mediator.Send(command));
-    }
 
     [Authorize("Admin")]
     [HttpGet("statistics")]
