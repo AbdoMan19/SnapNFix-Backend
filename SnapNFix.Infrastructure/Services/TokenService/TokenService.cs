@@ -117,15 +117,8 @@ public class TokenService : ITokenService
 
     public async Task<(string JwtToken, string RefreshToken)> RefreshTokenAsync(RefreshToken refreshToken)
     {
-        if (refreshToken.IsExpired)
-        {
-            throw new SecurityTokenException("Invalid refresh token");
-        }
 
-        var userDevice = await _unitOfWork.Repository<UserDevice>()
-            .FindBy(d => d.Id == refreshToken.UserDeviceId)
-            .Include(d => d.User)
-            .FirstOrDefaultAsync();
+        var userDevice = refreshToken.UserDevice;
 
         var user = userDevice?.User;
         var newAccessToken = await GenerateJwtToken(user, userDevice);
@@ -247,42 +240,7 @@ public class TokenService : ITokenService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public async Task<bool> ValidatePasswordResetRequestTokenAsync(User user, string token)
-    {
-        try
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-
-            var validationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = key,
-                ValidateIssuer = true,
-                ValidIssuer = _configuration["Jwt:Issuer"],
-                ValidateAudience = true,
-                ValidAudience = _configuration["Jwt:Audience"],
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero
-            };
-
-            var principal = tokenHandler.ValidateToken(token, validationParameters, out _);
-
-            var purposeClaim = principal.FindFirst(c => c.Type == "purpose");
-            if (purposeClaim == null || purposeClaim.Value != "password_reset_request")
-                return false;
-
-            var userIdClaim = principal.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
-            if (userIdClaim == null || userIdClaim.Value != user.Id.ToString())
-                return false;
-
-            return true;
-        }
-        catch (Exception ex)
-        {
-            return false;
-        }
-    }
+    
 
     public async Task<string> GeneratePasswordResetToken(User user)
     {
@@ -309,42 +267,7 @@ public class TokenService : ITokenService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public bool ValidatePasswordResetTokenAsync(User user, string token)
-    {
-        try
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-
-            var validationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = key,
-                ValidateIssuer = true,
-                ValidIssuer = _configuration["Jwt:Issuer"],
-                ValidateAudience = true,
-                ValidAudience = _configuration["Jwt:Audience"],
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero
-            };
-
-            var principal = tokenHandler.ValidateToken(token, validationParameters, out _);
-
-            var purposeClaim = principal.FindFirst(c => c.Type == "purpose");
-            if (purposeClaim == null || purposeClaim.Value != "password_reset")
-                return false;
-
-            var userIdClaim = principal.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
-            if (userIdClaim == null || userIdClaim.Value != user.Id.ToString())
-                return false;
-
-            return true;
-        }
-        catch (Exception ex)
-        {
-            return false;
-        }
-    }
+  
 
 
 

@@ -45,7 +45,7 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
             if (report.ImageStatus == ImageStatus.Approved)
             {
                 await _reportService.AttachReportWithIssue(report, cancellationToken);
-            }else
+            }else{}
 
             await _unitOfWork.Repository<Domain.Entities.SnapReport>().Update(report);
             await _unitOfWork.SaveChanges();

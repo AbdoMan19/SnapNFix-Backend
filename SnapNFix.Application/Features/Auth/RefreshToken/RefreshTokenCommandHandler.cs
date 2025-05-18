@@ -32,7 +32,7 @@ public class RefreshTokenCommandHandler
             .ThenInclude(u => u.User)
             .FirstOrDefaultAsync(cancellationToken);
         
-        if(refreshToken is null || !refreshToken.IsExpired)
+        if(refreshToken is null || refreshToken.IsExpired)
         {
             _logger.LogWarning("Invalid refresh token attempt: {Token}", request.RefreshToken);
             return GenericResponseModel<AuthResponse>.Failure(Constants.FailureMessage, new List<ErrorResponseModel>
@@ -42,6 +42,7 @@ public class RefreshTokenCommandHandler
         }
         var (newAccessToken, newRefreshToken) = await _tokenService.RefreshTokenAsync(
             refreshToken);
+        
         _logger.LogInformation("Token refreshed for user {UserId}", refreshToken.UserDevice.UserId);
         return GenericResponseModel<AuthResponse>.Success(new AuthResponse
         {

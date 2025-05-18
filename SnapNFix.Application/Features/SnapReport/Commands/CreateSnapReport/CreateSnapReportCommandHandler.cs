@@ -81,6 +81,11 @@ public class CreateSnapReportCommandHandler : IRequestHandler<CreateSnapReportCo
                 Category = snapReport.Category,
                 IssueId = snapReport.IssueId
             };
+            
+            
+            
+
+                
             return GenericResponseModel<ReportDetailsDto>.Success(reportDto);
         }
         catch (Exception ex)

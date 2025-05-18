@@ -56,7 +56,6 @@ public class SnapReportsController : ControllerBase
         [FromQuery] GetReportsQuery query)
     {
         return Ok(await _mediator.Send(query));
-    }
 
 
     [Authorize("Admin")]
