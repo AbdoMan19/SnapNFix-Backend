@@ -50,11 +50,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: .net-app
-          # No path specified - downloads to current directory
+          path: ./app-publish # Download to a specific directory
 
       # Add this step to debug what files are available
       - name: List files after download
-        run: ls -la
+        run: ls -la ./app-publish
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -63,15 +63,10 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1E720880C2914ADC95DCAB506BD89790 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5E30D59A90144B76B2421967B6DA2A79 }}
 
-      - name: Create ZIP file for deployment
-        run: |
-          apt-get update && apt-get install -y zip
-          zip -r deploy.zip ./*
-
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: "SnapNFix"
           slot-name: "Production"
-          package: ./deploy.zip
+          package: ./app-publish
