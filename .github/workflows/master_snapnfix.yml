@@ -80,5 +80,5 @@ jobs:
           app-name: "SnapNFix"
           resource-group-name: "SnapNFix-Backend"
           slot-name: "Production"
-          package: ./app-publish # Deploy the directory directly without zipping
+          package: ./app-publish # This should work correctly now
           clean: true
