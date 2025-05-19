@@ -70,28 +70,18 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1E720880C2914ADC95DCAB506BD89790 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5E30D59A90144B76B2421967B6DA2A79 }}
 
-      - name: Create Web App if it doesn't exist
+      - name: List available web apps
         uses: azure/cli@v1
         with:
           inlineScript: |
-            # Check if the app exists
-            EXISTS=$(az webapp show --name SnapNFix-Backend --query id --output tsv 2>/dev/null || echo "false")
-            if [ "$EXISTS" == "false" ]; then
-              echo "Creating Web App SnapNFix-Backend..."
-              # Create a resource group if needed
-              az group create --name SnapNFix-RG --location eastus
-              # Create an App Service Plan
-              az appservice plan create --name SnapNFixPlan --resource-group SnapNFix-RG --sku B1 --is-linux
-              # Create the Web App
-              az webapp create --name SnapNFix-Backend --resource-group SnapNFix-RG --plan SnapNFixPlan --runtime "DOTNET|7.0"
-            else
-              echo "Web App SnapNFix-Backend already exists."
-            fi
+            echo "Available web apps in subscription:"
+            az webapp list --query "[].{name:name, resourceGroup:resourceGroup}" -o table
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: "SnapNFix-Backend"
+          app-name: "snapnfix" # Use existing app name - may be lowercase
+          resource-group: "snapnfix-rg" # Specify existing resource group
           slot-name: "Production"
           package: ./deploy.zip
