@@ -70,21 +70,6 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1E720880C2914ADC95DCAB506BD89790 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5E30D59A90144B76B2421967B6DA2A79 }}
 
-      - name: Get resource group name
-        id: get-resource-group
-        uses: azure/cli@v1
-        with:
-          inlineScript: |
-            RESOURCE_GROUP=$(az webapp list --query "[?name=='SnapNFix-Backend'].resourceGroup" -o tsv)
-            echo "Resource group found: $RESOURCE_GROUP"
-            echo "RESOURCE_GROUP=$RESOURCE_GROUP" >> $GITHUB_ENV
-
-      - name: Stop Web App before deployment
-        uses: azure/cli@v1
-        with:
-          inlineScript: |
-            az webapp stop --name "SnapNFix-Backend" --resource-group "${{ env.RESOURCE_GROUP }}"
-
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
@@ -92,9 +77,3 @@ jobs:
           app-name: "SnapNFix-Backend"
           slot-name: "Production"
           package: ./deploy.zip
-
-      - name: Start Web App after deployment
-        uses: azure/cli@v1
-        with:
-          inlineScript: |
-            az webapp start --name "SnapNFix-Backend" --resource-group "${{ env.RESOURCE_GROUP }}"
