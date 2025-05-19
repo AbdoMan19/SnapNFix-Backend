@@ -58,6 +58,12 @@ jobs:
       - name: Create deployment package
         run: |
           cd ./app-publish
+          # Create a simpler directory structure by moving files up if needed
+          if [ -d "SnapNFix.Api" ]; then
+            echo "Flattening directory structure..."
+            cp -r SnapNFix.Api/* .
+            rm -rf SnapNFix.Api
+          fi
           zip -r ../deploy.zip ./*
           cd ..
           echo "Created deployment package:"
@@ -70,18 +76,29 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1E720880C2914ADC95DCAB506BD89790 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5E30D59A90144B76B2421967B6DA2A79 }}
 
-      - name: List available web apps
+      - name: Clean remote directory before deployment
         uses: azure/cli@v1
         with:
           inlineScript: |
-            echo "Available web apps in subscription:"
-            az webapp list --query "[].{name:name, resourceGroup:resourceGroup}" -o table
+            echo "Getting publishing credentials for web app cleanup"
+            PUBLISH_PROFILE=$(az webapp deployment list-publishing-profiles --name "SnapNFix" --xml)
+            PUBLISH_URL=$(echo "$PUBLISH_PROFILE" | grep -oPm1 "(?<=<publishUrl>)[^<]+")
+            USERNAME=$(echo "$PUBLISH_PROFILE" | grep -oPm1 "(?<=<userName>)[^<]+")
+            PASSWORD=$(echo "$PUBLISH_PROFILE" | grep -oPm1 "(?<=<userPWD>)[^<]+")
+
+            # Use the Kudu API to clean the wwwroot directory
+            echo "Cleaning wwwroot directory..."
+            curl -X POST "https://$PUBLISH_URL/api/command" \
+              -u "$USERNAME:$PASSWORD" \
+              -H "Content-Type: application/json" \
+              -d '{"command":"rm -rf /home/site/wwwroot/*", "dir":"/home"}'
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: "SnapNFix" # Correct case-sensitive name from the output
-          resource-group: "SnapNFix-Backend" # Correct resource group from the output
+          app-name: "SnapNFix" 
+          resource-group-name: "SnapNFix-Backend" 
           slot-name: "Production"
           package: ./deploy.zip
+          clean: true 
