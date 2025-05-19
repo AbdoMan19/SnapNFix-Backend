@@ -59,11 +59,6 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_9BBB3395393C4278B9DEB8920B483605 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_ADAA10115869469C9CE779DABD152DF2 }}
 
-      - name: Install Application Insights extension
-        run: |
-          az extension add --name application-insights
-          az webapp config appsettings set --name SnapNFix-Backend --resource-group your-resource-group --settings APPLICATIONINSIGHTS_CONNECTION_STRING="your-connection-string"
-
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
