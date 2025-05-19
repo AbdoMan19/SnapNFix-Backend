@@ -21,7 +21,15 @@ jobs:
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0'
+          dotnet-version: "9.0"
+
+      - name: Install EF Core tools
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Run database migrations
+        run: dotnet ef database update --project SnapNFix.Infrastructure --startup-project SnapNFix.Api
+        env:
+          ConnectionStrings__DefaultConnection: ${{ secrets.AZURE_POSTGRESQL_CONNECTIONSTRING }}
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
@@ -39,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     environment:
-      name: 'Production'
+      name: "Production"
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
       id-token: write #This is required for requesting the JWT
@@ -50,7 +58,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: .net-app
-      
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -62,7 +70,6 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'SnapNFix'
-          slot-name: 'Production'
+          app-name: "SnapNFix"
+          slot-name: "Production"
           package: .
-          
