@@ -27,8 +27,7 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish SnapNFix.Api/SnapNFix.Api.csproj -c Release -o '${{env.DOTNET_ROOT}}/myapp' --self-contained true --runtime win-x64
-
+        run: dotnet publish SnapNFix.Api/SnapNFix.Api.csproj -c Release -o '${{env.DOTNET_ROOT}}/myapp'
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -58,6 +57,11 @@ jobs:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_6FF591C4E8DE41748B9FD9C25E76FCEE }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_9BBB3395393C4278B9DEB8920B483605 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_ADAA10115869469C9CE779DABD152DF2 }}
+
+      - name: Install Application Insights extension
+        run: |
+          az extension add --name application-insights
+          az webapp config appsettings set --name SnapNFix-Backend --resource-group your-resource-group --settings APPLICATIONINSIGHTS_CONNECTION_STRING="your-connection-string"
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
