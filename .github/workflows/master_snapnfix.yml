@@ -81,7 +81,7 @@ jobs:
         with:
           inlineScript: |
             echo "Getting publishing credentials for web app cleanup"
-            PUBLISH_PROFILE=$(az webapp deployment list-publishing-profiles --name "SnapNFix" --xml)
+            PUBLISH_PROFILE=$(az webapp deployment list-publishing-profiles --name "SnapNFix" --resource-group "SnapNFix-Backend" --xml)
             PUBLISH_URL=$(echo "$PUBLISH_PROFILE" | grep -oPm1 "(?<=<publishUrl>)[^<]+")
             USERNAME=$(echo "$PUBLISH_PROFILE" | grep -oPm1 "(?<=<userName>)[^<]+")
             PASSWORD=$(echo "$PUBLISH_PROFILE" | grep -oPm1 "(?<=<userPWD>)[^<]+")
