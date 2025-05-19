@@ -22,23 +22,32 @@ public class RequestForgetPasswordOtpCommandHandler(
 {
     public async Task<GenericResponseModel<string>> Handle(RequestForgetPasswordOtpCommand request, CancellationToken cancellationToken)
     {
-        var (user, error) = await userValidationService.ValidateUserAsync<string>(request.EmailOrPhoneNumber);
-
-        if (error != null)
+        try
         {
-            return error;
+            // Step 1: Validate user
+            var (user, error) = await userValidationService.ValidateUserAsync<string>(request.EmailOrPhoneNumber);
+            if (error != null)
+            {
+                return error;
+            }
+
+            // Step 2: Generate OTP in memory cache
+            await otpService.InvalidateOtpAsync(request.EmailOrPhoneNumber, OtpPurpose.ForgotPassword);
+            var otp = await otpService.GenerateOtpAsync(request.EmailOrPhoneNumber, OtpPurpose.ForgotPassword);
+
+            // Step 3: Generate token (may involve database operations)
+            var resetRequestToken = tokenService.GenerateToken(request.EmailOrPhoneNumber , TokenPurpose.PasswordResetVerification);
+            
+            // Step 4: TODO - Send OTP to user
+
+            logger.LogInformation("Generated password reset token for user {UserId}", user.Id);
+            return GenericResponseModel<string>.Success(resetRequestToken);
         }
-
-        
-        var otp = await otpService.GenerateOtpAsync(request.EmailOrPhoneNumber, OtpPurpose.ForgotPassword);
-
-        // TODO : Send OTP to user via SMS
-        
-        
-        var resetRequestToken = await tokenService.GeneratePasswordResetRequestTokenAsync(user);
-        
-        logger.LogInformation("Generated password reset request token for user {UserId}", user.Id);
-        
-        return GenericResponseModel<string>.Success(resetRequestToken);
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error processing forgot password request for {EmailOrPhone}", 
+                request.EmailOrPhoneNumber);
+            return GenericResponseModel<string>.Failure("An error occurred processing your request");
+        }
     }
 }

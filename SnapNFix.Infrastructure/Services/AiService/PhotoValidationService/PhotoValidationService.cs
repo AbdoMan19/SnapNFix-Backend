@@ -35,12 +35,11 @@ public class PhotoValidationService : IPhotoValidationService
         try
         {
             var aiEndpoint = _photoValidationOptions.ValidationEndpoint;
-            //var webhookUrl = _photoValidationOptions.WebhookUrl;
+            var webhookUrl = _photoValidationOptions.WebhookUrl;
 
 
             var imageUrl =
                 "https://www.google.com/imgres?q=pothole&imgurl=https%3A%2F%2Fimages.squarespace-cdn.com%2Fcontent%2Fv1%2F573365789f726693272dc91a%2F1704992146415-CI272VYXPALWT52IGLUB%2FAdobeStock_201419293.jpeg%3Fformat%3D1500w&imgrefurl=https%3A%2F%2Fwww.omag.org%2Fnews%2F2024%2F1%2F1%2Fpotholes-how-they-form-and-how-they-can-be-prevented&docid=gzLygswCYinemM&tbnid=bAgXLflP_xF8eM&vet=12ahUKEwjYt-GJk5qNAxXzKvsDHcfJKsAQM3oECGcQAA..i&w=1500&h=1004&hcb=2&ved=2ahUKEwjYt-GJk5qNAxXzKvsDHcfJKsAQM3oECGcQAA";
-            var webhookUrl = "https://webhook.site/1a333a8c-54ce-492d-bb36-24a7aa3e4478";
             
 
             using var httpClient = _httpClientFactory.CreateClient();

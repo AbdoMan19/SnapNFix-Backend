@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SnapNFix.Domain.Entities;
+using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Infrastructure.Services.TokenService;
@@ -120,7 +121,7 @@ public class TokenService : ITokenService
 
         var userDevice = refreshToken.UserDevice;
 
-        var user = userDevice?.User;
+        var user = userDevice.User;
         var newAccessToken = await GenerateJwtToken(user, userDevice);
         var newRefreshToken = GenerateRefreshToken(userDevice);
 
@@ -166,12 +167,13 @@ public class TokenService : ITokenService
     }
 
 
-    public async Task<string> GenerateOtpRequestToken(string phoneNumber)
+    // Generate OTP request token for registration
+    public string GenerateToken(string emailOrPhoneNumber, TokenPurpose purpose)
     {
         var claims = new List<Claim>
         {
-            new("phone", phoneNumber),
-            new("purpose", "otp_request"),
+            new("contact", emailOrPhoneNumber),
+            new("purpose", purpose.ToString()),
             new("issued_at", DateTime.UtcNow.ToString("O"))
         };
 
@@ -189,86 +191,7 @@ public class TokenService : ITokenService
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-    public async Task<string> GenerateRegistrationToken(string phoneNumber)
-    {
-        var claims = new List<Claim>
-        {
-            new("phone", phoneNumber),
-            new("purpose", "registration"),
-            new("issued_at", DateTime.UtcNow.ToString("O"))
-        };
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        var expires = DateTime.UtcNow.AddHours(1); // Give them some time to register
-
-        var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
-            claims: claims,
-            expires: expires,
-            signingCredentials: credentials
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
-
-
-    public async Task<string> GeneratePasswordResetRequestTokenAsync(User user)
-    {
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new(ClaimTypes.Email, user.Email ?? string.Empty),
-            new(ClaimTypes.MobilePhone, user.PhoneNumber ?? string.Empty),
-            new("purpose", "password_reset_request")
-        };
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var expires = DateTime.UtcNow.AddMinutes(10);
-
-        var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
-            claims: claims,
-            expires: expires,
-            signingCredentials: credentials
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
-
     
-
-    public async Task<string> GeneratePasswordResetToken(User user)
-    {
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new("email", user.Email ?? string.Empty),
-            new("purpose", "password_reset")
-        };
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var expires = DateTime.UtcNow.AddMinutes(10);
-
-        var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
-            claims: claims,
-            expires: expires,
-            signingCredentials: credentials
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
-
-  
-
-
+    
 
 }

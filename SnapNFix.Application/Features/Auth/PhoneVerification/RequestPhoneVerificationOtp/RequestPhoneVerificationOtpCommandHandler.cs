@@ -47,7 +47,7 @@ public class RequestPhoneVerificationOtpCommandHandler : IRequestHandler<Request
     //     return GenericResponseModel<string>.Failure("Failed to send OTP. Please try again later.");
     // }
 
-    string token = await _tokenService.GenerateOtpRequestToken(request.PhoneNumber);
+    string token = _tokenService.GenerateToken(request.PhoneNumber , TokenPurpose.PhoneVerification);
         _logger.LogInformation("Generated OTP request token for phone number {PhoneNumber}", request.PhoneNumber);
         return GenericResponseModel<string>.Success(token);
     }

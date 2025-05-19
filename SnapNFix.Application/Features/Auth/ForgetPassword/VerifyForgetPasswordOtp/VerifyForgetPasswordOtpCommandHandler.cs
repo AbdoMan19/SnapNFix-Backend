@@ -33,40 +33,34 @@ public class VerifyForgetPasswordOtpCommandHandler : IRequestHandler<VerifyForge
 
     public async Task<GenericResponseModel<string>> Handle(VerifyForgetPasswordOtpCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-        
-        if (user == null || user.IsDeleted || user.IsSuspended)
-        {
-            _logger.LogWarning("User not found for OTP verification attempt");
-            return GenericResponseModel<string>.Failure(Constants.FailureMessage, new List<ErrorResponseModel>
-            {
-                ErrorResponseModel.Create(nameof(request.Otp), "User not found")
-            });
-        }
+        //contact claim form the request token
+        var contactClaim = _httpContextAccessor.HttpContext?.User.Claims
+            .FirstOrDefault(c => c.Type == "Contact")?.Value;
+      
 
-        var otpVerificationResult = await _otpService.VerifyOtpAsync(user.PhoneNumber ?? user.Email, request.Otp, OtpPurpose.ForgotPassword);
+        var otpVerificationResult = await _otpService.VerifyOtpAsync(contactClaim, request.Otp, OtpPurpose.ForgotPassword);
 
         if (!otpVerificationResult)
         {
-            _logger.LogWarning("OTP verification failed for user {UserId}", user.Id);
+            _logger.LogWarning("OTP verification failed for user {UserId}", contactClaim);
             return GenericResponseModel<string>.Failure(Constants.FailureMessage, new List<ErrorResponseModel>
             {
                 ErrorResponseModel.Create(nameof(request.Otp), "Invalid OTP")
             });
         }
 
-        var token = await _tokenService.GeneratePasswordResetToken(user);
+        var token =  _tokenService.GenerateToken(contactClaim , TokenPurpose.PasswordReset);
         
         if (string.IsNullOrEmpty(token))
         {
-            _logger.LogWarning("Failed to generate reset password token for user {UserId}", user.Id);
+            _logger.LogWarning("Failed to generate reset password token for user {UserId}", contactClaim);
             return GenericResponseModel<string>.Failure(Constants.FailureMessage, new List<ErrorResponseModel>
             {
                 ErrorResponseModel.Create(nameof(request.Otp), "Failed to generate reset password token")
             });
         }
         
-        _logger.LogInformation("OTP verified successfully for user {UserId}", user.Id);
+        _logger.LogInformation("OTP verified successfully for user {UserId}", contactClaim);
         return GenericResponseModel<string>.Success(token);
     }
 }

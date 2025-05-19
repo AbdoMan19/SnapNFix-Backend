@@ -17,6 +17,7 @@ public class ReportService : IReportService
 
     public async Task AttachReportWithIssue(SnapReport report, CancellationToken cancellationToken)
     {
+        // Use spatial index for efficient distance query
         var nearbyIssue = await _unitOfWork.Repository<Issue>()
             .FindBy(i => i.Category == report.Category &&
                          i.Location.IsWithinDistance(report.Location, Constants.NearbyIssueRadiusMeters))
@@ -25,11 +26,13 @@ public class ReportService : IReportService
 
         if (nearbyIssue != null)
         {
+            // Connect to existing issue
             report.IssueId = nearbyIssue.Id;
             report.Issue = nearbyIssue;
         }
         else
         {
+            // Create new issue
             var newIssue = new Issue
             {
                 Location = report.Location,
@@ -39,6 +42,7 @@ public class ReportService : IReportService
             };
 
             await _unitOfWork.Repository<Issue>().Add(newIssue);
+            // No need to save changes here, will be done in the transaction
             report.IssueId = newIssue.Id;
             report.Issue = newIssue;
         }
