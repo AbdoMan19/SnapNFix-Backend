@@ -21,13 +21,23 @@ jobs:
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "9.0"
+          dotnet-version: "9.0.x"
+
+      - name: Install dependencies
+        run: dotnet restore
 
       - name: Build with dotnet
-        run: dotnet build --configuration Release
+        run: dotnet build --configuration Release --no-restore
 
       - name: dotnet publish
-        run: dotnet publish SnapNFix.Api/SnapNFix.Api.csproj -c Release -o '${{env.DOTNET_ROOT}}/myapp'
+        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp --no-build
+
+      - name: Check published output
+        run: |
+          echo "Published content:"
+          ls -la ${{env.DOTNET_ROOT}}/myapp
+          echo "Checking for web.config:"
+          find ${{env.DOTNET_ROOT}}/myapp -name "web.config" -type f
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -52,19 +62,24 @@ jobs:
           name: .net-app
           path: ./app-publish
 
+      - name: Debug artifact contents
+        run: |
+          echo "Listing app-publish directory contents:"
+          ls -la ./app-publish
+          echo "Directory structure:"
+          find ./app-publish -type d | sort
+
+      # Simplified directory handling - only use if needed
       - name: Prepare directory structure
         run: |
           cd ./app-publish
-          # Create a simpler directory structure by moving files up if needed
-          if [ -d "SnapNFix.Api" ]; then
+          if [ -d "SnapNFix.Api" ] && [ ! -f "web.config" ]; then
             echo "Flattening directory structure..."
             cp -r SnapNFix.Api/* .
             rm -rf SnapNFix.Api
           fi
-
-          # List directory contents after changes
-          echo "Contents after flattening:"
-          find . -type d | sort
+          echo "Final directory contents:"
+          ls -la
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -73,6 +88,15 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1E720880C2914ADC95DCAB506BD89790 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5E30D59A90144B76B2421967B6DA2A79 }}
 
+      # Ensure Azure App Service is configured for .NET 9.0
+      - name: Configure Azure App Service for .NET 9.0
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az webapp config set --name SnapNFix --resource-group SnapNFix-Backend --net-framework-version "v9.0" --startup-file "dotnet SnapNFix.Api.dll"
+            # Set PostgreSQL connection string from secrets
+            az webapp config appsettings set --name SnapNFix --resource-group SnapNFix-Backend --settings "ConnectionStrings__DefaultConnection=${{ secrets.POSTGRESQL_CONNECTION_STRING }}"
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
@@ -80,5 +104,17 @@ jobs:
           app-name: "SnapNFix"
           resource-group-name: "SnapNFix-Backend"
           slot-name: "Production"
-          package: ./app-publish # This should work correctly now
+          package: ./app-publish
           clean: true
+
+      - name: Verify deployment
+        run: |
+          echo "Deployment completed. URL: ${{ steps.deploy-to-webapp.outputs.webapp-url }}"
+
+      # For troubleshooting deployment issues
+      - name: View application logs
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            echo "Showing recent application logs:"
+            az webapp log tail --name SnapNFix --resource-group SnapNFix-Backend --provider application
