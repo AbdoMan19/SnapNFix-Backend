@@ -28,7 +28,7 @@ COPY --from=build /app ./
 ENV ASPNETCORE_URLS=http://+:10000
 ENV ASPNETCORE_ENVIRONMENT=Production
 
-ENV ConnectionStrings__DefaultConnection="Host=dpg-d01e5sadbo4c738mad7g-a;Port=5432;Database=snapnfix_db;Username=snapnfix_db_user;Password=of1ADH97CszGA6B4rwUGWrCKZAha3wPX;SSL Mode=Require;"
+ENV ConnectionStrings__DefaultConnection="Host=dpg-d0lhi356ubrc73c3jhtg-a;Port=5432;Database=snapnfix_db_jhzy;Username=snapnfix_db_jhzy_user;Password=6ad9yY3dyNJ5XylIOoWbgSiIpptCB4Mo;SSL Mode=Require;"
 
 EXPOSE 10000
 
