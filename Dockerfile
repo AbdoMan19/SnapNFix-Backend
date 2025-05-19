@@ -28,8 +28,9 @@ COPY --from=build /app ./
 ENV ASPNETCORE_URLS=http://+:10000
 ENV ASPNETCORE_ENVIRONMENT=Production
 
-ENV ConnectionStrings__DefaultConnection="Host=dpg-d0lhi356ubrc73c3jhtg-a;Port=5432;Database=snapnfix_db_jhzy;Username=snapnfix_db_jhzy_user;Password=6ad9yY3dyNJ5XylIOoWbgSiIpptCB4Mo;SSL Mode=Require;"
+ENV ConnectionStrings__DefaultConnection="Host=snapnfix-server.postgres.database.azure.com;Port=5432;Database=postgres;Username=wnrqzgrnzx;Password=123456snapnfix@;SSL Mode=Require;"
 
 EXPOSE 10000
 
 ENTRYPOINT ["dotnet", "SnapNFix.Api.dll"]
+
