@@ -76,23 +76,6 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1E720880C2914ADC95DCAB506BD89790 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5E30D59A90144B76B2421967B6DA2A79 }}
 
-      - name: Clean remote directory before deployment
-        uses: azure/cli@v1
-        with:
-          inlineScript: |
-            echo "Getting publishing credentials for web app cleanup"
-            PUBLISH_PROFILE=$(az webapp deployment list-publishing-profiles --name "SnapNFix" --resource-group "SnapNFix-Backend" --xml)
-            PUBLISH_URL=$(echo "$PUBLISH_PROFILE" | grep -oPm1 "(?<=<publishUrl>)[^<]+")
-            USERNAME=$(echo "$PUBLISH_PROFILE" | grep -oPm1 "(?<=<userName>)[^<]+")
-            PASSWORD=$(echo "$PUBLISH_PROFILE" | grep -oPm1 "(?<=<userPWD>)[^<]+")
-
-            # Use the Kudu API to clean the wwwroot directory
-            echo "Cleaning wwwroot directory..."
-            curl -X POST "https://$PUBLISH_URL/api/command" \
-              -u "$USERNAME:$PASSWORD" \
-              -H "Content-Type: application/json" \
-              -d '{"command":"rm -rf /home/site/wwwroot/*", "dir":"/home"}'
-
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
