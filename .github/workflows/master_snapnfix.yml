@@ -81,7 +81,7 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: "snapnfix" # Use existing app name - may be lowercase
-          resource-group: "snapnfix-rg" # Specify existing resource group
+          app-name: "SnapNFix" # Correct case-sensitive name from the output
+          resource-group: "SnapNFix-Backend" # Correct resource group from the output
           slot-name: "Production"
           package: ./deploy.zip
