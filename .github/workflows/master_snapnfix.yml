@@ -23,14 +23,6 @@ jobs:
         with:
           dotnet-version: "9.0"
 
-      - name: Install EF Core tools
-        run: dotnet tool install --global dotnet-ef
-
-      - name: Run database migrations
-        run: dotnet ef database update --project SnapNFix.Infrastructure --startup-project SnapNFix.Api
-        env:
-          ConnectionStrings__DefaultConnection: ${{ secrets.AZURE_POSTGRESQL_CONNECTIONSTRING }}
-
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
