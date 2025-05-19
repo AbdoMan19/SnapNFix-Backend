@@ -46,6 +46,8 @@ public class SnapReportsController : ControllerBase
         query.UserId = (await UserService.GetCurrentUserAsync()).Id;
         return Ok(await _mediator.Send(query));
     }
+    
+    
 
 
 
@@ -56,7 +58,6 @@ public class SnapReportsController : ControllerBase
         [FromQuery] GetReportsQuery query)
     {
         return Ok(await _mediator.Send(query));
-    }
 
 
     [Authorize("Admin")]

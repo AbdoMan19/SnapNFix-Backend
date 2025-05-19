@@ -23,7 +23,6 @@ public class DeviceManager : IDeviceManager
         {
             existingDevice.LastUsedAt = DateTime.UtcNow;
             await _unitOfWork.Repository<UserDevice>().Update(existingDevice);
-            await _unitOfWork.SaveChanges();
             return existingDevice;
         }
         
@@ -39,7 +38,6 @@ public class DeviceManager : IDeviceManager
         };
 
         await _unitOfWork.Repository<UserDevice>().Add(newDevice);
-        await _unitOfWork.SaveChanges();
 
         return newDevice;
     }
@@ -51,6 +49,14 @@ public class DeviceManager : IDeviceManager
             .Include(d => d.RefreshToken)
             .FirstOrDefaultAsync();
     }
+    public async Task<UserDevice?> GetDeviceByIdAsync(Guid userId, Guid userDeviceId)
+    {
+        return await _unitOfWork.Repository<UserDevice>()
+            .FindBy(d => d.UserId == userId && d.Id == userDeviceId)
+            .Include(d => d.RefreshToken)
+            .FirstOrDefaultAsync();
+    }
+
 
     public async Task<IEnumerable<UserDevice>> GetUserDevicesAsync(Guid userId)
     {
@@ -61,14 +67,17 @@ public class DeviceManager : IDeviceManager
             .ToListAsync();
     }
 
-    public async Task<bool> DeactivateDeviceAsync(Guid userId, string deviceId)
+    public async Task<bool> DeactivateDeviceAsync(Guid userId, Guid deviceId)
     {
-        var device = await GetDeviceAsync(userId, deviceId);
+        var device = await GetDeviceByIdAsync(userId, deviceId);
         if (device?.RefreshToken == null) return false;
+        device.LastUsedAt = DateTime.UtcNow;
+
+        await _unitOfWork.Repository<UserDevice>().Update(device);
 
         device.RefreshToken.Expires = DateTime.UtcNow;
         await _unitOfWork.Repository<RefreshToken>().Update(device.RefreshToken);
-        await _unitOfWork.SaveChanges();
+        
         return true;
     }
 
@@ -78,13 +87,14 @@ public class DeviceManager : IDeviceManager
             .FindBy(d => d.UserId == userId)
             .CountAsync();
     }
-    public Guid? GetCurrentDeviceId()
+    public Guid GetCurrentDeviceId()
     {
         var currentDeviceId = _httpContextAccessor.HttpContext?.User.FindFirstValue("DeviceId");
         if (!Guid.TryParse(currentDeviceId, out var DeviceId))
         {
-            return null;
+            return Guid.Empty;
         }
         return DeviceId;
     }
+
 }

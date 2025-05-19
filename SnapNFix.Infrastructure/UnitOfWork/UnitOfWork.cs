@@ -1,5 +1,6 @@
 using System.Collections;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using SnapNFix.Domain.Interfaces;
 using SnapNFix.Infrastructure.Context;
 using SnapNFix.Infrastructure.GenericRepository;
@@ -41,6 +42,11 @@ public class UnitOfWork : IUnitOfWork
         await _dbContext.Database.BeginTransactionAsync(isolationLevel);
     }
 
+    public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Database.BeginTransactionAsync(cancellationToken);
+    }
+
     public async Task CommitTransactionAsync()
     {
         await _dbContext.Database.CommitTransactionAsync();
@@ -48,6 +54,6 @@ public class UnitOfWork : IUnitOfWork
 
     public async Task RollBackTransactionAsync()
     {
-        await _dbContext.Database.CommitTransactionAsync();
+        await _dbContext.Database.RollbackTransactionAsync();
     }
 }

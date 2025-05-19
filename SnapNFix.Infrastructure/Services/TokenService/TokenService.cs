@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SnapNFix.Domain.Entities;
+using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Infrastructure.Services.TokenService;
@@ -117,17 +118,10 @@ public class TokenService : ITokenService
 
     public async Task<(string JwtToken, string RefreshToken)> RefreshTokenAsync(RefreshToken refreshToken)
     {
-        if (refreshToken.IsExpired)
-        {
-            throw new SecurityTokenException("Invalid refresh token");
-        }
 
-        var userDevice = await _unitOfWork.Repository<UserDevice>()
-            .FindBy(d => d.Id == refreshToken.UserDeviceId)
-            .Include(d => d.User)
-            .FirstOrDefaultAsync();
+        var userDevice = refreshToken.UserDevice;
 
-        var user = userDevice?.User;
+        var user = userDevice.User;
         var newAccessToken = await GenerateJwtToken(user, userDevice);
         var newRefreshToken = GenerateRefreshToken(userDevice);
 
@@ -173,12 +167,13 @@ public class TokenService : ITokenService
     }
 
 
-    public async Task<string> GenerateOtpRequestToken(string phoneNumber)
+    // Generate OTP request token for registration
+    public string GenerateToken(string emailOrPhoneNumber, TokenPurpose purpose)
     {
         var claims = new List<Claim>
         {
-            new("phone", phoneNumber),
-            new("purpose", "otp_request"),
+            new("contact", emailOrPhoneNumber),
+            new("purpose", purpose.ToString()),
             new("issued_at", DateTime.UtcNow.ToString("O"))
         };
 
@@ -196,156 +191,7 @@ public class TokenService : ITokenService
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-    public async Task<string> GenerateRegistrationToken(string phoneNumber)
-    {
-        var claims = new List<Claim>
-        {
-            new("phone", phoneNumber),
-            new("purpose", "registration"),
-            new("issued_at", DateTime.UtcNow.ToString("O"))
-        };
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        var expires = DateTime.UtcNow.AddHours(1); // Give them some time to register
-
-        var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
-            claims: claims,
-            expires: expires,
-            signingCredentials: credentials
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
-
-
-    public async Task<string> GeneratePasswordResetRequestTokenAsync(User user)
-    {
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new(ClaimTypes.Email, user.Email ?? string.Empty),
-            new(ClaimTypes.MobilePhone, user.PhoneNumber ?? string.Empty),
-            new("purpose", "password_reset_request")
-        };
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var expires = DateTime.UtcNow.AddMinutes(10);
-
-        var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
-            claims: claims,
-            expires: expires,
-            signingCredentials: credentials
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
-
-    public async Task<bool> ValidatePasswordResetRequestTokenAsync(User user, string token)
-    {
-        try
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-
-            var validationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = key,
-                ValidateIssuer = true,
-                ValidIssuer = _configuration["Jwt:Issuer"],
-                ValidateAudience = true,
-                ValidAudience = _configuration["Jwt:Audience"],
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero
-            };
-
-            var principal = tokenHandler.ValidateToken(token, validationParameters, out _);
-
-            var purposeClaim = principal.FindFirst(c => c.Type == "purpose");
-            if (purposeClaim == null || purposeClaim.Value != "password_reset_request")
-                return false;
-
-            var userIdClaim = principal.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
-            if (userIdClaim == null || userIdClaim.Value != user.Id.ToString())
-                return false;
-
-            return true;
-        }
-        catch (Exception ex)
-        {
-            return false;
-        }
-    }
-
-    public async Task<string> GeneratePasswordResetToken(User user)
-    {
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new("email", user.Email ?? string.Empty),
-            new("purpose", "password_reset")
-        };
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var expires = DateTime.UtcNow.AddMinutes(10);
-
-        var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
-            claims: claims,
-            expires: expires,
-            signingCredentials: credentials
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
-
-    public bool ValidatePasswordResetTokenAsync(User user, string token)
-    {
-        try
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-
-            var validationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = key,
-                ValidateIssuer = true,
-                ValidIssuer = _configuration["Jwt:Issuer"],
-                ValidateAudience = true,
-                ValidAudience = _configuration["Jwt:Audience"],
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero
-            };
-
-            var principal = tokenHandler.ValidateToken(token, validationParameters, out _);
-
-            var purposeClaim = principal.FindFirst(c => c.Type == "purpose");
-            if (purposeClaim == null || purposeClaim.Value != "password_reset")
-                return false;
-
-            var userIdClaim = principal.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
-            if (userIdClaim == null || userIdClaim.Value != user.Id.ToString())
-                return false;
-
-            return true;
-        }
-        catch (Exception ex)
-        {
-            return false;
-        }
-    }
-
-
+    
+    
 
 }
