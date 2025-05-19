@@ -52,10 +52,7 @@ jobs:
           name: .net-app
           path: ./app-publish
 
-      - name: Install zip
-        run: sudo apt-get install -y zip
-
-      - name: Create deployment package
+      - name: Prepare directory structure
         run: |
           cd ./app-publish
           # Create a simpler directory structure by moving files up if needed
@@ -64,10 +61,10 @@ jobs:
             cp -r SnapNFix.Api/* .
             rm -rf SnapNFix.Api
           fi
-          zip -r ../deploy.zip ./*
-          cd ..
-          echo "Created deployment package:"
-          ls -la deploy.zip
+
+          # List directory contents after changes
+          echo "Contents after flattening:"
+          find . -type d | sort
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -80,8 +77,8 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: "SnapNFix" 
-          resource-group-name: "SnapNFix-Backend" 
+          app-name: "SnapNFix"
+          resource-group-name: "SnapNFix-Backend"
           slot-name: "Production"
-          package: ./deploy.zip
-          clean: true 
+          package: ./app-publish # Deploy the directory directly without zipping
+          clean: true
