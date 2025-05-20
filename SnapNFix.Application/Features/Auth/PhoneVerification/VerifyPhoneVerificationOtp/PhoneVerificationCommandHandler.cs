@@ -50,7 +50,7 @@ public class PhoneVerificationCommandHandler : IRequestHandler<PhoneVerification
         }
         
         _logger.LogInformation("Phone verification successful for {PhoneNumber}", contactClaim);
-        var token = _tokenService.GenerateToken(contactClaim , TokenPurpose.Registration);
+        var token = _tokenService.GenerateToken(contactClaim, TokenPurpose.Registration);
         _logger.LogInformation("Generated Registration token for user {PhoneNumber}", contactClaim);
         
         return GenericResponseModel<string>.Success(token);

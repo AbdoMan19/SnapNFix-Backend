@@ -53,7 +53,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    [Authorize("RequirePhoneVerification")]
+    [Authorize("RequireRegistration")]
     public async Task<ActionResult> Register(RegisterUserCommand command)
     {
         var result = await _mediator.Send(command);
