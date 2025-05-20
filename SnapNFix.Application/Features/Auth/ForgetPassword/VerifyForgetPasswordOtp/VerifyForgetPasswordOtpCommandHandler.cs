@@ -35,7 +35,7 @@ public class VerifyForgetPasswordOtpCommandHandler : IRequestHandler<VerifyForge
     {
         //contact claim form the request token
         var contactClaim = _httpContextAccessor.HttpContext?.User.Claims
-            .FirstOrDefault(c => c.Type == "Contact")?.Value;
+            .FirstOrDefault(c => c.Type == "contact")?.Value;
       
 
         var otpVerificationResult = await _otpService.VerifyOtpAsync(contactClaim, request.Otp, OtpPurpose.ForgotPassword);

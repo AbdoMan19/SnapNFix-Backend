@@ -39,7 +39,7 @@ public class PhoneVerificationCommandHandler : IRequestHandler<PhoneVerification
     public async Task<GenericResponseModel<string>> Handle(PhoneVerificationCommand request, CancellationToken cancellationToken)
     {
         var contactClaim = _httpContextAccessor.HttpContext?.User.Claims
-            .FirstOrDefault(c => c.Type == "Contact")?.Value;
+            .FirstOrDefault(c => c.Type == "contact")?.Value;
         _logger.LogInformation("Processing phone verification for {PhoneNumber}", contactClaim);
         var isOtpValid = await _otpService.VerifyOtpAsync(contactClaim, request.Otp, OtpPurpose.PhoneVerification);
         if (!isOtpValid)
