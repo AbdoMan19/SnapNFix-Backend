@@ -36,16 +36,16 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
 
     public async Task<GenericResponseModel<LoginResponse>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
-        var phoneNumber = _httpContextAccessor.HttpContext?.User.FindFirst("phone")?.Value;
+        var contact = _httpContextAccessor.HttpContext?.User.FindFirst("contact")?.Value;
 
-        _logger.LogInformation("Starting registration process for phone number {PhoneNumber}", phoneNumber);
-        
+        _logger.LogInformation("Starting registration process for contact {Contact}", contact);
+
         var user = new User
         {
             FirstName = request.FirstName,
             LastName = request.LastName,
-            PhoneNumber = phoneNumber,
-            UserName = phoneNumber,
+            PhoneNumber = contact,
+            UserName = contact,
             PhoneNumberConfirmed = true,
         };
         
