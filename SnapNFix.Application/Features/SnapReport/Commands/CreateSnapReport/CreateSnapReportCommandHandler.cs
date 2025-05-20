@@ -36,57 +36,92 @@ public class CreateSnapReportCommandHandler : IRequestHandler<CreateSnapReportCo
 
     public async Task<GenericResponseModel<ReportDetailsDto>> Handle(CreateSnapReportCommand request, CancellationToken cancellationToken)
     {
+        // Image validation - no database access
+        var (isValid, errorMessage) = await _imageProcessingService.ValidateImageAsync(request.Image);
+        if (!isValid)
+        {
+            _logger.LogWarning("Image validation failed: {ErrorMessage}", errorMessage);
+            return GenericResponseModel<ReportDetailsDto>.Failure(errorMessage);
+        }
+
         try
         {
-            // Validate image
-            var (isValid, errorMessage) = await _imageProcessingService.ValidateImageAsync(request.Image);
-            if (!isValid)
+            // Start explicit transaction
+            await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
+            
+            try
             {
-                return GenericResponseModel<ReportDetailsDto>.Failure(errorMessage);
+                // Get current user and prepare data - minimal DB read
+                var currentUserId = await _userService.GetCurrentUserIdAsync();
+                
+                // Save image - filesystem operation, not database
+                var imagePath = await _imageProcessingService.SaveImageAsync(request.Image, "snapreports");
+                
+                // Prepare location data
+                var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
+                var point = geometryFactory.CreatePoint(new Coordinate(request.Longitude, request.Latitude));
+                
+                // Create entity
+                var snapReport = new Domain.Entities.SnapReport
+                {
+                    Comment = request.Comment,
+                    ImagePath = imagePath,
+                    Location = point,
+                    UserId = currentUserId,
+                    ImageStatus = ImageStatus.Pending,
+                    Category = ReportCategory.NotSpecified
+                };
+
+                // Database operations - single insert
+                await _unitOfWork.Repository<Domain.Entities.SnapReport>().Add(snapReport);
+                await _unitOfWork.SaveChanges();
+                
+                // Commit transaction
+                await transaction.CommitAsync(cancellationToken);
+                
+                // After successful save, start background task
+                // Note: This is outside transaction as it's a fire-and-forget operation
+                _photoValidationService.ProcessPhotoValidationInBackgroundAsync(snapReport);
+
+                _logger.LogInformation("Successfully created snap report with ID {ReportId} for user {UserId}", 
+                    snapReport.Id, currentUserId);
+                
+                // Map to DTO for response
+                var reportDto = new ReportDetailsDto
+                {
+                    Id = snapReport.Id,
+                    Comment = snapReport.Comment,
+                    ImagePath = snapReport.ImagePath,
+                    Latitude = request.Latitude,
+                    Longitude = request.Longitude,
+                    Status = snapReport.ImageStatus,
+                    CreatedAt = snapReport.CreatedAt,
+                    Category = snapReport.Category,
+                    IssueId = snapReport.IssueId
+                };
+                
+                return GenericResponseModel<ReportDetailsDto>.Success(reportDto);
             }
-
-            // Save image and get path
-            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
-            var currentuserId = await _userService.GetCurrentUserIdAsync();
-            if (currentuserId == Guid.Empty)
+            catch (DbUpdateException dbEx)
             {
-                return GenericResponseModel<ReportDetailsDto>.Failure("User not found");
+                // Database-specific error handling
+                await transaction.RollbackAsync(cancellationToken);
+                _logger.LogError(dbEx, "Database error creating snap report");
+                return GenericResponseModel<ReportDetailsDto>.Failure("Database error occurred while saving the report");
             }
-            var imagePath = await _imageProcessingService.SaveImageAsync(request.Image, "snapreports");
-            var point = geometryFactory.CreatePoint(new Coordinate(request.Longitude, request.Latitude));
-            var snapReport = new Domain.Entities.SnapReport
+            catch (Exception ex)
             {
-                Comment = request.Comment,
-                ImagePath = imagePath,
-                Location = point ,
-                UserId = currentuserId,
-                ImageStatus = ImageStatus.Pending,
-                Category = ReportCategory.NotSpecified
-            };
-
-            await _unitOfWork.Repository<Domain.Entities.SnapReport>().Add(snapReport);
-            await _unitOfWork.SaveChanges();
-
-            _photoValidationService.ProcessPhotoValidationInBackgroundAsync(snapReport);
-
-            var reportDto = new ReportDetailsDto
-            {
-                Id = snapReport.Id,
-                Comment = snapReport.Comment,
-                ImagePath = snapReport.ImagePath,
-                Latitude = request.Latitude,
-                Longitude = request.Longitude,
-                Status = snapReport.ImageStatus,
-                CreatedAt = snapReport.CreatedAt,
-                Category = snapReport.Category,
-                IssueId = snapReport.IssueId
-            };
-            return GenericResponseModel<ReportDetailsDto>.Success(reportDto);
+                // General error during transaction
+                await transaction.RollbackAsync(cancellationToken);
+                _logger.LogError(ex, "Error during snap report creation transaction");
+                return GenericResponseModel<ReportDetailsDto>.Failure("Failed to create report");
+            }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error creating snap report");
-            return GenericResponseModel<ReportDetailsDto>.Failure("Failed to create report");
+            // Outer exception handling for non-transaction errors
+            _logger.LogError(ex, "Unhandled exception creating snap report");
+            return GenericResponseModel<ReportDetailsDto>.Failure("An unexpected error occurred");
         }
     }
 }

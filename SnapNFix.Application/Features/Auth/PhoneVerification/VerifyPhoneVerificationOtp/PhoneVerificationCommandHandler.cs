@@ -38,20 +38,20 @@ public class PhoneVerificationCommandHandler : IRequestHandler<PhoneVerification
 
     public async Task<GenericResponseModel<string>> Handle(PhoneVerificationCommand request, CancellationToken cancellationToken)
     {
-        var phoneNumber = _httpContextAccessor.HttpContext?.User.FindFirst("phone")?.Value;
-
-        _logger.LogInformation("Processing phone verification for {PhoneNumber}", phoneNumber);
-        var isOtpValid = await _otpService.VerifyOtpAsync(phoneNumber, request.Otp, OtpPurpose.PhoneVerification);
+        var contactClaim = _httpContextAccessor.HttpContext?.User.Claims
+            .FirstOrDefault(c => c.Type == "Contact")?.Value;
+        _logger.LogInformation("Processing phone verification for {PhoneNumber}", contactClaim);
+        var isOtpValid = await _otpService.VerifyOtpAsync(contactClaim, request.Otp, OtpPurpose.PhoneVerification);
         if (!isOtpValid)
         {
-            _logger.LogWarning("Phone verification failed: Invalid OTP for {PhoneNumber}", phoneNumber);
+            _logger.LogWarning("Phone verification failed: Invalid OTP for {PhoneNumber}", contactClaim);
             return GenericResponseModel<string>.Failure(Constants.FailureMessage , new List<ErrorResponseModel>{ErrorResponseModel.Create(
                 nameof(request.Otp) , "Invalid OTP" )});
         }
         
-        _logger.LogInformation("Phone verification successful for {PhoneNumber}", phoneNumber);
-        var token = await _tokenService.GenerateRegistrationToken(phoneNumber);
-        _logger.LogInformation("Generated Registration token for user {PhoneNumber}", phoneNumber);
+        _logger.LogInformation("Phone verification successful for {PhoneNumber}", contactClaim);
+        var token = _tokenService.GenerateToken(contactClaim , TokenPurpose.Registration);
+        _logger.LogInformation("Generated Registration token for user {PhoneNumber}", contactClaim);
         
         return GenericResponseModel<string>.Success(token);
     }

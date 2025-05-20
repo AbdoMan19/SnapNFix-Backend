@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SnapNFix.Api.Handlers;
 using SnapNFix.Domain.Entities;
+using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces.ServiceLifetime;
 using SnapNFix.Infrastructure.Context;
 
@@ -70,14 +71,19 @@ public static class ServiceCollectionExtensions
             options.AddPolicy("Citizen", policy => policy.RequireRole("Citizen"));
 
             options.AddPolicy("RequirePhoneVerification", policy =>
-                    policy.RequireClaim("purpose", "registration")
-                    .RequireClaim("phone"));
+                    policy.RequireClaim("purpose", TokenPurpose.PhoneVerification.ToString())
+                        .RequireClaim("contact"));
             
-            options.AddPolicy("RequireOtpVerification", policy =>
-                policy.RequireClaim("purpose", "otp_request")
-                    .RequireClaim("phone"));
-            options.AddPolicy("RequestResetPassword", policy => policy.RequireClaim("purpose", "password_reset_request"));
-            options.AddPolicy("ResetPassword", policy => policy.RequireClaim("purpose", "password_reset"));
+            options.AddPolicy("RequireRegistration", policy =>
+                policy.RequireClaim("purpose", TokenPurpose.Registration.ToString())
+                    .RequireClaim("contact"));
+            options.AddPolicy("RequirePasswordResetVerification", policy => 
+                policy.RequireClaim("purpose", TokenPurpose.PasswordResetVerification.ToString())
+                .RequireClaim("contact"));
+
+            options.AddPolicy("RequireResetPassword", policy => policy.RequireClaim("purpose", TokenPurpose.PasswordReset.ToString())
+                .RequireClaim("contact"));
+
         });
 
         services.AddProblemDetails();

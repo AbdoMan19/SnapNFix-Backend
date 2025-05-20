@@ -35,7 +35,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Configuration\" />
       <Folder Include="Controllers\" />
+      <Folder Include="Middleware\" />
+      <Folder Include="RateLimiting\" />
     </ItemGroup>
 
 </Project>

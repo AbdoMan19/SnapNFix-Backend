@@ -69,7 +69,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("verify-phone/verify-otp")]
-    [Authorize("RequireOtpVerification")]
+    [Authorize("RequirePhoneVerification")]
     public async Task<IActionResult> VerifyPhoneVerificationOtp([FromBody] PhoneVerificationCommand command)
     {
         var result = await _mediator.Send(command);
@@ -93,7 +93,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("forget-password/verify-otp")]
-    [Authorize(Policy = "RequestResetPassword")]
+    [Authorize(Policy = "RequirePasswordResetVerification")]
     public async Task<IActionResult> VerifyForgetPasswordOtp([FromBody] VerifyForgetPasswordOtpCommand command)
     {
         var result = await _mediator.Send(command);
@@ -109,7 +109,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("forget-password/reset")]
-    [Authorize(Policy = "ResetPassword")]
+    [Authorize(Policy = "RequireResetPassword")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand command)
     {
         var result = await _mediator.Send(command);
