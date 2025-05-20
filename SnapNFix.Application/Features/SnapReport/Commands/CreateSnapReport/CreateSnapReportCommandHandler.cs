@@ -54,7 +54,7 @@ public class CreateSnapReportCommandHandler : IRequestHandler<CreateSnapReportCo
                 // Get current user and prepare data - minimal DB read
                 var currentUserId = await _userService.GetCurrentUserIdAsync();
                 
-                // Save image - filesystem operation, not database
+                // Save image 
                 var imagePath = await _imageProcessingService.SaveImageAsync(request.Image, "snapreports");
                 
                 // Prepare location data

@@ -68,6 +68,11 @@ jobs:
                 "name": "ConnectionStrings__DefaultConnection",
                 "value": "${{ secrets.AZURE_POSTGRESQL_CONNECTIONSTRING }}",
                 "slotSetting": false
+              },
+              {
+                "name": "AzureBlob__ConnectionString",
+                "value": "${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}",
+                "slotSetting": false
               }
             ]
           connection-strings-json: |

@@ -35,7 +35,6 @@ public class Program
 
 
         
-
         builder.Services.AddControllers()
             .ConfigureApiBehaviorOptions(options => options.InvalidModelStateResponseFactory = context => ValidationResult(context))
             .AddJsonOptions(o =>
