@@ -68,9 +68,7 @@ public class TokenService : ITokenService
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
         claims.AddRange(new[]
         {
-            new Claim("DeviceId", device.DeviceId),
-            new Claim("DeviceName", device.DeviceName),
-            new Claim("Platform", device.Platform)
+            new Claim("DeviceId", device.Id.ToString()),
         });
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));

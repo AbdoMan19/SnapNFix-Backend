@@ -109,6 +109,7 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
 
                 if (userDevice.RefreshToken != null)
                 {
+                    Console.WriteLine("Refresh token exists, updating it");
                     refreshTokenString = _tokenService.GenerateRefreshToken();
                     userDevice.RefreshToken.Token = refreshTokenString;
                     userDevice.RefreshToken.Expires = _tokenService.GetRefreshTokenExpirationDays();

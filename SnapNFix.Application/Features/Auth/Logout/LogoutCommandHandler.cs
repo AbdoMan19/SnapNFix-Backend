@@ -47,9 +47,9 @@ public class LogoutCommandHandler : IRequestHandler<LogoutCommand, GenericRespon
             try
             {
                 // Find active refresh token for this device
-                var sucess = await _deviceManager.DeactivateDeviceAsync(currentUserId, currentDeviceId);
+                var success = await _deviceManager.DeactivateDeviceAsync(currentUserId, currentDeviceId);
 
-                if (!sucess)
+                if (!success)
                 {
                     // Log the token out by expiring it
                     _logger.LogInformation("Logging out device {DeviceId} by expiring refresh token", currentDeviceId);

@@ -70,6 +70,7 @@ public class DeviceManager : IDeviceManager
     public async Task<bool> DeactivateDeviceAsync(Guid userId, Guid deviceId)
     {
         var device = await GetDeviceByIdAsync(userId, deviceId);
+        
         if (device?.RefreshToken == null) return false;
         device.LastUsedAt = DateTime.UtcNow;
 

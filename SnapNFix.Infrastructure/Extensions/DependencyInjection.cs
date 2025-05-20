@@ -26,7 +26,7 @@ public static class DependencyInjection
                 npgsqlOptions =>
                 {
                     npgsqlOptions.UseNetTopologySuite();
-                    npgsqlOptions.EnableRetryOnFailure(3);
+                    //npgsqlOptions.EnableRetryOnFailure(3);
                     npgsqlOptions.CommandTimeout(30);
                 });
         });
