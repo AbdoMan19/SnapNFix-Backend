@@ -63,7 +63,17 @@ public class ImageProcessingService : IImageProcessingService
         {
             var blobClient = _containerClient.GetBlobClient(uniqueFileName);
             using var stream = image.OpenReadStream();
-            await blobClient.UploadAsync(stream, overwrite: true);
+
+            var contentType = image.ContentType;
+            var uploadOptions = new Azure.Storage.Blobs.Models.BlobUploadOptions
+            {
+                HttpHeaders = new Azure.Storage.Blobs.Models.BlobHttpHeaders
+                {
+                    ContentType = contentType
+                }
+            };
+
+            await blobClient.UploadAsync(stream, uploadOptions);
             return blobClient.Uri.ToString();
         }
         catch (Exception ex)
