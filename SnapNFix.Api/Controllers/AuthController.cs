@@ -77,7 +77,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("verify-phone/resend-otp")]
-    [Authorize("RequireOtpVerification")]
+    [Authorize("RequirePhoneVerification")]
     public async Task<IActionResult> ResendPhoneVerificationOtp([FromBody] ResendPhoneVerificationOtpCommand command)
     {
         var result = await _mediator.Send(command);
