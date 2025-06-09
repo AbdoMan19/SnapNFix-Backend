@@ -2,6 +2,6 @@ namespace SnapNFix.Infrastructure.Options;
 
 public class PhotoValidationOptions
 {
-    public string ValidationEndpoint { get; set; } = "https://snapnfix-ai-api.azurewebsites.net/api/v1/tasks/";
-    public string WebhookUrl { get; set; } = "https://webhook.site/0b560717-3b92-4faa-9410-6cae643fbf0f";
+    public string ValidationEndpoint { get; set; }
+    public string WebhookUrl { get; set; }
 }
