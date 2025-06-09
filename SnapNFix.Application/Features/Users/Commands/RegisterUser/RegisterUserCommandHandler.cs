@@ -17,6 +17,7 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITokenService _tokenService;
+    private readonly IDeviceManager _deviceManager;
 
     public RegisterUserCommandHandler(
         UserManager<User> userManager,
@@ -24,7 +25,8 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
         ILogger<RegisterUserCommandHandler> logger,
         IHttpContextAccessor httpContextAccessor,
         IUnitOfWork unitOfWork,
-        ITokenService tokenService)
+        ITokenService tokenService,
+        IDeviceManager deviceManager)
     {
         _userManager = userManager;
         _roleManager = roleManager;
@@ -32,6 +34,7 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
         _httpContextAccessor = httpContextAccessor;
         _unitOfWork = unitOfWork;
         _tokenService = tokenService;
+        _deviceManager = deviceManager;
     }
 
     public async Task<GenericResponseModel<LoginResponse>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
@@ -48,7 +51,7 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
             UserName = contact,
             PhoneNumberConfirmed = true,
         };
-        
+
         var result = await _userManager.CreateAsync(user, request.Password);
         if (!result.Succeeded)
         {
@@ -65,29 +68,37 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
         }
 
         await _userManager.AddToRoleAsync(user, citizenRoleName);
-        
-        //add user device to the user and generate the tokens
-        var userDevice = new UserDevice
+
+        UserDevice userDevice = null;
+
+        try
         {
-            DeviceId = request.DeviceId,
-            DeviceName = request.DeviceName,
-            DeviceType = request.DeviceType,
-            Platform = request.Platform,
-            UserId = user.Id //55
-        };
-        
-        // Generate new tokens
+            userDevice = await _deviceManager.RegisterDeviceAsync(
+                user.Id,
+                request.DeviceId,
+                request.DeviceName,
+                request.Platform,
+                request.DeviceType
+            );
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogWarning("Device registration failed: {Message}", ex.Message);
+            return GenericResponseModel<LoginResponse>.Failure("Device registration failed", new List<ErrorResponseModel>
+            {
+                ErrorResponseModel.Create("DeviceRegistrationFailed", ex.Message)
+            });
+        }
+
+
         var accessToken = await _tokenService.GenerateJwtToken(user, userDevice);
         var refreshTokenObj = _tokenService.GenerateRefreshToken(userDevice);
-        // Add new refresh token
-        userDevice.RefreshToken = refreshTokenObj;
-        await _unitOfWork.Repository<UserDevice>().Add(userDevice);
-        await _unitOfWork.Repository<RefreshToken>().Add(refreshTokenObj);
-        
 
-        // Single database call
+        userDevice.RefreshToken = refreshTokenObj;
+        await _unitOfWork.Repository<RefreshToken>().Add(refreshTokenObj);
+
         await _unitOfWork.SaveChanges();
-        _logger.LogInformation("User {UserId} logged in successfully from device {DeviceId}", 
+        _logger.LogInformation("User {UserId} logged in successfully from device {DeviceId}",
             user.Id, request.DeviceId);
 
         return GenericResponseModel<LoginResponse>.Success(new LoginResponse

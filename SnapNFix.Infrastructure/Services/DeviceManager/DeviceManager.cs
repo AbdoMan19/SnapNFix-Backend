@@ -18,14 +18,20 @@ public class DeviceManager : IDeviceManager
 
     public async Task<UserDevice> RegisterDeviceAsync(Guid userId, string deviceId, string deviceName, string platform, string deviceType)
     {
-        var existingDevice = await GetDeviceAsync(userId, deviceId);
-        if (existingDevice != null)
+        var deviceWithSameId = await _unitOfWork.Repository<UserDevice>()
+            .FindBy(d => d.DeviceId == deviceId && d.DeviceName == deviceName)
+            .FirstOrDefaultAsync();
+
+        if (deviceWithSameId != null)
         {
-            existingDevice.LastUsedAt = DateTime.UtcNow;
-            await _unitOfWork.Repository<UserDevice>().Update(existingDevice);
-            return existingDevice;
+            if (deviceWithSameId.UserId == userId)
+            {
+                deviceWithSameId.LastUsedAt = DateTime.UtcNow;
+                await _unitOfWork.Repository<UserDevice>().Update(deviceWithSameId);
+                return deviceWithSameId;
+            }
+            throw new InvalidOperationException("This device is already registered to another user.");
         }
-        
 
         var newDevice = new UserDevice
         {
@@ -41,7 +47,6 @@ public class DeviceManager : IDeviceManager
 
         return newDevice;
     }
-
     public async Task<UserDevice?> GetDeviceAsync(Guid userId, string deviceId)
     {
         return await _unitOfWork.Repository<UserDevice>()
