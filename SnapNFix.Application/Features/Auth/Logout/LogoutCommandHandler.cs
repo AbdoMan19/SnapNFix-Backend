@@ -1,14 +1,8 @@
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
-using SnapNFix.Application.Utilities;
-using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
+
 
 namespace SnapNFix.Application.Features.Auth.Logout;
 
@@ -36,36 +30,29 @@ public class LogoutCommandHandler : IRequestHandler<LogoutCommand, GenericRespon
     {
         try
         {
-            // Validate device ID from current context
             var currentDeviceId = _deviceManager.GetCurrentDeviceId();
             var currentUserId = await _userService.GetCurrentUserIdAsync();
         
 
-            // Start transaction for database operations
             await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
             
             try
             {
-                // Find active refresh token for this device
                 var success = await _deviceManager.DeactivateDeviceAsync(currentUserId, currentDeviceId);
 
                 if (!success)
                 {
-                    // Log the token out by expiring it
                     _logger.LogInformation("Logging out device {DeviceId} by expiring refresh token", currentDeviceId);
-                    //return generic response
                     return GenericResponseModel<bool>.Failure("No active refresh token found for this device");
                 }
                 await _unitOfWork.SaveChanges();
                 
-                // Commit the transaction
                 await transaction.CommitAsync(cancellationToken);
                 
                 return GenericResponseModel<bool>.Success(true);
             }
             catch (Exception ex)
             {
-                // Rollback on database errors
                 await transaction.RollbackAsync(cancellationToken);
                 _logger.LogError(ex, "Error during logout process for device {DeviceId}", currentDeviceId);
                 throw;

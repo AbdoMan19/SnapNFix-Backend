@@ -69,26 +69,14 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
 
         await _userManager.AddToRoleAsync(user, citizenRoleName);
 
-        UserDevice userDevice = null;
+        UserDevice userDevice = await _deviceManager.RegisterDeviceAsync(
+            user.Id,
+            request.DeviceId,
+            request.DeviceName,
+            request.Platform,
+            request.DeviceType
+        );
 
-        try
-        {
-            userDevice = await _deviceManager.RegisterDeviceAsync(
-                user.Id,
-                request.DeviceId,
-                request.DeviceName,
-                request.Platform,
-                request.DeviceType
-            );
-        }
-        catch (InvalidOperationException ex)
-        {
-            _logger.LogWarning("Device registration failed: {Message}", ex.Message);
-            return GenericResponseModel<LoginResponse>.Failure("Device registration failed", new List<ErrorResponseModel>
-            {
-                ErrorResponseModel.Create("DeviceRegistrationFailed", ex.Message)
-            });
-        }
 
 
         var accessToken = await _tokenService.GenerateJwtToken(user, userDevice);

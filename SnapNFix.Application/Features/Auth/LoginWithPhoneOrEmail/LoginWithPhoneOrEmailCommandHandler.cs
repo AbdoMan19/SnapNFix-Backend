@@ -75,7 +75,6 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
 
             await _userManager.ResetAccessFailedCountAsync(identityUser);
 
-            // Start a transaction for all database operations
             await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
             
             try
@@ -87,29 +86,12 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
                     request.Platform,
                     request.DeviceType);
 
-                bool isNewDevice = userDevice.Id == Guid.Empty;
-                
-                if (isNewDevice)
-                {
-                    await _unitOfWork.Repository<UserDevice>().Add(userDevice);
-                    // Save now only if we need the ID for child entities
-                    await _unitOfWork.SaveChanges();
-                    
-                    _logger.LogInformation("New device registered for user {UserId} with device ID {DeviceId}",
-                        identityUser.Id, request.DeviceId);
-                }
-                else
-                {
-                    userDevice.LastUsedAt = DateTime.UtcNow;
-                    await _unitOfWork.Repository<UserDevice>().Update(userDevice);
-                }
 
                 var accessToken = await _tokenService.GenerateJwtToken(identityUser, userDevice);
                 string refreshTokenString;
 
                 if (userDevice.RefreshToken != null)
                 {
-                    Console.WriteLine("Refresh token exists, updating it");
                     refreshTokenString = _tokenService.GenerateRefreshToken();
                     userDevice.RefreshToken.Token = refreshTokenString;
                     userDevice.RefreshToken.Expires = _tokenService.GetRefreshTokenExpirationDays();
@@ -128,12 +110,10 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
                     refreshTokenString = refreshTokenObj.Token;
                     await _unitOfWork.Repository<Domain.Entities.RefreshToken>().Add(refreshTokenObj);
                     userDevice.RefreshToken = refreshTokenObj;
+                    userDevice.RefreshTokenId = refreshTokenObj.Id;
                 }
 
-                // Single SaveChanges() for all pending changes
                 await _unitOfWork.SaveChanges();
-                
-                // Commit the transaction
                 await transaction.CommitAsync(cancellationToken);
                 
                 _logger.LogInformation("User {UserId} logged in successfully from device {DeviceId}", 
@@ -160,7 +140,6 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
             }
             catch (Exception ex)
             {
-                // Rollback on error
                 await transaction.RollbackAsync(cancellationToken);
                 _logger.LogError(ex, "Database operation failed during login for user with ID {UserId}", identityUser?.Id);
                 return GenericResponseModel<LoginResponse>.Failure("An error occurred during login");

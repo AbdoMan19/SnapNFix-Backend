@@ -1,0 +1,757 @@
+{
+  "info": {
+    "name": "SnapNFix Authentication Tests",
+    "description": "Comprehensive authentication system integration tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "{{BASE_URL}}",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "phoneVerificationToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "registrationToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "passwordResetToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "testPhoneNumber",
+      "value": "+201234567890",
+      "type": "string"
+    },
+    {
+      "key": "testEmail",
+      "value": "test@example.com",
+      "type": "string"
+    },
+    {
+      "key": "deviceId",
+      "value": "test-device-123",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Phone Verification Flow",
+      "item": [
+        {
+          "name": "Request Phone Verification OTP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response contains token', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.data).to.not.be.empty;",
+                  "    pm.collectionVariables.set('phoneVerificationToken', responseJson.data);",
+                  "});",
+                  "",
+                  "pm.test('Response structure is correct', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('message');",
+                  "    pm.expect(responseJson).to.have.property('data');",
+                  "    pm.expect(responseJson.errorList).to.be.an('array').that.is.empty;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phoneNumber\": \"{{testPhoneNumber}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/verify-phone/request-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "verify-phone", "request-otp"]
+            }
+          }
+        },
+        {
+          "name": "Verify Phone OTP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Registration token received', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.data).to.not.be.empty;",
+                  "    pm.collectionVariables.set('registrationToken', responseJson.data);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{phoneVerificationToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"otp\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/verify-phone/verify-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "verify-phone", "verify-otp"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Registration",
+      "item": [
+        {
+          "name": "Register New User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('User registered successfully', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.data).to.have.property('tokens');",
+                  "    pm.expect(responseJson.data).to.have.property('user');",
+                  "    ",
+                  "    // Store tokens for further tests",
+                  "    pm.collectionVariables.set('accessToken', responseJson.data.tokens.token);",
+                  "    pm.collectionVariables.set('refreshToken', responseJson.data.tokens.refreshToken);",
+                  "});",
+                  "",
+                  "pm.test('User data is complete', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    const user = responseJson.data.user;",
+                  "    pm.expect(user).to.have.property('id');",
+                  "    pm.expect(user).to.have.property('firstName');",
+                  "    pm.expect(user).to.have.property('lastName');",
+                  "    pm.expect(user).to.have.property('phoneNumber');",
+                  "    pm.expect(user.phoneNumberConfirmed).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{registrationToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Test\",\n  \"lastName\": \"User\",\n  \"password\": \"TestPassword123!\",\n  \"confirmPassword\": \"TestPassword123!\",\n  \"deviceId\": \"{{deviceId}}\",\n  \"deviceName\": \"Test Device\",\n  \"deviceType\": \"Mobile\",\n  \"platform\": \"iOS\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Login Flow",
+      "item": [
+        {
+          "name": "Login with Phone Number",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Login successful', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.data).to.have.property('tokens');",
+                  "    pm.expect(responseJson.data).to.have.property('user');",
+                  "    ",
+                  "    // Update tokens",
+                  "    pm.collectionVariables.set('accessToken', responseJson.data.tokens.token);",
+                  "    pm.collectionVariables.set('refreshToken', responseJson.data.tokens.refreshToken);",
+                  "});",
+                  "",
+                  "pm.test('Token structure is valid', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    const tokens = responseJson.data.tokens;",
+                  "    pm.expect(tokens).to.have.property('token');",
+                  "    pm.expect(tokens).to.have.property('refreshToken');",
+                  "    pm.expect(tokens).to.have.property('expiresAt');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"emailOrPhoneNumber\": \"{{testPhoneNumber}}\",\n  \"password\": \"TestPassword123!\",\n  \"deviceId\": \"{{deviceId}}\",\n  \"deviceName\": \"Test Device\",\n  \"deviceType\": \"Mobile\",\n  \"platform\": \"iOS\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login with Invalid Credentials",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Error message present', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.errorList).to.not.be.empty;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"emailOrPhoneNumber\": \"{{testPhoneNumber}}\",\n  \"password\": \"WrongPassword123!\",\n  \"deviceId\": \"{{deviceId}}\",\n  \"deviceName\": \"Test Device\",\n  \"deviceType\": \"Mobile\",\n  \"platform\": \"iOS\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Token Management",
+      "item": [
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('New tokens received', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.data).to.have.property('token');",
+                  "    pm.expect(responseJson.data).to.have.property('refreshToken');",
+                  "    ",
+                  "    // Update tokens",
+                  "    pm.collectionVariables.set('accessToken', responseJson.data.token);",
+                  "    pm.collectionVariables.set('refreshToken', responseJson.data.refreshToken);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/refresh-token",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "refresh-token"]
+            }
+          }
+        },
+        {
+          "name": "Access Protected Endpoint",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Protected resource accessed', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('data');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/snapreports/my-reports",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "snapreports", "my-reports"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Password Reset Flow",
+      "item": [
+        {
+          "name": "Request Password Reset OTP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Reset token received', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.data).to.not.be.empty;",
+                  "    pm.collectionVariables.set('passwordResetToken', responseJson.data);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"emailOrPhoneNumber\": \"{{testPhoneNumber}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/forget-password/request-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "forget-password", "request-otp"]
+            }
+          }
+        },
+        {
+          "name": "Verify Password Reset OTP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Reset verification token received', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.data).to.not.be.empty;",
+                  "    pm.collectionVariables.set('passwordResetToken', responseJson.data);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{passwordResetToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"otp\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/forget-password/verify-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "forget-password", "verify-otp"]
+            }
+          }
+        },
+        {
+          "name": "Reset Password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Password reset successful', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.data).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{passwordResetToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"newPassword\": \"NewTestPassword123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/forget-password/reset",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "forget-password", "reset"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Google OAuth",
+      "item": [
+        {
+          "name": "Google Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Skip this test in automated runs since it requires real Google token",
+                  "if (pm.environment.get('SKIP_GOOGLE_TEST') === 'true') {",
+                  "    pm.test.skip('Google login test skipped in automated run');",
+                  "    return;",
+                  "}",
+                  "",
+                  "pm.test('Status code should be 200 with valid token', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Google login successful', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.data).to.have.property('tokens');",
+                  "    pm.expect(responseJson.data).to.have.property('user');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accessToken\": \"MOCK_GOOGLE_TOKEN\",\n  \"deviceId\": \"{{deviceId}}\",\n  \"deviceName\": \"Test Device\",\n  \"deviceType\": \"Mobile\",\n  \"platform\": \"iOS\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/google/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "google", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Logout",
+      "item": [
+        {
+          "name": "Logout User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Logout successful', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.data).to.be.true;",
+                  "});",
+                  "",
+                  "// Clear tokens after logout",
+                  "pm.collectionVariables.set('accessToken', '');",
+                  "pm.collectionVariables.set('refreshToken', '');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "logout"]
+            }
+          }
+        },
+        {
+          "name": "Access Protected Endpoint After Logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test('Access denied after logout', function () {",
+                  "    // This confirms that logout properly invalidated the token",
+                  "    pm.expect(pm.response.code).to.equal(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/snapreports/my-reports",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "snapreports", "my-reports"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Validation Tests",
+      "item": [
+        {
+          "name": "Invalid Phone Number Format",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Validation error returned', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.errorList).to.not.be.empty;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phoneNumber\": \"invalid-phone\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/verify-phone/request-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "verify-phone", "request-otp"]
+            }
+          }
+        },
+        {
+          "name": "Weak Password Registration",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Password validation error', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.errorList).to.not.be.empty;",
+                  "    const passwordErrors = responseJson.errorList.filter(err => err.propertyName.toLowerCase().includes('password'));",
+                  "    pm.expect(passwordErrors).to.not.be.empty;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{registrationToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Test\",\n  \"lastName\": \"User\",\n  \"password\": \"weak\",\n  \"confirmPassword\": \"weak\",\n  \"deviceId\": \"{{deviceId}}\",\n  \"deviceName\": \"Test Device\",\n  \"deviceType\": \"Mobile\",\n  \"platform\": \"iOS\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Generate unique test data for each run",
+          "const timestamp = Date.now();",
+          "const randomSuffix = Math.floor(Math.random() * 1000);",
+          "",
+          "// Update test phone number with timestamp to avoid conflicts",
+          "const basePhone = '+2010';",
+          "const uniquePhone = basePhone + timestamp.toString().slice(-8);",
+          "pm.collectionVariables.set('testPhoneNumber', uniquePhone);",
+          "",
+          "// Update device ID to be unique",
+          "const uniqueDeviceId = 'test-device-' + timestamp + '-' + randomSuffix;",
+          "pm.collectionVariables.set('deviceId', uniqueDeviceId);",
+          "",
+          "console.log('Test run initialized with:');",
+          "console.log('Phone:', uniquePhone);",
+          "console.log('Device ID:', uniqueDeviceId);"
+        ]
+      }
+    }
+  ]
+}

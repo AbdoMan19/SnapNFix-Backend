@@ -19,18 +19,26 @@ public class DeviceManager : IDeviceManager
     public async Task<UserDevice> RegisterDeviceAsync(Guid userId, string deviceId, string deviceName, string platform, string deviceType)
     {
         var deviceWithSameId = await _unitOfWork.Repository<UserDevice>()
-            .FindBy(d => d.DeviceId == deviceId && d.DeviceName == deviceName)
+            .FindBy(d => d.DeviceId == deviceId)
+            .Include(d => d.RefreshToken)
             .FirstOrDefaultAsync();
 
         if (deviceWithSameId != null)
         {
-            if (deviceWithSameId.UserId == userId)
+
+            if (deviceWithSameId.RefreshToken != null)
             {
-                deviceWithSameId.LastUsedAt = DateTime.UtcNow;
-                await _unitOfWork.Repository<UserDevice>().Update(deviceWithSameId);
-                return deviceWithSameId;
+                deviceWithSameId.RefreshToken.Expires = DateTime.UtcNow;
+                await _unitOfWork.Repository<RefreshToken>().Update(deviceWithSameId.RefreshToken);
             }
-            throw new InvalidOperationException("This device is already registered to another user.");
+
+            deviceWithSameId.UserId = userId;
+            deviceWithSameId.LastUsedAt = DateTime.UtcNow;
+            deviceWithSameId.Platform = platform;
+            deviceWithSameId.DeviceType = deviceType;
+
+            await _unitOfWork.Repository<UserDevice>().Update(deviceWithSameId);
+            return deviceWithSameId;
         }
 
         var newDevice = new UserDevice
