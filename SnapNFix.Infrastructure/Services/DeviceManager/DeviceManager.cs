@@ -18,10 +18,7 @@ public class DeviceManager : IDeviceManager
 
     public async Task<UserDevice> RegisterDeviceAsync(Guid userId, string deviceId, string deviceName, string platform, string deviceType)
     {
-        var deviceWithSameId = await _unitOfWork.Repository<UserDevice>()
-            .FindBy(d => d.DeviceId == deviceId)
-            .Include(d => d.RefreshToken)
-            .FirstOrDefaultAsync();
+        var deviceWithSameId = await GetDeviceAsync(userId, deviceId);
 
         if (deviceWithSameId != null)
         {
