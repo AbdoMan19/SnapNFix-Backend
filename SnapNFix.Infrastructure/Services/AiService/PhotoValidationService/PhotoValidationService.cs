@@ -30,7 +30,7 @@ public class PhotoValidationService : IPhotoValidationService
         _serviceScopeFactory = serviceScopeFactory;
     }
 
-    public async Task<string> SendImageForValidationAsync(string imagePath, CancellationToken cancellationToken)
+    public async Task<string> SendImageForValidationAsync(string imageUrl, CancellationToken cancellationToken)
     {
         try
         {
@@ -38,13 +38,9 @@ public class PhotoValidationService : IPhotoValidationService
             var webhookUrl = _photoValidationOptions.WebhookUrl;
 
 
-            var imageUrl =
-                "https://www.google.com/imgres?q=pothole&imgurl=https%3A%2F%2Fimages.squarespace-cdn.com%2Fcontent%2Fv1%2F573365789f726693272dc91a%2F1704992146415-CI272VYXPALWT52IGLUB%2FAdobeStock_201419293.jpeg%3Fformat%3D1500w&imgrefurl=https%3A%2F%2Fwww.omag.org%2Fnews%2F2024%2F1%2F1%2Fpotholes-how-they-form-and-how-they-can-be-prevented&docid=gzLygswCYinemM&tbnid=bAgXLflP_xF8eM&vet=12ahUKEwjYt-GJk5qNAxXzKvsDHcfJKsAQM3oECGcQAA..i&w=1500&h=1004&hcb=2&ved=2ahUKEwjYt-GJk5qNAxXzKvsDHcfJKsAQM3oECGcQAA";
-            
 
             using var httpClient = _httpClientFactory.CreateClient();
             using var formData = new MultipartFormDataContent();
-            // Add form fields
             
             formData.Add(new StringContent(imageUrl), "image_url");
             formData.Add(new StringContent(webhookUrl), "callback_url");

@@ -86,7 +86,6 @@ public class CreateSnapReportCommandHandler : IRequestHandler<CreateSnapReportCo
                 _logger.LogInformation("Successfully created snap report with ID {ReportId} for user {UserId}", 
                     snapReport.Id, currentUserId);
                 
-                // Map to DTO for response
                 var reportDto = new ReportDetailsDto
                 {
                     Id = snapReport.Id,
