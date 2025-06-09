@@ -28,8 +28,18 @@ bool>>
 
     public async Task<GenericResponseModel<bool>> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-        
+        var contactClaim = _httpContextAccessor.HttpContext?.User.Claims
+            .FirstOrDefault(c => c.Type == "contact")?.Value;
+
+        if (string.IsNullOrEmpty(contactClaim))
+        {
+            _logger.LogWarning("Contact number not found in the request");
+            return GenericResponseModel<bool>.Failure(Constants.FailureMessage, new List<ErrorResponseModel>
+            {
+                ErrorResponseModel.Create(nameof(request.NewPassword), "Contact number not found")
+            });
+        }
+        var user = await _userManager.FindByNameAsync(contactClaim);
         if (user == null || user.IsDeleted || user.IsSuspended)
         {
             _logger.LogWarning("User not found for password reset attempt");

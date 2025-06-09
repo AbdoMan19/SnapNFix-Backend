@@ -52,7 +52,7 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
 
             var identityUser = await _userManager.FindByIdAsync(user.Id.ToString());
             
-            var passwordValid = await _userManager.CheckPasswordAsync(identityUser, request.Password );
+            var passwordValid = await _userManager.CheckPasswordAsync(identityUser, request.Password);
             if (!passwordValid)
             {
                 _logger.LogWarning("Invalid password attempt for user {UserId}", identityUser.Id);
