@@ -17,7 +17,7 @@ public class ResendForgetPasswordOtpCommandHandler : IRequestHandler<ResendForge
     private readonly ILogger<ResendForgetPasswordOtpCommandHandler> _logger;
     
     private readonly IUserValidationService _userValidationService;
-    private readonly IHttpContextAccessor httpContextAccessor;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
   public ResendForgetPasswordOtpCommandHandler(
   IUnitOfWork unitOfWork,
@@ -30,30 +30,29 @@ public class ResendForgetPasswordOtpCommandHandler : IRequestHandler<ResendForge
     _unitOfWork = unitOfWork;
     _otpService = otpService;
     _logger = logger;
-    this.httpContextAccessor = httpContextAccessor;
+    _httpContextAccessor = httpContextAccessor;
     _userValidationService = userValidationService;
   }
 
   public async Task<GenericResponseModel<bool>> Handle(ResendForgetPasswordOtpCommand request, CancellationToken cancellationToken)
   {
 
-    var phoneNumber = httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.MobilePhone)?.Value;
-    
-    if (string.IsNullOrEmpty(phoneNumber))
+    var contactClaim = _httpContextAccessor.HttpContext?.User.Claims
+            .FirstOrDefault(c => c.Type == "contact")?.Value;
+
+    if (string.IsNullOrEmpty(contactClaim))
     {
-      _logger.LogWarning("Phone number not found in the request");
-      return GenericResponseModel<bool>.Failure("Phone number not found");
+      _logger.LogWarning("Contact number not found in the request");
+      return GenericResponseModel<bool>.Failure("Contact number not found");
     }
 
-    
-    await _otpService.InvalidateOtpAsync(phoneNumber, OtpPurpose.ForgotPassword);
+    await _otpService.InvalidateOtpAsync(contactClaim, OtpPurpose.ForgotPassword);
 
-    var otp = await _otpService.GenerateOtpAsync(phoneNumber, OtpPurpose.ForgotPassword);
+    var otp = await _otpService.GenerateOtpAsync(contactClaim, OtpPurpose.ForgotPassword);
 
     // TODO : Send OTP to user via SMS
-    
 
-    _logger.LogInformation("OTP sent successfully to {PhoneNumber}", phoneNumber);
+    _logger.LogInformation("OTP sent successfully to {ContactClaim}", contactClaim);
     return GenericResponseModel<bool>.Success(true);
   }
 }

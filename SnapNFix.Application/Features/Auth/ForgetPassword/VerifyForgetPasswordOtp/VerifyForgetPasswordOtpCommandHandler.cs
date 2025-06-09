@@ -21,7 +21,7 @@ public class VerifyForgetPasswordOtpCommandHandler : IRequestHandler<VerifyForge
     private readonly IHttpContextAccessor _httpContextAccessor;
 
     public VerifyForgetPasswordOtpCommandHandler(IUserService userService,
-     ILogger<VerifyForgetPasswordOtpCommandHandler> logger, IOtpService otpService, ITokenService tokenService, UserManager<User> userManager, IHttpContextAccessor httpContextAccessor)
+        ILogger<VerifyForgetPasswordOtpCommandHandler> logger, IOtpService otpService, ITokenService tokenService, UserManager<User> userManager, IHttpContextAccessor httpContextAccessor)
     {
         _userService = userService;
         _logger = logger;
@@ -33,10 +33,17 @@ public class VerifyForgetPasswordOtpCommandHandler : IRequestHandler<VerifyForge
 
     public async Task<GenericResponseModel<string>> Handle(VerifyForgetPasswordOtpCommand request, CancellationToken cancellationToken)
     {
-        //contact claim form the request token
         var contactClaim = _httpContextAccessor.HttpContext?.User.Claims
             .FirstOrDefault(c => c.Type == "contact")?.Value;
-      
+
+        if (string.IsNullOrEmpty(contactClaim))
+        {
+            _logger.LogWarning("Contact number not found in the request");
+            return GenericResponseModel<string>.Failure(Constants.FailureMessage, new List<ErrorResponseModel>
+            {
+                ErrorResponseModel.Create(nameof(request.Otp), "Contact number not found")
+            });
+        }
 
         var otpVerificationResult = await _otpService.VerifyOtpAsync(contactClaim, request.Otp, OtpPurpose.ForgotPassword);
 
