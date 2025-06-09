@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy ASP.Net Core app to Azure Web App - SnapNFix-Backend
+name: Build and deploy ASP.Net Core app to Azure Web App - SnapNFix
 
 on:
   push:
@@ -61,7 +61,7 @@ jobs:
       - name: Set App Settings
         uses: azure/appservice-settings@v1
         with:
-          app-name: "SnapNFix-Backend"
+          app-name: 'SnapNFix'
           app-settings-json: |
             [
               {
@@ -89,6 +89,6 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: "SnapNFix-Backend"
+          app-name: 'SnapNFix'
           slot-name: "Production"
           package: .
