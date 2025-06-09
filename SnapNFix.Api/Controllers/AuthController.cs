@@ -101,7 +101,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("forget-password/resend-otp")]
-    [Authorize(Policy = "RequestResetPassword")]
+    [Authorize(Policy = "RequirePasswordResetVerification")]
     public async Task<IActionResult> ResendForgetPasswordOtp([FromBody] ResendForgetPasswordOtpCommand command)
     {
         var result = await _mediator.Send(command);

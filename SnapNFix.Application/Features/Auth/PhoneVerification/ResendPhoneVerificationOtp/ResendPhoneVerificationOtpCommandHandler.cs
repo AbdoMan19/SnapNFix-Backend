@@ -26,22 +26,24 @@ public class ResendPhoneVerificationOtpCommandHandler : IRequestHandler<ResendPh
 
     public async Task<GenericResponseModel<bool>> Handle(ResendPhoneVerificationOtpCommand request, CancellationToken cancellationToken)
     {
-        var phoneNumber = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.MobilePhone)?.Value;
-        if (string.IsNullOrEmpty(phoneNumber))
+        var contactClaim = _httpContextAccessor.HttpContext?.User.Claims
+            .FirstOrDefault(c => c.Type == "contact")?.Value;
+
+        if (string.IsNullOrEmpty(contactClaim))
         {
-            _logger.LogWarning("Phone number not found in the request token");
-            return GenericResponseModel<bool>.Failure("Phone number not found");
+            _logger.LogWarning("Contact number not found in the request token");
+            return GenericResponseModel<bool>.Failure("Contact number not found");
         }
 
-        await _otpService.InvalidateOtpAsync(phoneNumber, OtpPurpose.PhoneVerification);
+        await _otpService.InvalidateOtpAsync(contactClaim, OtpPurpose.PhoneVerification);
 
-        var otp = await _otpService.GenerateOtpAsync(phoneNumber, OtpPurpose.PhoneVerification);
+        var otp = await _otpService.GenerateOtpAsync(contactClaim, OtpPurpose.PhoneVerification);
 
         // TODO: Send OTP to user via SMS
         // When you implement SMS service, uncomment and use it here
-        // await _smsService.SendSmsAsync(phoneNumber, otp, "Your verification code is: {0}");
+        // await _smsService.SendSmsAsync(contactClaim, otp, "Your verification code is: {0}");
 
-        _logger.LogInformation("Verification OTP resent successfully to {PhoneNumber}", phoneNumber);
+        _logger.LogInformation("Verification OTP resent successfully to {ContactClaim}", contactClaim);
         return GenericResponseModel<bool>.Success(true);
     }
 }

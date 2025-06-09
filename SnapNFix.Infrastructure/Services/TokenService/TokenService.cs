@@ -165,7 +165,6 @@ public class TokenService : ITokenService
     }
 
 
-    // Generate OTP request token for registration
     public string GenerateToken(string emailOrPhoneNumber, TokenPurpose purpose)
     {
         var claims = new List<Claim>
@@ -177,7 +176,7 @@ public class TokenService : ITokenService
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        var expires = DateTime.UtcNow.AddMinutes(5); // Short-lived token
+        var expires = DateTime.UtcNow.AddMinutes(5); 
 
         var token = new JwtSecurityToken(
             issuer: _configuration["Jwt:Issuer"],
