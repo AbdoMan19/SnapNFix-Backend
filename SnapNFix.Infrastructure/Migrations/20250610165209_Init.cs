@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace SnapNFix.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -142,11 +142,11 @@ namespace SnapNFix.Infrastructure.Migrations
                     ImagePath = table.Column<string>(type: "text", nullable: false),
                     Location = table.Column<Point>(type: "geography(Point,4326)", nullable: false),
                     ImageStatus = table.Column<string>(type: "text", nullable: false),
-                    TaskId = table.Column<string>(type: "text", nullable: false),
+                    TaskId = table.Column<string>(type: "text", nullable: true),
+                    Threshold = table.Column<double>(type: "double precision", precision: 5, scale: 2, nullable: true),
                     ReportCategory = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    Category = table.Column<int>(type: "integer", nullable: false)
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -351,16 +351,6 @@ namespace SnapNFix.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_SnapReport_Category",
-                table: "SnapReport",
-                column: "Category");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SnapReport_ImageStatus",
-                table: "SnapReport",
-                column: "ImageStatus");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_SnapReport_IssueId",
                 table: "SnapReport",
                 column: "IssueId");
@@ -370,6 +360,12 @@ namespace SnapNFix.Infrastructure.Migrations
                 table: "SnapReport",
                 column: "Location")
                 .Annotation("Npgsql:IndexMethod", "GIST");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SnapReport_TaskId",
+                table: "SnapReport",
+                column: "TaskId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_SnapReport_UserId",

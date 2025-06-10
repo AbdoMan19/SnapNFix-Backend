@@ -2,8 +2,8 @@
 
 public enum ReportCategory
 {
-    Garbage,
     Pothole,
+    Garbage,
     DefectiveManhole,
     NonDefectiveManhole,
     NotSpecified

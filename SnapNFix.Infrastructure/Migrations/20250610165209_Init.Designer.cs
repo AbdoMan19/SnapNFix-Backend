@@ -13,8 +13,8 @@ using SnapNFix.Infrastructure.Context;
 namespace SnapNFix.Infrastructure.Migrations
 {
     [DbContext(typeof(SnapNFixContext))]
-    [Migration("20250610032103_ModifiedReport")]
-    partial class ModifiedReport
+    [Migration("20250610165209_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
