@@ -20,6 +20,9 @@ public class AiValidationWebhookDto
     [JsonPropertyName("threshold")] 
     public double Threshold { get; set; } 
     
+    [JsonPropertyName("api_key")]
+    public string? ApiKey { get; set; }
+    
     [JsonIgnore]
     public ImageStatus ImageStatus => MapStatus();
     
@@ -48,6 +51,7 @@ public class AiValidationWebhookDto
             "pothole" => ReportCategory.Pothole,
             "defective_manhole" or "defectivemanhole" => ReportCategory.DefectiveManhole,
             "non_defective_manhole" or "nondefectivemanhole" => ReportCategory.NonDefectiveManhole,
+            "unknown" => ReportCategory.NotSpecified,
             _ => ReportCategory.NotSpecified
         };
     }

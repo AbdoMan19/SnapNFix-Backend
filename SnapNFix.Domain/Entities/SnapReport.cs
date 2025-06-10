@@ -30,9 +30,5 @@ public class SnapReport
     //dates
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? DeletedAt { get; set; }
-
-
-
-    public ReportCategory Category { get; set; }
     
 }

@@ -41,9 +41,13 @@ public class PhotoValidationService : IPhotoValidationService
                 imageUrl, webhookUrl);
 
             using var httpClient = _httpClientFactory.CreateClient();
+            httpClient.Timeout = TimeSpan.FromSeconds(_photoValidationOptions.TimeoutSeconds);
             
-
-            httpClient.Timeout = TimeSpan.FromMinutes(2);
+            // Add API key header if configured
+            if (!string.IsNullOrEmpty(_photoValidationOptions.WebhookApiKey))
+            {
+                httpClient.DefaultRequestHeaders.Add("X-API-Key", _photoValidationOptions.WebhookApiKey);
+            }
             
             using var formData = new MultipartFormDataContent();
             
@@ -107,7 +111,7 @@ public class PhotoValidationService : IPhotoValidationService
                 logger.LogInformation("Starting background photo validation for report {ReportId}", snapReport.Id);
 
                 var taskId = await SendImageForValidationAsync(
-                    snapReport.ImagePath,
+                    snapReport.ImagePath, // This should be the full URL from Azure Blob Storage
                     CancellationToken.None);
 
                 logger.LogInformation("Image of report {ReportId} sent for validation. TaskId: {TaskId}",
@@ -146,7 +150,7 @@ public class PhotoValidationService : IPhotoValidationService
             {
                 logger.LogError(ex, "Error processing photo validation for report {ReportId}", snapReport.Id);
                 
-                // Optionally, you could mark the report as failed here
+                // Mark the report as failed if validation service is unavailable
                 try
                 {
                     using var fallbackScope = _serviceScopeFactory.CreateScope();

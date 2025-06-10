@@ -19,8 +19,8 @@ public class ReportService : IReportService
     {
         // Use spatial index for efficient distance query
         var nearbyIssue = await _unitOfWork.Repository<Issue>()
-            .FindBy(i => i.Category == report.Category &&
-                         i.Location.IsWithinDistance(report.Location, Constants.NearbyIssueRadiusMeters))
+            .FindBy(i => i.Category == report.ReportCategory &&
+                            i.Location.IsWithinDistance(report.Location, Constants.NearbyIssueRadiusMeters))
             .OrderBy(i => i.Location.Distance(report.Location))
             .FirstOrDefaultAsync(cancellationToken);
 
@@ -36,13 +36,12 @@ public class ReportService : IReportService
             var newIssue = new Issue
             {
                 Location = report.Location,
-                Category = report.Category,
+                Category = report.ReportCategory,
                 Status = IssueStatus.Pending,
                 CreatedAt = DateTime.UtcNow
             };
 
             await _unitOfWork.Repository<Issue>().Add(newIssue);
-            // No need to save changes here, will be done in the transaction
             report.IssueId = newIssue.Id;
             report.Issue = newIssue;
         }

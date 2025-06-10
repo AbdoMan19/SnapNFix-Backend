@@ -32,9 +32,10 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
 
         await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
         
+        Domain.Entities.SnapReport? report = null;
         try
         {
-            var report = await _unitOfWork.Repository<Domain.Entities.SnapReport>()
+            report = await _unitOfWork.Repository<Domain.Entities.SnapReport>()
                 .FindBy(r => r.TaskId == request.TaskId)
                 .FirstOrDefaultAsync(cancellationToken);
 
@@ -55,25 +56,25 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
             }
 
             var oldStatus = report.ImageStatus;
-            var oldCategory = report.Category;
-            
+            var oldCategory = report.ReportCategory;
+
             report.ImageStatus = request.ImageStatus;
-            report.Category = request.ReportCategory;
+            report.ReportCategory = request.ReportCategory;
             report.Threshold = request.Threshold;
-            
+
             await _unitOfWork.Repository<Domain.Entities.SnapReport>().Update(report);
-            
+
             _logger.LogInformation("Updated report {ReportId}: Status {OldStatus} -> {NewStatus}, Category {OldCategory} -> {NewCategory}, Threshold: {Threshold}",
                 report.Id, oldStatus, request.ImageStatus, oldCategory, request.ReportCategory, request.Threshold);
 
             if (report.ImageStatus == ImageStatus.Approved)
             {
                 _logger.LogInformation("Report {ReportId} approved, attempting to attach to issue", report.Id);
-                
+
                 try
                 {
                     await _reportService.AttachReportWithIssue(report, cancellationToken);
-                    _logger.LogInformation("Successfully attached report {ReportId} to issue {IssueId}", 
+                    _logger.LogInformation("Successfully attached report {ReportId} to issue {IssueId}",
                         report.Id, report.IssueId);
                 }
                 catch (Exception ex)
@@ -88,10 +89,10 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
 
             await _unitOfWork.SaveChanges();
             await transaction.CommitAsync(cancellationToken);
-            
+
             _logger.LogInformation("Successfully processed AI validation result for TaskId: {TaskId}, Report: {ReportId}",
                 request.TaskId, report.Id);
-            
+
             return GenericResponseModel<bool>.Success(true);
         }
         catch (DbUpdateConcurrencyException ex)
@@ -104,6 +105,24 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
         {
             await transaction.RollbackAsync(cancellationToken);
             _logger.LogError(ex, "Database error while processing AI validation result for TaskId: {TaskId}", request.TaskId);
+
+            try
+            {
+                if (report != null)
+                {
+                    report.ImageStatus = ImageStatus.Declined;
+                    report.IssueId = null;
+                    report.Issue = null; 
+                    await _unitOfWork.Repository<Domain.Entities.SnapReport>().Update(report);
+                    await _unitOfWork.SaveChanges();
+                    _logger.LogInformation("Set report {ReportId} status to Declined due to DbUpdateException", report.Id);
+                }
+            }
+            catch (Exception updateEx)
+            {
+                _logger.LogError(updateEx, "Failed to set report status to Declined after DbUpdateException for TaskId: {TaskId}", request.TaskId);
+            }
+
             return GenericResponseModel<bool>.Failure("Database error occurred while updating the report");
         }
         catch (Exception ex)

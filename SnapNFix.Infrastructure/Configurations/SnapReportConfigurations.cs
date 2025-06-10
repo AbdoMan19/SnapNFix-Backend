@@ -46,8 +46,6 @@ public class SnapReportConfiguration : IEntityTypeConfiguration<SnapReport>
         builder.HasIndex(r => r.TaskId).IsUnique();
         builder.HasIndex(r => r.UserId);
         builder.HasIndex(r => r.IssueId);
-        builder.HasIndex(r => r.ImageStatus);
-        builder.HasIndex(r => r.Category);
         
 
         // PostGIS - Location column (geography point)

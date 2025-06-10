@@ -33,16 +33,19 @@ public class AiWebhookController : ControllerBase
     [HttpPost("validation-result")]
     public async Task<IActionResult> ReceiveValidationResult([FromBody] AiValidationWebhookDto request)
     {
-        _logger.LogInformation("Received AI validation webhook for TaskId: {TaskId}, Status: {Status}, Category: {Category}, ReportCategory: {ReportCategory}, Threshold: {Threshold}", 
-            request.TaskId, request.Status, request.Category, request.ReportCategory, request.Threshold);
+        _logger.LogInformation("Received AI validation webhook for TaskId: {TaskId}, Status: {Status}, Category: {Category}, Threshold: {Threshold}", 
+            request.TaskId, request.Status, request.Category, request.Threshold);
 
-        // Optional: Verify API key if you want to secure the webhook
-        // if (!string.IsNullOrEmpty(_photoValidationOptions.WebhookApiKey) && 
-        //     request.ApiKey != _photoValidationOptions.WebhookApiKey)
-        // {
-        //     _logger.LogWarning("Unauthorized webhook attempt with invalid API key for TaskId: {TaskId}", request.TaskId);
-        //     return Unauthorized("Invalid API key");
-        // }
+        // Verify API key if configured
+        if (!string.IsNullOrEmpty(_photoValidationOptions.WebhookApiKey))
+        {
+            var providedApiKey = Request.Headers["SNAPNFIX_API_KEY"].FirstOrDefault();
+            if (string.IsNullOrEmpty(providedApiKey) || providedApiKey != _photoValidationOptions.WebhookApiKey)
+            {
+                _logger.LogWarning("Unauthorized webhook attempt with invalid or missing API key for TaskId: {TaskId}", request.TaskId);
+                return Unauthorized("Invalid or missing API key");
+            }
+        }
 
         if (string.IsNullOrEmpty(request.TaskId))
         {

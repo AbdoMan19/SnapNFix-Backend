@@ -69,7 +69,7 @@ public class CreateSnapReportCommandHandler : IRequestHandler<CreateSnapReportCo
                     Location = point,
                     UserId = currentUserId,
                     ImageStatus = ImageStatus.Pending,
-                    Category = ReportCategory.NotSpecified
+                    ReportCategory = ReportCategory.NotSpecified
                 };
 
                 // Database operations - single insert
@@ -95,7 +95,7 @@ public class CreateSnapReportCommandHandler : IRequestHandler<CreateSnapReportCo
                     Longitude = request.Longitude,
                     Status = snapReport.ImageStatus,
                     CreatedAt = snapReport.CreatedAt,
-                    Category = snapReport.Category,
+                    Category = snapReport.ReportCategory,
                     IssueId = snapReport.IssueId
                 };
                 
