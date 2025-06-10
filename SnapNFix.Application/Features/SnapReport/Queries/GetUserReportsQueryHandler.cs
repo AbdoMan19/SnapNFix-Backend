@@ -1,11 +1,11 @@
 using Mapster;
 using MapsterMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using SnapNFix.Application.Common.Models;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.SnapReport.DTOs;
 using SnapNFix.Domain.Interfaces;
+using SnapNFix.Domain.Enums;
 
 namespace SnapNFix.Application.Features.SnapReport.Queries;
 
@@ -30,12 +30,18 @@ public class GetUserReportsQueryHandler :
         
         if (!string.IsNullOrEmpty(request.Status))
         {
-            query = query.Where(r => r.ImageStatus.ToString() == request.Status);
+            if (Enum.TryParse<ImageStatus>(request.Status, true, out var imageStatus))
+            {
+                query = query.Where(r => r.ImageStatus == imageStatus);
+            }
         }
 
         if (!string.IsNullOrEmpty(request.Category))
         {
-            query = query.Where(r => r.ReportCategory.ToString() == request.Category);
+            if (Enum.TryParse<ReportCategory>(request.Category, true, out var reportCategory))
+            {
+                query = query.Where(r => r.ReportCategory == reportCategory);
+            }
         }
 
         query = query.OrderByDescending(r => r.CreatedAt);

@@ -80,37 +80,24 @@ public class CreateSnapReportCommandHandler : IRequestHandler<CreateSnapReportCo
                 await transaction.CommitAsync(cancellationToken);
                 
                 // After successful save, start background task
-                // Note: This is outside transaction as it's a fire-and-forget operation
                 _photoValidationService.ProcessPhotoValidationInBackgroundAsync(snapReport);
 
+                
                 _logger.LogInformation("Successfully created snap report with ID {ReportId} for user {UserId}", 
                     snapReport.Id, currentUserId);
-                
-                var reportDto = new ReportDetailsDto
-                {
-                    Id = snapReport.Id,
-                    Comment = snapReport.Comment,
-                    ImagePath = snapReport.ImagePath,
-                    Latitude = request.Latitude,
-                    Longitude = request.Longitude,
-                    Status = snapReport.ImageStatus,
-                    CreatedAt = snapReport.CreatedAt,
-                    Category = snapReport.ReportCategory,
-                    IssueId = snapReport.IssueId
-                };
-                
+
+                var reportDto = snapReport.Adapt<ReportDetailsDto>();
+
                 return GenericResponseModel<ReportDetailsDto>.Success(reportDto);
             }
             catch (DbUpdateException dbEx)
             {
-                // Database-specific error handling
                 await transaction.RollbackAsync(cancellationToken);
                 _logger.LogError(dbEx, "Database error creating snap report");
                 return GenericResponseModel<ReportDetailsDto>.Failure("Database error occurred while saving the report");
             }
             catch (Exception ex)
             {
-                // General error during transaction
                 await transaction.RollbackAsync(cancellationToken);
                 _logger.LogError(ex, "Error during snap report creation transaction");
                 return GenericResponseModel<ReportDetailsDto>.Failure("Failed to create report");
@@ -118,7 +105,6 @@ public class CreateSnapReportCommandHandler : IRequestHandler<CreateSnapReportCo
         }
         catch (Exception ex)
         {
-            // Outer exception handling for non-transaction errors
             _logger.LogError(ex, "Unhandled exception creating snap report");
             return GenericResponseModel<ReportDetailsDto>.Failure("An unexpected error occurred");
         }

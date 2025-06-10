@@ -11,14 +11,19 @@ public class Mapper : IRegister
     public void Register(TypeAdapterConfig config)
     {
         config.NewConfig<LoginWithPhoneOrEmailCommand, UserDevice>();
+        
         TypeAdapterConfig<Domain.Entities.SnapReport, ReportDetailsDto>
             .NewConfig()
             .Map(dest => dest.Latitude, src => src.Location != null ? src.Location.Y : 0)
-            .Map(dest => dest.Longitude, src => src.Location != null ? src.Location.X : 0);
+            .Map(dest => dest.Longitude, src => src.Location != null ? src.Location.X : 0)
+            .Map(dest => dest.Status, src => src.ImageStatus) 
+            .Map(dest => dest.Category, src => src.ReportCategory); 
 
         TypeAdapterConfig<Domain.Entities.SnapReport, IssueDetailsDto>
             .NewConfig()
             .Map(dest => dest.Latitude, src => src.Location != null ? src.Location.Y : 0)
-            .Map(dest => dest.Longitude, src => src.Location != null ? src.Location.X : 0);
+            .Map(dest => dest.Longitude, src => src.Location != null ? src.Location.X : 0)
+            .Map(dest => dest.Category, src => src.ReportCategory.ToString())
+            .Map(dest => dest.Status, src => src.Issue != null ? src.Issue.Status.ToString() : "Unknown");
     }
 }
