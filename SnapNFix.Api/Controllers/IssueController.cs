@@ -5,22 +5,16 @@ using SnapNFix.Application.Common.Models;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Issue.DTOs;
 using SnapNFix.Application.Features.Issue.Queries;
-using SnapNFix.Application.Features.SnapReport.Commands.CreateSnapReport;
-using SnapNFix.Application.Features.SnapReport.DTOs;
-using SnapNFix.Application.Features.SnapReport.Queries;
 using SnapNFix.Domain.Interfaces;
 using SnapNFix.Infrastructure.Services.UserService;
-
 
 namespace SnapNFix.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-
 public class IssueController : ControllerBase
 {
   private readonly IMediator _mediator;
-
   private readonly IUserService UserService;
 
   public IssueController(IMediator mediator, IUserService userService)
@@ -31,10 +25,25 @@ public class IssueController : ControllerBase
 
   [Authorize("Citizen")]
   [HttpGet("get-nearby-issues")]
-  public async Task<ActionResult<GenericResponseModel<List<IssueDetailsDto>>>> GetNearbyIssues(
+  public async Task<ActionResult<GenericResponseModel<List<NearbyIssueDto>>>> GetNearbyIssues(
       [FromQuery] GetNearbyIssuesQuery query)
   {
     return Ok(await _mediator.Send(query));
+  }
+
+  [Authorize("Citizen")]
+  [HttpGet("{id}")]
+  public async Task<ActionResult<GenericResponseModel<IssueDetailsDto>>> GetIssueById(Guid id)
+  {
+    var query = new GetIssueByIdQuery { Id = id };
+    var result = await _mediator.Send(query);
+    
+    if (result.ErrorList.Count != 0)
+    {
+      return NotFound(result);
+    }
+    
+    return Ok(result);
   }
 
   [Authorize("Citizen")]
