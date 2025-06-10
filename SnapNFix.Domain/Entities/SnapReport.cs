@@ -1,5 +1,6 @@
 ﻿using NetTopologySuite.Geometries;
 using SnapNFix.Domain.Enums;
+
 namespace SnapNFix.Domain.Entities;
 
 public class SnapReport
@@ -16,19 +17,16 @@ public class SnapReport
 
     public string ImagePath { get; set; }
     
-    //location
     public Point Location { get; set; }
     
-    //ai response
     public ImageStatus ImageStatus { get; set; } = ImageStatus.Pending;
     public string? TaskId { get; set; }
     public double? Threshold { get; set; }
     
-    //report category
     public ReportCategory ReportCategory { get; set; } = ReportCategory.NotSpecified;
     
-    //dates
+    public Severity Severity { get; set; } = Severity.Medium;
+    
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? DeletedAt { get; set; }
-    
 }

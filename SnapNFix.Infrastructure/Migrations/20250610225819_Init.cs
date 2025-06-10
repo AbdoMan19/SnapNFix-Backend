@@ -29,7 +29,8 @@ namespace SnapNFix.Infrastructure.Migrations
                     Category = table.Column<string>(type: "text", nullable: false),
                     Location = table.Column<Point>(type: "geography(Point,4326)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    Status = table.Column<string>(type: "text", nullable: false)
+                    Status = table.Column<string>(type: "text", nullable: false),
+                    Severity = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -145,6 +146,7 @@ namespace SnapNFix.Infrastructure.Migrations
                     TaskId = table.Column<string>(type: "text", nullable: true),
                     Threshold = table.Column<double>(type: "double precision", precision: 5, scale: 2, nullable: true),
                     ReportCategory = table.Column<string>(type: "text", nullable: false),
+                    Severity = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },

@@ -19,5 +19,7 @@ public class ReportDetailsDto
     
     public ReportCategory Category { get; set; }
     
+    public Severity Severity { get; set; }
+    
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

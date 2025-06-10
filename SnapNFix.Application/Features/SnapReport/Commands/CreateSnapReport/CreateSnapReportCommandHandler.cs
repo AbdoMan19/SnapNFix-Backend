@@ -12,6 +12,7 @@ using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Application.Features.SnapReport.Commands.CreateSnapReport;
+
 public class CreateSnapReportCommandHandler : IRequestHandler<CreateSnapReportCommand, GenericResponseModel<ReportDetailsDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -69,7 +70,8 @@ public class CreateSnapReportCommandHandler : IRequestHandler<CreateSnapReportCo
                     Location = point,
                     UserId = currentUserId,
                     ImageStatus = ImageStatus.Pending,
-                    ReportCategory = ReportCategory.NotSpecified
+                    ReportCategory = ReportCategory.NotSpecified,
+                    Severity = request.Severity
                 };
 
                 // Database operations - single insert
@@ -83,8 +85,8 @@ public class CreateSnapReportCommandHandler : IRequestHandler<CreateSnapReportCo
                 _photoValidationService.ProcessPhotoValidationInBackgroundAsync(snapReport);
 
                 
-                _logger.LogInformation("Successfully created snap report with ID {ReportId} for user {UserId}", 
-                    snapReport.Id, currentUserId);
+                _logger.LogInformation("Successfully created snap report with ID {ReportId} for user {UserId} with severity {Severity}", 
+                    snapReport.Id, currentUserId, request.Severity);
 
                 var reportDto = snapReport.Adapt<ReportDetailsDto>();
 

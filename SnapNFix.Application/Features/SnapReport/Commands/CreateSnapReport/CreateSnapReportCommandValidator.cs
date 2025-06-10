@@ -25,5 +25,9 @@ public class CreateSnapReportCommandValidator : AbstractValidator<CreateSnapRepo
             .WithMessage("Longitude is required.")
             .InclusiveBetween(-180, 180)
             .WithMessage("Longitude must be between -180 and 180 degrees.");
+
+        RuleFor(x => x.Severity)
+            .IsInEnum()
+            .WithMessage("Invalid severity level.");
     }
 }

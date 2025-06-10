@@ -215,6 +215,10 @@ namespace SnapNFix.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("geography(Point,4326)");
 
+                    b.Property<string>("Severity")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");
@@ -299,6 +303,10 @@ namespace SnapNFix.Infrastructure.Migrations
                         .HasColumnType("geography(Point,4326)");
 
                     b.Property<string>("ReportCategory")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Severity")
                         .IsRequired()
                         .HasColumnType("text");
 

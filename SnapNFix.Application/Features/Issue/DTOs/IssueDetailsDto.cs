@@ -11,4 +11,5 @@ public class IssueDetailsDto
     public double Longitude { get; set; }
     public DateTime CreatedAt { get; set; }
     public string Status { get; set; } = string.Empty;
+    public string Severity { get; set; } = string.Empty;
 }

@@ -26,6 +26,7 @@ public class IssueConfiguration : IEntityTypeConfiguration<Issue>
         // Properties
         builder.Property(i => i.Status).HasConversion<string>();
         builder.Property(i => i.Category).HasConversion<string>();
+        builder.Property(i => i.Severity).HasConversion<string>();
         builder.Property(i => i.ImagePath)
             .IsRequired();
         builder.Property(i => i.CreatedAt)

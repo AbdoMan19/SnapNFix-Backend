@@ -26,6 +26,7 @@ public class SnapReportConfiguration : IEntityTypeConfiguration<SnapReport>
         // Properties
         builder.Property(r => r.ImageStatus).HasConversion<string>();
         builder.Property(r => r.ReportCategory).HasConversion<string>();
+        builder.Property(r => r.Severity).HasConversion<string>();
         builder.Property(r => r.Comment)
             .HasMaxLength(500)
             .IsRequired(false);

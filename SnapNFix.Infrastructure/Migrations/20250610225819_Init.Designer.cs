@@ -13,7 +13,7 @@ using SnapNFix.Infrastructure.Context;
 namespace SnapNFix.Infrastructure.Migrations
 {
     [DbContext(typeof(SnapNFixContext))]
-    [Migration("20250610165209_Init")]
+    [Migration("20250610225819_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -218,6 +218,10 @@ namespace SnapNFix.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("geography(Point,4326)");
 
+                    b.Property<string>("Severity")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");
@@ -302,6 +306,10 @@ namespace SnapNFix.Infrastructure.Migrations
                         .HasColumnType("geography(Point,4326)");
 
                     b.Property<string>("ReportCategory")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Severity")
                         .IsRequired()
                         .HasColumnType("text");
 
