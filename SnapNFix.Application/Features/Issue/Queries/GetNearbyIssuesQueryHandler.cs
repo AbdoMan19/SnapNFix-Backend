@@ -25,18 +25,18 @@ public class GetNearbyIssuesQueryHandler :
     {
         var userLocation = new Point(request.Longitude, request.Latitude) { SRID = 4326 };
         
-        var query = _unitOfWork.Repository<Domain.Entities.Issue>()
+        var issues = await _unitOfWork.Repository<Domain.Entities.Issue>()
             .GetQuerableData()
             .Where(i => i.Location.Distance(userLocation) <= request.Radius)
-            .Select(i => new NearbyIssueDto
-            {
-                Id = i.Id,
-                Latitude = i.Location.Y,
-                Longitude = i.Location.X
-            });
+            .ToListAsync(cancellationToken);
 
-        var issues = await query.ToListAsync(cancellationToken);
+        var issueDtos = issues.Select(issue => new NearbyIssueDto
+        {
+            Id = issue.Id,
+            Latitude = issue.Location.Y,
+            Longitude = issue.Location.X
+        }).ToList();
         
-        return GenericResponseModel<List<NearbyIssueDto>>.Success(issues);
+        return GenericResponseModel<List<NearbyIssueDto>>.Success(issueDtos);
     }
 }

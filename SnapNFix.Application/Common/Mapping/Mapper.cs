@@ -3,6 +3,7 @@ using SnapNFix.Application.Features.Auth.LoginWithPhoneOrEmail;
 using SnapNFix.Application.Features.Issue.DTOs;
 using SnapNFix.Application.Features.SnapReport.DTOs;
 using SnapNFix.Domain.Entities;
+using SnapNFix.Domain.Enums;
 
 namespace SnapNFix.Application.Common.Mapping;
 
@@ -34,7 +35,13 @@ public class Mapper : IRegister
             .Map(dest => dest.Longitude, src => src.Location != null ? src.Location.X : 0)
             .Map(dest => dest.Category, src => src.Category.ToString())
             .Map(dest => dest.Status, src => src.Status.ToString())
-            .Map(dest => dest.Severity, src => src.Severity.ToString());
+            .Map(dest => dest.Severity, src => src.Severity.ToString())
+            .Map(dest => dest.AssociatedImages, src => src.AssociatedSnapReports
+                .Where(sr => sr.ImageStatus == ImageStatus.Approved && !string.IsNullOrEmpty(sr.ImagePath))
+                .OrderBy(sr => sr.CreatedAt)
+                .Take(5)
+                .Select(sr => sr.ImagePath)
+                .ToList());
 
         TypeAdapterConfig<Domain.Entities.Issue, NearbyIssueDto>
             .NewConfig()

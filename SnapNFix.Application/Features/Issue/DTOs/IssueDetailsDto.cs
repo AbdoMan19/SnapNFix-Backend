@@ -12,4 +12,5 @@ public class IssueDetailsDto
     public DateTime CreatedAt { get; set; }
     public string Status { get; set; } = string.Empty;
     public string Severity { get; set; } = string.Empty;
+    public List<string> AssociatedImages { get; set; } = new List<string>();
 }
