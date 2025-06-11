@@ -57,6 +57,6 @@ public sealed class ValidationBehavior<TRequest, TResponse>
 
     private GenericResponseModel<T> CreateFailureResponse<T>(IList<ErrorResponseModel> errors)
     {
-        return GenericResponseModel<T>.Failure("Validation Failed", errors);
+        return new GenericResponseModel<T>("Validation Failed", errors);
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Application.Common.Services.LocationValidation;
 using SnapNFix.Application.Features.SnapReport.DTOs;
 using SnapNFix.Application.Utilities;
 using SnapNFix.Domain.Entities;
@@ -20,12 +21,14 @@ public class CreateSnapReportCommandHandler : IRequestHandler<CreateSnapReportCo
     private readonly IUserService _userService;
     private readonly IPhotoValidationService _photoValidationService;
     private readonly IImageProcessingService _imageProcessingService;
+    private readonly ILocationValidationService _locationValidationService;
 
     public CreateSnapReportCommandHandler(
         IUnitOfWork unitOfWork,
         IUserService userService,
         IPhotoValidationService photoValidationService,
         IImageProcessingService imageProcessingService,
+        ILocationValidationService locationValidationService,
         ILogger<CreateSnapReportCommandHandler> logger)
     {
         _unitOfWork = unitOfWork;
@@ -33,10 +36,23 @@ public class CreateSnapReportCommandHandler : IRequestHandler<CreateSnapReportCo
         _userService = userService;
         _photoValidationService = photoValidationService;
         _imageProcessingService = imageProcessingService;
+        _locationValidationService = locationValidationService;
     }
 
     public async Task<GenericResponseModel<ReportDetailsDto>> Handle(CreateSnapReportCommand request, CancellationToken cancellationToken)
     {
+        if (!_locationValidationService.IsWithinEgypt(request.Latitude, request.Longitude))
+        {
+            var locationMessage = _locationValidationService.GetLocationValidationMessage(request.Latitude, request.Longitude);
+            _logger.LogWarning("Report creation denied for location outside Egypt: Lat={Latitude}, Lng={Longitude}", 
+                request.Latitude, request.Longitude);
+            
+            return GenericResponseModel<ReportDetailsDto>.Failure(locationMessage, new List<ErrorResponseModel>
+            {
+                ErrorResponseModel.Create("Location", locationMessage)
+            });
+        }
+
         // Image validation - no database access
         var (isValid, errorMessage) = await _imageProcessingService.ValidateImageAsync(request.Image);
         if (!isValid)
@@ -47,7 +63,6 @@ public class CreateSnapReportCommandHandler : IRequestHandler<CreateSnapReportCo
 
         try
         {
-            // Start explicit transaction
             await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
             
             try
@@ -85,8 +100,8 @@ public class CreateSnapReportCommandHandler : IRequestHandler<CreateSnapReportCo
                 _photoValidationService.ProcessPhotoValidationInBackgroundAsync(snapReport);
 
                 
-                _logger.LogInformation("Successfully created snap report with ID {ReportId} for user {UserId} with severity {Severity}", 
-                    snapReport.Id, currentUserId, request.Severity);
+                _logger.LogInformation("Successfully created snap report with ID {ReportId} for user {UserId} at location Lat={Latitude}, Lng={Longitude}", 
+                    snapReport.Id, currentUserId, request.Latitude, request.Longitude);
 
                 var reportDto = snapReport.Adapt<ReportDetailsDto>();
 

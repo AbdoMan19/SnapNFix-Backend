@@ -9,10 +9,13 @@ public class GenericResponseModel<TResponse> : BaseResponseModel
 
     public GenericResponseModel(string message, IList<ErrorResponseModel> errorList) : base(message, errorList)
     {
-        Type t = typeof(TResponse);
-        if (t.GetConstructor(Type.EmptyTypes) != null)
+        if (errorList.Count == 0)
         {
-            Data = Activator.CreateInstance<TResponse>();
+            Type t = typeof(TResponse);
+            if (t.GetConstructor(Type.EmptyTypes) != null)
+            {
+                Data = Activator.CreateInstance<TResponse>();
+            }
         }
     }
 
