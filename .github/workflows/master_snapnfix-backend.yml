@@ -73,6 +73,21 @@ jobs:
                 "name": "AzureBlob__ConnectionString",
                 "value": "${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}",
                 "slotSetting": false
+              },
+              {
+                "name": "AI__PhotoValidation__ValidationEndpoint",
+                "value": "${{ secrets.VALIDATION_ENDPOINT }}",
+                "slotSetting": false
+              },
+              {
+                "name": "AI__PhotoValidation__WebhookUrl",
+                "value": "${{ secrets.WEBHOOK_URL }}",
+                "slotSetting": false
+              },
+              {
+                "name": "AI__PhotoValidation__WebhookApiKey",
+                "value": "${{ secrets.WEBHOOK_API_KEY }}",
+                "slotSetting": false
               }
             ]
           connection-strings-json: |
