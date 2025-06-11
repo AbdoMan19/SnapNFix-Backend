@@ -27,18 +27,42 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .IsUnique();
             
         builder.Property(u => u.Email).IsRequired(false);
+
         builder.Property(u => u.NormalizedEmail).IsRequired(false);
+
         builder.Property(u => u.CreatedAt)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP")
-            .ValueGeneratedOnAddOrUpdate();
+            .IsRequired()
+            .HasColumnType("date")
+            .HasDefaultValueSql("NOW()")
+            .ValueGeneratedOnAdd();
+
         builder.Property(u => u.UpdatedAt)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP")
-            .ValueGeneratedOnAddOrUpdate();
+            .HasColumnType("date")
+            .ValueGeneratedOnUpdate();
+
+        builder.Property(u => u.DeletedAt)
+            .HasColumnType("date")
+            .IsRequired(false);
+
+
+        builder.Property(u => u.Gender)
+            .HasConversion<string>()
+            .HasMaxLength(20)
+            .HasDefaultValue(Domain.Enums.Gender.NotSpecified);
+
+        builder.Property(u => u.BirthDate)
+            .HasColumnType("date")
+            .IsRequired(false);
         
 
         // Indexes
         builder.HasIndex(u => new { u.FirstName, u.LastName });
-
+        builder.HasIndex(u => u.CreatedAt);
+        builder.HasIndex(u => u.IsDeleted);
+        builder.HasIndex(u => u.Gender);
+        builder.HasIndex(u => u.DeletedAt);
+         builder.HasIndex(u => new { u.FirstName, u.LastName })
+            .HasFilter("\"DeletedAt\" IS NULL"); // Performance index for name searches
         
         // Relationships
         builder.HasMany(u => u.SnapReports)
@@ -50,6 +74,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .WithOne(r => r.User)
             .HasForeignKey(r => r.UserId)
             .OnDelete(DeleteBehavior.Restrict);
+
 
     }
 }

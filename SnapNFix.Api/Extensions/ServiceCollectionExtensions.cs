@@ -42,6 +42,7 @@ public static class ServiceCollectionExtensions
             options.User.RequireUniqueEmail = false; 
             options.Lockout.MaxFailedAccessAttempts = 3;
             options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromSeconds(10);
+            options.User.un
         })
         .AddEntityFrameworkStores<SnapNFixContext>()
         .AddDefaultTokenProviders()

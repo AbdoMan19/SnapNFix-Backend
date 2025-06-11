@@ -13,8 +13,8 @@ using SnapNFix.Infrastructure.Context;
 namespace SnapNFix.Infrastructure.Migrations
 {
     [DbContext(typeof(SnapNFixContext))]
-    [Migration("20250610225819_Init")]
-    partial class Init
+    [Migration("20250611232503_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -205,22 +205,53 @@ namespace SnapNFix.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValue("");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValue("Egypt");
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .HasDefaultValueSql("NOW()");
 
                     b.Property<string>("ImagePath")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<Point>("Location")
                         .IsRequired()
-                        .HasColumnType("geography(Point,4326)");
+                        .HasColumnType("geometry (point, 4326)");
+
+                    b.Property<string>("Road")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasDefaultValue("");
 
                     b.Property<string>("Severity")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
+                        .HasDefaultValue("Unspecified");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValue("");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -230,13 +261,29 @@ namespace SnapNFix.Infrastructure.Migrations
 
                     b.HasIndex("Category");
 
+                    b.HasIndex("City");
+
+                    b.HasIndex("Country");
+
+                    b.HasIndex("CreatedAt");
+
                     b.HasIndex("Location");
 
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Location"), "GIST");
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Location"), "gist");
+
+                    b.HasIndex("Severity");
+
+                    b.HasIndex("State");
 
                     b.HasIndex("Status");
 
-                    b.ToTable("Issue");
+                    b.HasIndex("Category", "Status");
+
+                    b.HasIndex("City", "Status");
+
+                    b.HasIndex("Status", "CreatedAt");
+
+                    b.ToTable("Issues", (string)null);
                 });
 
             modelBuilder.Entity("SnapNFix.Domain.Entities.RefreshToken", b =>
@@ -278,46 +325,88 @@ namespace SnapNFix.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValue("");
+
                     b.Property<string>("Comment")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasDefaultValue("");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValue("Egypt");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .HasDefaultValueSql("NOW()");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ImagePath")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<string>("ImageStatus")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
+                        .HasDefaultValue("Pending");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<Guid?>("IssueId")
                         .HasColumnType("uuid");
 
                     b.Property<Point>("Location")
                         .IsRequired()
-                        .HasColumnType("geography(Point,4326)");
+                        .HasColumnType("geometry (point, 4326)");
 
                     b.Property<string>("ReportCategory")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
+                        .HasDefaultValue("NotSpecified");
+
+                    b.Property<string>("Road")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasDefaultValue("");
 
                     b.Property<string>("Severity")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
+                        .HasDefaultValue("Unspecified");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValue("");
 
                     b.Property<string>("TaskId")
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<double?>("Threshold")
-                        .HasPrecision(5, 2)
+                        .HasPrecision(5, 4)
                         .HasColumnType("double precision");
 
                     b.Property<Guid>("UserId")
@@ -325,21 +414,44 @@ namespace SnapNFix.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("City");
+
+                    b.HasIndex("Country");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("DeletedAt");
+
+                    b.HasIndex("ImageStatus");
+
                     b.HasIndex("IssueId");
 
                     b.HasIndex("Location");
 
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Location"), "GIST");
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Location"), "gist");
 
-                    b.HasIndex("TaskId")
-                        .IsUnique();
+                    b.HasIndex("ReportCategory");
+
+                    b.HasIndex("Severity");
+
+                    b.HasIndex("State");
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("UserId", "IssueId")
-                        .IsUnique();
+                    b.HasIndex("City", "ImageStatus");
 
-                    b.ToTable("SnapReport");
+                    b.HasIndex("DeletedAt", "CreatedAt")
+                        .HasFilter("\"DeletedAt\" IS NULL");
+
+                    b.HasIndex("ImageStatus", "CreatedAt");
+
+                    b.HasIndex("IssueId", "CreatedAt");
+
+                    b.HasIndex("ReportCategory", "ImageStatus");
+
+                    b.HasIndex("UserId", "CreatedAt");
+
+                    b.ToTable("SnapReports", (string)null);
                 });
 
             modelBuilder.Entity("SnapNFix.Domain.Entities.User", b =>
@@ -351,17 +463,20 @@ namespace SnapNFix.Infrastructure.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
+                    b.Property<DateOnly?>("BirthDate")
+                        .HasColumnType("date");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("date")
+                        .HasDefaultValueSql("NOW()");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("date");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -374,6 +489,13 @@ namespace SnapNFix.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("NotSpecified");
 
                     b.Property<string>("ImagePath")
                         .IsRequired()
@@ -418,9 +540,8 @@ namespace SnapNFix.Infrastructure.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .ValueGeneratedOnUpdate()
+                        .HasColumnType("date");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
@@ -432,6 +553,14 @@ namespace SnapNFix.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("DeletedAt");
+
+                    b.HasIndex("Gender");
+
+                    b.HasIndex("IsDeleted");
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -442,7 +571,8 @@ namespace SnapNFix.Infrastructure.Migrations
                     b.HasIndex("PhoneNumber")
                         .IsUnique();
 
-                    b.HasIndex("FirstName", "LastName");
+                    b.HasIndex("FirstName", "LastName")
+                        .HasFilter("\"DeletedAt\" IS NULL");
 
                     b.ToTable("Users", (string)null);
                 });
@@ -548,7 +678,7 @@ namespace SnapNFix.Infrastructure.Migrations
                     b.HasOne("SnapNFix.Domain.Entities.Issue", "Issue")
                         .WithMany("AssociatedFastReports")
                         .HasForeignKey("IssueId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
 
                     b.HasOne("SnapNFix.Domain.Entities.User", "User")
@@ -578,7 +708,7 @@ namespace SnapNFix.Infrastructure.Migrations
                     b.HasOne("SnapNFix.Domain.Entities.Issue", "Issue")
                         .WithMany("AssociatedSnapReports")
                         .HasForeignKey("IssueId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("SnapNFix.Domain.Entities.User", "User")
                         .WithMany("SnapReports")

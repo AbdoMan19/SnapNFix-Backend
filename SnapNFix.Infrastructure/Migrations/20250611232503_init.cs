@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace SnapNFix.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,20 +21,24 @@ namespace SnapNFix.Infrastructure.Migrations
                 .Annotation("Npgsql:PostgresExtension:uuid-ossp", ",,");
 
             migrationBuilder.CreateTable(
-                name: "Issue",
+                name: "Issues",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ImagePath = table.Column<string>(type: "text", nullable: false),
+                    ImagePath = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     Category = table.Column<string>(type: "text", nullable: false),
-                    Location = table.Column<Point>(type: "geography(Point,4326)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    Location = table.Column<Point>(type: "geometry (point, 4326)", nullable: false),
+                    Road = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false, defaultValue: ""),
+                    City = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValue: ""),
+                    State = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValue: ""),
+                    Country = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValue: "Egypt"),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
                     Status = table.Column<string>(type: "text", nullable: false),
-                    Severity = table.Column<string>(type: "text", nullable: false)
+                    Severity = table.Column<string>(type: "text", nullable: false, defaultValue: "Unspecified")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Issue", x => x.Id);
+                    table.PrimaryKey("PK_Issues", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -61,10 +65,12 @@ namespace SnapNFix.Infrastructure.Migrations
                     ImagePath = table.Column<string>(type: "text", nullable: false),
                     Username = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    BirthDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    Gender = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false, defaultValue: "NotSpecified"),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    DeletedAt = table.Column<DateTime>(type: "date", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "date", nullable: false, defaultValueSql: "NOW()"),
+                    UpdatedAt = table.Column<DateTime>(type: "date", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedEmail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -119,11 +125,11 @@ namespace SnapNFix.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_FastReport", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_FastReport_Issue_IssueId",
+                        name: "FK_FastReport_Issues_IssueId",
                         column: x => x.IssueId,
-                        principalTable: "Issue",
+                        principalTable: "Issues",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_FastReport_Users_UserId",
                         column: x => x.UserId,
@@ -133,34 +139,39 @@ namespace SnapNFix.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SnapReport",
+                name: "SnapReports",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     IssueId = table.Column<Guid>(type: "uuid", nullable: true),
-                    Comment = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    ImagePath = table.Column<string>(type: "text", nullable: false),
-                    Location = table.Column<Point>(type: "geography(Point,4326)", nullable: false),
-                    ImageStatus = table.Column<string>(type: "text", nullable: false),
-                    TaskId = table.Column<string>(type: "text", nullable: true),
-                    Threshold = table.Column<double>(type: "double precision", precision: 5, scale: 2, nullable: true),
-                    ReportCategory = table.Column<string>(type: "text", nullable: false),
-                    Severity = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    Comment = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false, defaultValue: ""),
+                    ImagePath = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    Location = table.Column<Point>(type: "geometry (point, 4326)", nullable: false),
+                    Road = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false, defaultValue: ""),
+                    City = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValue: ""),
+                    State = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValue: ""),
+                    Country = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValue: "Egypt"),
+                    ImageStatus = table.Column<string>(type: "text", nullable: false, defaultValue: "Pending"),
+                    TaskId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    Threshold = table.Column<double>(type: "double precision", precision: 5, scale: 4, nullable: true),
+                    ReportCategory = table.Column<string>(type: "text", nullable: false, defaultValue: "NotSpecified"),
+                    Severity = table.Column<string>(type: "text", nullable: false, defaultValue: "Unspecified"),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SnapReport", x => x.Id);
+                    table.PrimaryKey("PK_SnapReports", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SnapReport_Issue_IssueId",
+                        name: "FK_SnapReports_Issues_IssueId",
                         column: x => x.IssueId,
-                        principalTable: "Issue",
+                        principalTable: "Issues",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
-                        name: "FK_SnapReport_Users_UserId",
+                        name: "FK_SnapReports_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -314,20 +325,60 @@ namespace SnapNFix.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Issue_Category",
-                table: "Issue",
+                name: "IX_Issues_Category",
+                table: "Issues",
                 column: "Category");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Issue_Location",
-                table: "Issue",
-                column: "Location")
-                .Annotation("Npgsql:IndexMethod", "GIST");
+                name: "IX_Issues_Category_Status",
+                table: "Issues",
+                columns: new[] { "Category", "Status" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Issue_Status",
-                table: "Issue",
+                name: "IX_Issues_City",
+                table: "Issues",
+                column: "City");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Issues_City_Status",
+                table: "Issues",
+                columns: new[] { "City", "Status" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Issues_Country",
+                table: "Issues",
+                column: "Country");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Issues_CreatedAt",
+                table: "Issues",
+                column: "CreatedAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Issues_Location",
+                table: "Issues",
+                column: "Location")
+                .Annotation("Npgsql:IndexMethod", "gist");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Issues_Severity",
+                table: "Issues",
+                column: "Severity");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Issues_State",
+                table: "Issues",
+                column: "State");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Issues_Status",
+                table: "Issues",
                 column: "Status");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Issues_Status_CreatedAt",
+                table: "Issues",
+                columns: new[] { "Status", "CreatedAt" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_RefreshToken_Token",
@@ -353,32 +404,91 @@ namespace SnapNFix.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_SnapReport_IssueId",
-                table: "SnapReport",
+                name: "IX_SnapReports_City",
+                table: "SnapReports",
+                column: "City");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SnapReports_City_ImageStatus",
+                table: "SnapReports",
+                columns: new[] { "City", "ImageStatus" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SnapReports_Country",
+                table: "SnapReports",
+                column: "Country");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SnapReports_CreatedAt",
+                table: "SnapReports",
+                column: "CreatedAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SnapReports_DeletedAt",
+                table: "SnapReports",
+                column: "DeletedAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SnapReports_DeletedAt_CreatedAt",
+                table: "SnapReports",
+                columns: new[] { "DeletedAt", "CreatedAt" },
+                filter: "\"DeletedAt\" IS NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SnapReports_ImageStatus",
+                table: "SnapReports",
+                column: "ImageStatus");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SnapReports_ImageStatus_CreatedAt",
+                table: "SnapReports",
+                columns: new[] { "ImageStatus", "CreatedAt" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SnapReports_IssueId",
+                table: "SnapReports",
                 column: "IssueId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SnapReport_Location",
-                table: "SnapReport",
+                name: "IX_SnapReports_IssueId_CreatedAt",
+                table: "SnapReports",
+                columns: new[] { "IssueId", "CreatedAt" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SnapReports_Location",
+                table: "SnapReports",
                 column: "Location")
-                .Annotation("Npgsql:IndexMethod", "GIST");
+                .Annotation("Npgsql:IndexMethod", "gist");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SnapReport_TaskId",
-                table: "SnapReport",
-                column: "TaskId",
-                unique: true);
+                name: "IX_SnapReports_ReportCategory",
+                table: "SnapReports",
+                column: "ReportCategory");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SnapReport_UserId",
-                table: "SnapReport",
+                name: "IX_SnapReports_ReportCategory_ImageStatus",
+                table: "SnapReports",
+                columns: new[] { "ReportCategory", "ImageStatus" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SnapReports_Severity",
+                table: "SnapReports",
+                column: "Severity");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SnapReports_State",
+                table: "SnapReports",
+                column: "State");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SnapReports_UserId",
+                table: "SnapReports",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SnapReport_UserId_IssueId",
-                table: "SnapReport",
-                columns: new[] { "UserId", "IssueId" },
-                unique: true);
+                name: "IX_SnapReports_UserId_CreatedAt",
+                table: "SnapReports",
+                columns: new[] { "UserId", "CreatedAt" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserClaims_UserId",
@@ -412,9 +522,30 @@ namespace SnapNFix.Infrastructure.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Users_CreatedAt",
+                table: "Users",
+                column: "CreatedAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_DeletedAt",
+                table: "Users",
+                column: "DeletedAt");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_FirstName_LastName",
                 table: "Users",
-                columns: new[] { "FirstName", "LastName" });
+                columns: new[] { "FirstName", "LastName" },
+                filter: "\"DeletedAt\" IS NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Gender",
+                table: "Users",
+                column: "Gender");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_IsDeleted",
+                table: "Users",
+                column: "IsDeleted");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_PhoneNumber",
@@ -442,7 +573,7 @@ namespace SnapNFix.Infrastructure.Migrations
                 name: "RoleClaims");
 
             migrationBuilder.DropTable(
-                name: "SnapReport");
+                name: "SnapReports");
 
             migrationBuilder.DropTable(
                 name: "UserClaims");
@@ -460,7 +591,7 @@ namespace SnapNFix.Infrastructure.Migrations
                 name: "UserDevice");
 
             migrationBuilder.DropTable(
-                name: "Issue");
+                name: "Issues");
 
             migrationBuilder.DropTable(
                 name: "Roles");
