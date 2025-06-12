@@ -50,7 +50,7 @@ public class GetIssueByIdQueryHandler :
             CreatedAt = issue.CreatedAt,
             Status = issue.Status.ToString(),
             Severity = issue.Severity.ToString(),
-            AssociatedImages = associatedImages
+            Images = associatedImages
         };
         
         return GenericResponseModel<IssueDetailsDto>.Success(issueDto);
