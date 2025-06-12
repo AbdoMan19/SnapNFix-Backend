@@ -43,7 +43,7 @@ public class GetIssueByIdQueryHandler :
         var issueDto = new IssueDetailsDto
         {
             Id = issue.Id,
-            Category = issue.Category.ToString(),
+            Category = ToCamelCase(issue.Category.ToString()),
             Latitude = issue.Location.Y,
             Longitude = issue.Location.X,
             CreatedAt = issue.CreatedAt,
@@ -54,5 +54,13 @@ public class GetIssueByIdQueryHandler :
         };
         
         return GenericResponseModel<IssueDetailsDto>.Success(issueDto);
+    }
+
+    private static string ToCamelCase(string input)
+    {
+        if (string.IsNullOrEmpty(input))
+            return input;
+
+        return char.ToLowerInvariant(input[0]) + input.Substring(1);
     }
 }

@@ -37,7 +37,7 @@ public static class MiddlewareExtension
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
-       // app.MapHealthChecks("/health");
+        app.MapHealthChecks("/health");
 
         return app;
     }
