@@ -15,6 +15,13 @@ public class ReportDetailsDto
     public double Latitude { get; set; }
     public double Longitude { get; set; }
     
+    //address details
+    public string Road { get; set; } 
+    public string City { get; set; }
+    public string State { get; set; }
+    public string Country { get; set; }
+
+    
     public ImageStatus Status { get; set; } = ImageStatus.Pending;
     
     public ReportCategory Category { get; set; }

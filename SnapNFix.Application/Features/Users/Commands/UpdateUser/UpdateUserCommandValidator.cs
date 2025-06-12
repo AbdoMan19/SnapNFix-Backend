@@ -25,8 +25,6 @@ public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
 
         // Validate Gender only if provided
         RuleFor(x => x.Gender)
-            .NotEqual(Gender.NotSpecified)
-            .WithMessage("Please select a valid gender")
             .IsInEnum()
             .WithMessage("Invalid gender value")
             .When(x => x.Gender.HasValue);
