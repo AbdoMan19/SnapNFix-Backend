@@ -17,8 +17,8 @@ public class Mapper : IRegister
         // Add User to LoginResponse.UserInfo mapping
         TypeAdapterConfig<User, LoginResponse.UserInfo>
             .NewConfig()
-            .Map(dest => dest.BirthDate, src => src.BirthDate.ToString())
-            .Map(dest => dest.Gender, src => src.Gender.ToString());
+            .Map(dest => dest.BirthDate, src => src.BirthDate)
+            .Map(dest => dest.Gender, src => src.Gender);
 
 
 
