@@ -46,8 +46,8 @@ public class SnapReportsController : ControllerBase
     }
     
     [Authorize("Citizen")]
-    [HttpGet("user-statistics")]
-    public async Task<ActionResult<GenericResponseModel<UserReportsStatisticsDto>>> GetUserReportsStatistics()
+    [HttpGet("statistics")]
+    public async Task<ActionResult<GenericResponseModel<UserReportsStatisticsDto>>> Statistics()
     {
         var result = await _mediator.Send(new GetUserReportsStatisticsQuery());
         if (result.ErrorList.Count != 0) return BadRequest(result);
