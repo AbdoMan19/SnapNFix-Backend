@@ -5,7 +5,15 @@ public static class MiddlewareExtension
     public static WebApplication UseWebApiMiddleware(this WebApplication app)
     {
 
-        if (app.Environment.IsDevelopment())
+        if (app.Environment.IsDevelopment() || app.Environment.IsStaging() || app.Environment.IsProduction())
+        {
+            app.UseDeveloperExceptionPage();
+        }
+        else
+        {
+            app.UseExceptionHandler("/error");
+            app.UseHsts();
+        }
         {
             app.UseSwagger();
             app.UseSwaggerUI(c =>
