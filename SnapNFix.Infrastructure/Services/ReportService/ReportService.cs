@@ -37,7 +37,11 @@ public class ReportService : IReportService
                 Status = IssueStatus.Pending,
                 Severity = Severity.Unspecified, 
                 ImagePath = report.ImagePath, 
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                Road = report.Road,
+                City = report.City,
+                State = report.State,
+                Country = report.Country
             };
 
             await _unitOfWork.Repository<Issue>().Add(newIssue);

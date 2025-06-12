@@ -29,5 +29,19 @@ public class CreateSnapReportCommandValidator : AbstractValidator<CreateSnapRepo
         RuleFor(x => x.Severity)
             .IsInEnum()
             .WithMessage("Invalid severity level.");
+        RuleFor(x => x.Road)
+            .NotEmpty()
+            .WithMessage("Road is required.")
+            .MaximumLength(200)
+            .WithMessage("Road cannot exceed 200 characters.");
+        RuleFor(x => x.City)
+            .MaximumLength(100)
+            .WithMessage("City cannot exceed 100 characters.");
+        RuleFor(x => x.State)
+            .MaximumLength(100)
+            .WithMessage("State cannot exceed 100 characters.");
+        RuleFor(x => x.Country)
+            .MaximumLength(100)
+            .WithMessage("Country cannot exceed 100 characters.");
     }
 }

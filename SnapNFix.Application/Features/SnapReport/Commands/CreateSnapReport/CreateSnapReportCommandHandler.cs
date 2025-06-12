@@ -86,7 +86,12 @@ public class CreateSnapReportCommandHandler : IRequestHandler<CreateSnapReportCo
                     UserId = currentUserId,
                     ImageStatus = ImageStatus.Pending,
                     ReportCategory = ReportCategory.NotSpecified,
-                    Severity = request.Severity
+                    Severity = request.Severity,
+                    // Address fields
+                    Road = request.Road,
+                    City = request.City,
+                    State = request.State,
+                    Country = request.Country
                 };
 
                 // Database operations - single insert

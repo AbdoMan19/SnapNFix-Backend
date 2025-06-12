@@ -13,4 +13,8 @@ public class CreateSnapReportCommand : IRequest<GenericResponseModel<ReportDetai
     public double Latitude { get; set; }
     public double Longitude { get; set; }
     public Severity Severity { get; set; } = Severity.Medium;
+    public string Road { get; set; } = string.Empty;
+    public string City { get; set; } = string.Empty;
+    public string State { get; set; } = string.Empty;
+    public string Country { get; set; } = "Egypt";
 }
