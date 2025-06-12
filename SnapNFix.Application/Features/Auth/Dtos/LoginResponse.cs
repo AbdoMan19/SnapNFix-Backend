@@ -1,3 +1,5 @@
+using SnapNFix.Domain.Enums;
+
 namespace SnapNFix.Application.Features.Auth.Dtos;
 
 public class LoginResponse
@@ -13,5 +15,9 @@ public class LoginResponse
         public string? PhoneNumber { get; set; }
         public bool PhoneNumberConfirmed { get; set; }
         public string ImagePath { get; set; } = String.Empty;
+        //birthdate
+        public DateTime? BirthDate { get; set; }
+        //gender
+        public Gender Gender { get; set; }
     }
 }

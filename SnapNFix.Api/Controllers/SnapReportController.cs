@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.SnapReport.Commands.CreateSnapReport;
-
 using SnapNFix.Application.Features.SnapReport.DTOs;
 using SnapNFix.Application.Features.SnapReport.Queries;
+using SnapNFix.Application.Features.SnapReport.Queries.GetUserReportsStatistics;
 using SnapNFix.Domain.Interfaces;
 using SnapNFix.Infrastructure.Services.UserService;
 
@@ -17,7 +17,6 @@ namespace SnapNFix.Api.Controllers;
 public class SnapReportsController : ControllerBase
 {
     private readonly IMediator _mediator;
-
     private readonly IUserService UserService;
 
     public SnapReportsController(IMediator mediator, IUserService userService)
@@ -25,7 +24,6 @@ public class SnapReportsController : ControllerBase
         _mediator = mediator;
         UserService = userService;
     }
-
 
     [Authorize("Citizen")]
     [HttpPost("create")]
@@ -37,7 +35,6 @@ public class SnapReportsController : ControllerBase
         return Ok(result);
     }
 
-
     [Authorize("Citizen")]
     [HttpGet("my-reports")]
     public async Task<ActionResult<GenericResponseModel<List<ReportDetailsDto>>>> GetMyReports(
@@ -48,24 +45,14 @@ public class SnapReportsController : ControllerBase
         return Ok(result);
     }
     
+    [Authorize("Citizen")]
+    [HttpGet("user-statistics")]
+    public async Task<ActionResult<GenericResponseModel<UserReportsStatisticsDto>>> GetUserReportsStatistics()
+    {
+        var result = await _mediator.Send(new GetUserReportsStatisticsQuery());
+        if (result.ErrorList.Count != 0) return BadRequest(result);
+        return Ok(result);
+    }
+
     
-
-
-
-    // Admin Operations
-    /*[Authorize("Admin")]
-    [HttpGet]
-    public async Task<ActionResult<GenericResponseModel<PagedList<ReportDetailsDto>>>> GetAllReports(
-        [FromQuery] GetReportsQuery query)
-    {
-        return Ok(await _mediator.Send(query));
-
-
-    [Authorize("Admin")]
-    [HttpGet("statistics")]
-    public async Task<ActionResult<GenericResponseModel<ReportStatisticsDto>>> GetReportStatistics(
-        [FromQuery] GetReportStatisticsQuery query)
-    {
-        return Ok(await _mediator.Send(query));
-    }*/
 }

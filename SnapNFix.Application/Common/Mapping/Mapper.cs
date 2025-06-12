@@ -17,19 +17,18 @@ public class Mapper : IRegister
         // Add User to LoginResponse.UserInfo mapping
         TypeAdapterConfig<User, LoginResponse.UserInfo>
             .NewConfig()
-            .Map(dest => dest.FirstName, src => src.FirstName)
-            .Map(dest => dest.LastName, src => src.LastName)
-            .Map(dest => dest.Email, src => src.Email)
-            .Map(dest => dest.PhoneNumber, src => src.PhoneNumber)
-            .Map(dest => dest.PhoneNumberConfirmed, src => src.PhoneNumberConfirmed);
+            .Map(dest => dest.BirthDate, src => src.BirthDate.ToString())
+            .Map(dest => dest.Gender, src => src.Gender.ToString());
+
+
 
         TypeAdapterConfig<Domain.Entities.SnapReport, ReportDetailsDto>
             .NewConfig()
             .Map(dest => dest.Latitude, src => src.Location != null ? src.Location.Y : 0)
             .Map(dest => dest.Longitude, src => src.Location != null ? src.Location.X : 0)
-            .Map(dest => dest.Status, src => src.ImageStatus) 
-            .Map(dest => dest.Category, src => src.ReportCategory)
-            .Map(dest => dest.Severity, src => src.Severity); 
+            .Map(dest => dest.Status, src => src.ImageStatus)
+            .Map(dest => dest.Category, src => src.ReportCategory);
+      
 
         TypeAdapterConfig<Domain.Entities.SnapReport, IssueDetailsDto>
             .NewConfig()
