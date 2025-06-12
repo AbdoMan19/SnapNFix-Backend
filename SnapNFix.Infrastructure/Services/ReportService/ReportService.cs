@@ -17,9 +17,11 @@ public class ReportService : IReportService
 
     public async Task AttachReportWithIssue(SnapReport report, CancellationToken cancellationToken)
     {
+        var radiusInDegrees = Constants.NearbyIssueRadiusMeters / 111000.0;
+        
         var nearbyIssue = await _unitOfWork.Repository<Issue>()
             .FindBy(i => i.Category == report.ReportCategory &&
-                            i.Location.IsWithinDistance(report.Location, Constants.NearbyIssueRadiusMeters))
+                         i.Location.IsWithinDistance(report.Location, radiusInDegrees))
             .OrderBy(i => i.Location.Distance(report.Location))
             .FirstOrDefaultAsync(cancellationToken);
 
