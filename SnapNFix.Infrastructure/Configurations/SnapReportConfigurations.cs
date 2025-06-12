@@ -119,6 +119,9 @@ public class SnapReportConfiguration : IEntityTypeConfiguration<SnapReport>
         builder.HasIndex(sr => new { sr.DeletedAt, sr.CreatedAt })
             .HasFilter("\"DeletedAt\" IS NULL"); // Partial index for active reports
         builder.HasIndex(sr => new { sr.IssueId, sr.CreatedAt });
+
+        builder.HasIndex(sr => new { sr.UserId, sr.IssueId })
+            .IsUnique();
         
         // Ignore computed property from database mapping
         builder.Ignore(sr => sr.FullAddress);
