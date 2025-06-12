@@ -37,19 +37,23 @@ public class IssueConfiguration : IEntityTypeConfiguration<Issue>
         // Address properties
         builder.Property(i => i.Road)
             .HasMaxLength(200)
-            .HasDefaultValue(string.Empty);
+            .HasDefaultValue(string.Empty)
+            .IsRequired(false);
 
         builder.Property(i => i.City)
             .HasMaxLength(100)
-            .HasDefaultValue(string.Empty);
+            .HasDefaultValue(string.Empty)
+            .IsRequired(false);
 
         builder.Property(i => i.State)
             .HasMaxLength(100)
-            .HasDefaultValue(string.Empty);
+            .HasDefaultValue(string.Empty)
+            .IsRequired(false);
 
         builder.Property(i => i.Country)
             .HasMaxLength(100)
-            .HasDefaultValue("Egypt");
+            .HasDefaultValue("Egypt")
+            .IsRequired(false);
 
         // DateTime properties
         builder.Property(i => i.CreatedAt)

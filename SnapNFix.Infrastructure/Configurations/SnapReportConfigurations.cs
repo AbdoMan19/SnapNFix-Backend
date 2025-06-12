@@ -50,19 +50,24 @@ public class SnapReportConfiguration : IEntityTypeConfiguration<SnapReport>
         // Address properties
         builder.Property(sr => sr.Road)
             .HasMaxLength(200)
-            .HasDefaultValue(string.Empty);
+            .HasDefaultValue(string.Empty)
+            .IsRequired(false);
 
         builder.Property(sr => sr.City)
             .HasMaxLength(100)
-            .HasDefaultValue(string.Empty);
+            .HasDefaultValue(string.Empty)
+            .IsRequired(false);
 
         builder.Property(sr => sr.State)
             .HasMaxLength(100)
-            .HasDefaultValue(string.Empty);
+            .HasDefaultValue(string.Empty)
+            .IsRequired(false);
 
         builder.Property(sr => sr.Country)
             .HasMaxLength(100)
-            .HasDefaultValue("Egypt");
+            .HasDefaultValue("Egypt")
+            .IsRequired(false);
+        
 
         // DateTime properties
         builder.Property(sr => sr.CreatedAt)
