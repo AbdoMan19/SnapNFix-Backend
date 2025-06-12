@@ -1,7 +1,6 @@
 using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Common.Services.UserValidationServices;
@@ -27,7 +26,6 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
         UserManager<User> userManager, 
         ITokenService tokenService,
         ILogger<LoginWithPhoneOrEmailCommandHandler> logger,
-        IUserService userService,
         IUserValidationService userValidationService,
         IDeviceManager deviceManager)
     {
