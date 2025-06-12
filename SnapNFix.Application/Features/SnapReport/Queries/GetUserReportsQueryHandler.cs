@@ -15,19 +15,23 @@ public class GetUserReportsQueryHandler :
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
 
-    public GetUserReportsQueryHandler(IMapper mapper, IUnitOfWork unitOfWork)
+    private readonly IUserService _userService;
+
+    public GetUserReportsQueryHandler(IMapper mapper, IUnitOfWork unitOfWork, IUserService userService)
     {
         _mapper = mapper;
         _unitOfWork = unitOfWork;
+        _userService = userService;
     }
 
     public async Task<GenericResponseModel<PagedList<ReportDetailsDto>>> Handle(
         GetUserReportsQuery request, CancellationToken cancellationToken)
     {
+        var user = await _userService.GetCurrentUserAsync();
         var query = _unitOfWork.Repository<Domain.Entities.SnapReport>()
             .GetQuerableData()
-            .Where(r => r.UserId == request.UserId);
-        
+            .Where(r => r.UserId == user.Id);
+
         if (!string.IsNullOrEmpty(request.Status))
         {
             if (Enum.TryParse<ImageStatus>(request.Status, true, out var imageStatus))
