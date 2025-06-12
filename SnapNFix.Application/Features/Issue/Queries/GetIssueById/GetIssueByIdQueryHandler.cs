@@ -47,8 +47,8 @@ public class GetIssueByIdQueryHandler :
             Latitude = issue.Location.Y,
             Longitude = issue.Location.X,
             CreatedAt = issue.CreatedAt,
-            Status = issue.Status.ToString(),
-            Severity = issue.Severity.ToString(),
+            Status = issue.Status.ToString().ToLower(),
+            Severity = issue.Severity.ToString().ToLower(),
             Images = associatedImages,
             ReportsCount = issue.AssociatedSnapReports.Count(sr => sr.ImageStatus == ImageStatus.Approved)
         };
