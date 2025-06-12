@@ -5,6 +5,7 @@ using SnapNFix.Application.Common.Models;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Issue.DTOs;
 using SnapNFix.Application.Features.Issue.Queries;
+using SnapNFix.Application.Features.SnapReport.DTOs;
 using SnapNFix.Domain.Interfaces;
 using SnapNFix.Infrastructure.Services.UserService;
 
@@ -28,7 +29,9 @@ public class IssueController : ControllerBase
   public async Task<ActionResult<GenericResponseModel<List<NearbyIssueDto>>>> GetNearbyIssues(
       [FromQuery] GetNearbyIssuesQuery query)
   {
-    return Ok(await _mediator.Send(query));
+    var result = await _mediator.Send(query);
+    if (result.ErrorList.Count != 0) return BadRequest(result);
+    return Ok(result);
   }
 
   [Authorize("Citizen")]
@@ -47,10 +50,32 @@ public class IssueController : ControllerBase
   }
 
   [Authorize("Citizen")]
+  [HttpGet("{id}/snapreports")]
+  public async Task<ActionResult<GenericResponseModel<PagedList<ReportDetailsDto>>>> GetSnapReportsByIssueId(Guid id)
+  {
+    var query = new GetSnapReportsByIssueIdQuery { Id = id };
+    var result = await _mediator.Send(query);
+    
+    if (result.ErrorList.Count != 0)
+    {
+      return NotFound(result);
+    }
+    
+    return Ok(result);
+  }
+
+  [Authorize("Citizen")]
   [HttpGet("get-user-issues")]
   public async Task<ActionResult<GenericResponseModel<PagedList<IssueDetailsDto>>>> GetUserIssues(
       [FromQuery] GetUserIssuesQuery query)
   {
-    return Ok(await _mediator.Send(query));
+    var result = await _mediator.Send(query);
+    
+    if (result.ErrorList.Count != 0)
+    {
+      return NotFound(result);
+    }
+    
+    return Ok(result);
   }
 }

@@ -43,7 +43,6 @@ public class GetIssueByIdQueryHandler :
         var issueDto = new IssueDetailsDto
         {
             Id = issue.Id,
-            ImagePath = issue.ImagePath,
             Category = issue.Category.ToString(),
             Latitude = issue.Location.Y,
             Longitude = issue.Location.X,
