@@ -10,12 +10,12 @@ public static class SwaggerConfiguration
         {
             c.SwaggerDoc("v1", new OpenApiInfo
             {
-                Title = "Ecommerce API",
+                Title = "SnapNFix API",
                 Version = "v1",
                 Contact = new OpenApiContact
                 {
                     Name = "Support",
-                    Email = "support@ecommerce.com"
+                    Email = "support@snapnfix.com"
                 }
             });
 

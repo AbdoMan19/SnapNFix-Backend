@@ -18,7 +18,7 @@ public static class MiddlewareExtension
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ecommerce API v1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "SnapNFix API V1");
                 c.OAuthClientId("swagger-ui");
                 c.OAuthAppName("Swagger UI");
             });
