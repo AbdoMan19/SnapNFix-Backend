@@ -45,7 +45,7 @@ public class Mapper : IRegister
             .Map(dest => dest.Category, src => src.Category.ToString())
             .Map(dest => dest.Status, src => src.Status.ToString())
             .Map(dest => dest.Severity, src => src.Severity.ToString())
-            .Map(dest => dest.AssociatedImages, src => src.AssociatedSnapReports
+            .Map(dest => dest.Images, src => src.AssociatedSnapReports
                 .Where(sr => sr.ImageStatus == ImageStatus.Approved && !string.IsNullOrEmpty(sr.ImagePath))
                 .OrderBy(sr => sr.CreatedAt)
                 .Take(5)
