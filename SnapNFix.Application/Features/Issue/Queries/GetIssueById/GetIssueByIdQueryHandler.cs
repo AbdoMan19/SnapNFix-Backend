@@ -50,7 +50,10 @@ public class GetIssueByIdQueryHandler :
             Status = issue.Status.ToString().ToLower(),
             Severity = issue.Severity.ToString().ToLower(),
             Images = associatedImages,
-            ReportsCount = issue.AssociatedSnapReports.Count(sr => sr.ImageStatus == ImageStatus.Approved)
+            ReportsCount = issue.AssociatedSnapReports.Count(sr => sr.ImageStatus == ImageStatus.Approved),
+            Road = issue.Road ?? string.Empty,
+            City = issue.City ?? string.Empty,
+            State = issue.State ?? string.Empty
         };
         
         return GenericResponseModel<IssueDetailsDto>.Success(issueDto);

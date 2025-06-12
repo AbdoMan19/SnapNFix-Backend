@@ -13,5 +13,9 @@ public class IssueDetailsDto
     public string Severity { get; set; } = string.Empty;
     public List<string> Images { get; set; } = new List<string>();
 
+    public string Road { get; set; } = string.Empty;
+    public string City { get; set; } = string.Empty;
+    public string State { get; set; } = string.Empty;
+
     public int ReportsCount { get; set; }
 }
