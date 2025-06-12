@@ -53,7 +53,8 @@ public class GetIssueByIdQueryHandler :
             ReportsCount = issue.AssociatedSnapReports.Count(sr => sr.ImageStatus == ImageStatus.Approved),
             Road = issue.Road ?? string.Empty,
             City = issue.City ?? string.Empty,
-            State = issue.State ?? string.Empty
+            State = issue.State ?? string.Empty,
+            Country = issue.Country ?? string.Empty
         };
         
         return GenericResponseModel<IssueDetailsDto>.Success(issueDto);
