@@ -2,6 +2,7 @@ using Mapster;
 using SnapNFix.Application.Features.Auth.LoginWithPhoneOrEmail;
 using SnapNFix.Application.Features.Issue.DTOs;
 using SnapNFix.Application.Features.SnapReport.DTOs;
+using SnapNFix.Application.Features.Auth.Dtos; // Add this
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
 
@@ -13,6 +14,15 @@ public class Mapper : IRegister
     {
         config.NewConfig<LoginWithPhoneOrEmailCommand, UserDevice>();
         
+        // Add User to LoginResponse.UserInfo mapping
+        TypeAdapterConfig<User, LoginResponse.UserInfo>
+            .NewConfig()
+            .Map(dest => dest.FirstName, src => src.FirstName)
+            .Map(dest => dest.LastName, src => src.LastName)
+            .Map(dest => dest.Email, src => src.Email)
+            .Map(dest => dest.PhoneNumber, src => src.PhoneNumber)
+            .Map(dest => dest.PhoneNumberConfirmed, src => src.PhoneNumberConfirmed);
+
         TypeAdapterConfig<Domain.Entities.SnapReport, ReportDetailsDto>
             .NewConfig()
             .Map(dest => dest.Latitude, src => src.Location != null ? src.Location.Y : 0)

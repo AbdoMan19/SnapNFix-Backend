@@ -1,3 +1,4 @@
+using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -97,15 +98,7 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
                 RefreshToken = refreshTokenObj.Token,
                 ExpiresAt = _tokenService.GetTokenExpiration()
             },
-            User = new LoginResponse.UserInfo
-            {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                PhoneNumber = user.PhoneNumber,
-                PhoneNumberConfirmed = user.PhoneNumberConfirmed
-            }
+            User = user.Adapt<LoginResponse.UserInfo>()
         });
     }
 }

@@ -1,3 +1,4 @@
+using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -127,15 +128,7 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
                         RefreshToken = refreshTokenString,
                         ExpiresAt = userDevice.RefreshToken.Expires
                     },
-                    User = new LoginResponse.UserInfo
-                    {
-                        Id = identityUser.Id,
-                        FirstName = identityUser.FirstName,
-                        LastName = identityUser.LastName,
-                        Email = identityUser.Email,
-                        PhoneNumber = identityUser.PhoneNumber,
-                        PhoneNumberConfirmed = identityUser.PhoneNumberConfirmed
-                    }
+                    User = identityUser.Adapt<LoginResponse.UserInfo>()
                 });
             }
             catch (Exception ex)

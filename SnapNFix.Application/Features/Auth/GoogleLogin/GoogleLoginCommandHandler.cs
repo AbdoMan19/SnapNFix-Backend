@@ -1,4 +1,5 @@
 using Google.Apis.Auth;
+using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -154,15 +155,7 @@ public class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCommand, Gen
                         RefreshToken = refreshTokenString,
                         ExpiresAt = userDevice.RefreshToken.Expires
                     },
-                    User = new LoginResponse.UserInfo
-                    {
-                        Id = user.Id,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Email = user.Email,
-                        PhoneNumber = user.PhoneNumber,
-                        PhoneNumberConfirmed = user.PhoneNumberConfirmed
-                    }
+                    User = user.Adapt<LoginResponse.UserInfo>()
                 });
             }
             catch (Exception ex)
