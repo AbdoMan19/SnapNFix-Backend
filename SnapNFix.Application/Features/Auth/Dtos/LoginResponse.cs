@@ -16,7 +16,7 @@ public class LoginResponse
         public bool PhoneNumberConfirmed { get; set; }
         public string ImagePath { get; set; } = String.Empty;
         //birthdate
-        public DateTime? BirthDate { get; set; }
+        public DateOnly? BirthDate { get; set; }
         //gender
         public Gender Gender { get; set; }
     }
