@@ -49,7 +49,8 @@ public class GetIssueByIdQueryHandler :
             CreatedAt = issue.CreatedAt,
             Status = issue.Status.ToString(),
             Severity = issue.Severity.ToString(),
-            Images = associatedImages
+            Images = associatedImages,
+            ReportsCount = issue.AssociatedSnapReports.Count(sr => sr.ImageStatus == ImageStatus.Approved)
         };
         
         return GenericResponseModel<IssueDetailsDto>.Success(issueDto);

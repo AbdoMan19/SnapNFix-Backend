@@ -8,5 +8,5 @@ public class GetNearbyIssuesQuery : IRequest<GenericResponseModel<List<NearbyIss
 {
     public double Latitude { get; set; }
     public double Longitude { get; set; }
-    public double Radius { get; set; } = 30; 
+    public double Radius { get; set; } = 10; 
 }

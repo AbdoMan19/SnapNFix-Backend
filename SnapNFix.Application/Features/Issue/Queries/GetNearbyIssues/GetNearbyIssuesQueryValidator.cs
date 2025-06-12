@@ -21,7 +21,7 @@ public class GetNearbyIssuesQueryValidator : AbstractValidator<GetNearbyIssuesQu
         RuleFor(x => x.Radius)
             .GreaterThan(0)
             .WithMessage("Radius must be greater than zero.")
-            .LessThanOrEqualTo(30)
-            .WithMessage("Radius must not exceed 30 kilometers.");
+            .LessThanOrEqualTo(10)
+            .WithMessage("Radius must not exceed 10 kilometers.");
     }
 }
