@@ -43,8 +43,9 @@ public class SnapReportsController : ControllerBase
     public async Task<ActionResult<GenericResponseModel<List<ReportDetailsDto>>>> GetMyReports(
         [FromQuery] GetUserReportsQuery query)
     {
-        query.UserId = (await UserService.GetCurrentUserAsync()).Id;
-        return Ok(await _mediator.Send(query));
+        var result = await _mediator.Send(query);
+        if (result.ErrorList.Count != 0) return BadRequest(result);
+        return Ok(result);
     }
     
     
