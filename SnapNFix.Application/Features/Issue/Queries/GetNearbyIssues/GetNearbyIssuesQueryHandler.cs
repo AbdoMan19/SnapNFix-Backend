@@ -25,9 +25,14 @@ public class GetNearbyIssuesQueryHandler :
     {
         var userLocation = new Point(request.Longitude, request.Latitude) { SRID = 4326 };
         
+        // Convert kilometers to meters for PostGIS ST_DWithin function
+        var radiusInMeters = request.Radius * 1000;
+        
         var issues = await _unitOfWork.Repository<Domain.Entities.Issue>()
             .GetQuerableData()
-            .Where(i => i.Location.Distance(userLocation) <= request.Radius)
+            .Where(i => i.Location.IsWithinDistance(userLocation, radiusInMeters))
+            .OrderBy(i => i.Location.Distance(userLocation))
+            .Take(100) 
             .ToListAsync(cancellationToken);
 
         var issueDtos = issues.Select(issue => new NearbyIssueDto
