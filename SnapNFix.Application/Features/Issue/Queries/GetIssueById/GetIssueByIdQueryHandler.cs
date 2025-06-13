@@ -43,28 +43,21 @@ public class GetIssueByIdQueryHandler :
         var issueDto = new IssueDetailsDto
         {
             Id = issue.Id,
-            Category = ToCamelCase(issue.Category.ToString()),
+            Category = issue.Category,
             Latitude = issue.Location.Y,
             Longitude = issue.Location.X,
             CreatedAt = issue.CreatedAt,
-            Status = issue.Status.ToString().ToLower(),
-            Severity = issue.Severity.ToString().ToLower(),
+            Status = issue.Status,
+            Severity = issue.Severity,
             Images = associatedImages,
             ReportsCount = issue.AssociatedSnapReports.Count(sr => sr.ImageStatus == ImageStatus.Approved),
-            Road = issue.Road ?? string.Empty,
-            City = issue.City ?? string.Empty,
-            State = issue.State ?? string.Empty,
-            Country = issue.Country ?? string.Empty
+            Road = issue.Road,
+            City = issue.City,
+            State = issue.State,
+            Country = issue.Country
         };
         
         return GenericResponseModel<IssueDetailsDto>.Success(issueDto);
     }
 
-    private static string ToCamelCase(string input)
-    {
-        if (string.IsNullOrEmpty(input))
-            return input;
-
-        return char.ToLowerInvariant(input[0]) + input.Substring(1);
-    }
 }

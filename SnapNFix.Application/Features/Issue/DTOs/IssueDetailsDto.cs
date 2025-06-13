@@ -5,12 +5,12 @@ namespace SnapNFix.Application.Features.Issue.DTOs;
 public class IssueDetailsDto
 {
     public Guid Id { get; set; }
-    public string Category { get; set; } = string.Empty;
+    public ReportCategory Category { get; set; }
     public double Latitude { get; set; }
     public double Longitude { get; set; }
     public DateTime CreatedAt { get; set; }
-    public string Status { get; set; } = string.Empty;
-    public string Severity { get; set; } = string.Empty;
+    public IssueStatus Status { get; set; }
+    public Severity Severity { get; set; }
     public List<string> Images { get; set; } = new List<string>();
 
     public string Road { get; set; } = string.Empty;
