@@ -30,9 +30,9 @@ public class IssueController : ControllerBase
   public async Task<ActionResult<GenericResponseModel<List<NearbyIssueDto>>>> GetNearbyIssues(
       [FromQuery] GetNearbyIssuesQuery query)
   {
-    var result = await _mediator.Send(query);
-    if (result.ErrorList.Count != 0) return BadRequest(result);
-    return Ok(result);
+      var result = await _mediator.Send(query);
+      if (result.ErrorList.Count != 0) return BadRequest(result);
+      return Ok(result);
   }
 
   [Authorize("Citizen")]
