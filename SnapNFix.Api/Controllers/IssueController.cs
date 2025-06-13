@@ -6,6 +6,7 @@ using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Issue.DTOs;
 using SnapNFix.Application.Features.Issue.Queries;
 using SnapNFix.Application.Features.SnapReport.DTOs;
+using SnapNFix.Application.Features.FastReport.DTOs; // Add this line
 using SnapNFix.Domain.Interfaces;
 using SnapNFix.Infrastructure.Services.UserService;
 
@@ -54,6 +55,27 @@ public class IssueController : ControllerBase
   public async Task<ActionResult<GenericResponseModel<PagedList<ReportDetailsDto>>>> GetSnapReportsByIssueId(Guid id)
   {
     var query = new GetSnapReportsByIssueIdQuery { Id = id };
+    var result = await _mediator.Send(query);
+    
+    if (result.ErrorList.Count != 0)
+    {
+      return NotFound(result);
+    }
+    
+    return Ok(result);
+  }
+
+  [Authorize("Citizen")]
+  [HttpGet("{id}/fastreports")]
+  public async Task<ActionResult<GenericResponseModel<PagedList<FastReportDetailsDto>>>> GetFastReportsByIssueId(
+      Guid id, 
+      [FromQuery] int pageNumber = 1)
+  {
+    var query = new GetFastReportsByIssueIdQuery 
+    { 
+        Id = id, 
+        PageNumber = pageNumber,
+    };
     var result = await _mediator.Send(query);
     
     if (result.ErrorList.Count != 0)
