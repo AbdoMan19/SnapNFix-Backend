@@ -27,7 +27,7 @@ public class SnapReport
     public string? TaskId { get; set; }
     public double? Threshold { get; set; }
     public ReportCategory ReportCategory { get; set; } = ReportCategory.NotSpecified;
-    public Severity Severity { get; set; } = Severity.Unspecified;
+    public Severity Severity { get; set; } = Severity.Low;
     
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? DeletedAt { get; set; }

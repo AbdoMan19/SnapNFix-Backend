@@ -37,7 +37,7 @@ public class ReportService : IReportService
                 Location = report.Location,
                 Category = report.ReportCategory,
                 Status = IssueStatus.Pending,
-                Severity = Severity.Unspecified, 
+                Severity = Severity.NotSpecified, 
                 ImagePath = report.ImagePath, 
                 CreatedAt = DateTime.UtcNow,
                 Road = report.Road,

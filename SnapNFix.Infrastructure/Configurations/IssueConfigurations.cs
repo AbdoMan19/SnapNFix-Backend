@@ -27,7 +27,7 @@ public class IssueConfiguration : IEntityTypeConfiguration<Issue>
         builder.Property(i => i.Severity)
             .IsRequired()
             .HasConversion<string>()
-            .HasDefaultValue(Domain.Enums.Severity.Unspecified);
+            .HasDefaultValue(Domain.Enums.Severity.NotSpecified);
 
         // Location property (PostGIS)
         builder.Property(i => i.Location)

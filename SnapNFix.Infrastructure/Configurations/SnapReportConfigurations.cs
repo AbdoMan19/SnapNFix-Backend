@@ -40,7 +40,7 @@ public class SnapReportConfiguration : IEntityTypeConfiguration<SnapReport>
         builder.Property(sr => sr.Severity)
             .IsRequired()
             .HasConversion<string>()
-            .HasDefaultValue(Domain.Enums.Severity.Unspecified);
+            .HasDefaultValue(Domain.Enums.Severity.Low);
 
         // Location property (PostGIS)
         builder.Property(sr => sr.Location) 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SnapNFix.Domain.Entities;
+using SnapNFix.Domain.Enums;
 
 namespace SnapNFix.Infrastructure.Configurations;
 
@@ -29,6 +30,12 @@ public class FastReportConfiguration : IEntityTypeConfiguration<FastReport>
         builder.Property(f => f.CreatedAt)
             .HasDefaultValueSql("CURRENT_TIMESTAMP")
             .ValueGeneratedOnAdd();
+        builder.Property(f => f.Severity)
+            .IsRequired()
+            .HasConversion<string>()
+            .HasDefaultValue(Severity.Low);
+        
+            
         
         // Indexes
         builder.HasIndex(fr => new { fr.UserId, fr.IssueId })

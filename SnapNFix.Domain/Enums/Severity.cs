@@ -2,7 +2,7 @@ namespace SnapNFix.Domain.Enums;
 
 public enum Severity
 {
-    Unspecified,
+    NotSpecified,
     Low,
     Medium,
     High

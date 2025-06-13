@@ -1,4 +1,6 @@
-﻿namespace SnapNFix.Domain.Entities;
+﻿using SnapNFix.Domain.Enums;
+
+namespace SnapNFix.Domain.Entities;
 
 public class FastReport
 {
@@ -13,5 +15,7 @@ public class FastReport
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public string Comment { get; set; }
 
-    
+    public Severity Severity { get; set; } = Severity.Low;
+
+
 }

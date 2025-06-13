@@ -19,7 +19,7 @@ public class Issue
     
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public IssueStatus Status { get; set; } = IssueStatus.Pending;
-    public Severity Severity { get; set; } = Severity.Unspecified;
+    public Severity Severity { get; set; } = Severity.NotSpecified;
 
     public virtual ICollection<SnapReport> AssociatedSnapReports { get; set; } = [];
     public virtual ICollection<FastReport> AssociatedFastReports { get; set; } = [];

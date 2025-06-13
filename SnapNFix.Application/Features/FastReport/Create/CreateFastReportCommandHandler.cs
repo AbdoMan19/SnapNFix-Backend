@@ -33,6 +33,7 @@ public class CreateFastReportCommandHandler : IRequestHandler<CreateFastReportCo
                 UserId = userId,
                 IssueId = request.IssueId,
                 Comment = request.Comment,
+                Severity = request.Severity,
             };
 
             await _unitOfWork.Repository<Domain.Entities.FastReport>().Add(fastReport);
