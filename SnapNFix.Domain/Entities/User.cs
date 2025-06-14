@@ -8,6 +8,7 @@ public class User : IdentityUser<Guid>
     //Name
     public string FirstName { get; set; }
     public string LastName { get; set; }
+    public string FullName => FirstName + " " + LastName;
     //ImagePath
     public string ImagePath { get; set; } = string.Empty;
     //Username

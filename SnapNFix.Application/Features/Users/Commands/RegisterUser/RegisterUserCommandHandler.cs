@@ -75,7 +75,8 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
             request.DeviceId,
             request.DeviceName,
             request.Platform,
-            request.DeviceType
+            request.DeviceType,
+            request.FCMToken
         );
 
 

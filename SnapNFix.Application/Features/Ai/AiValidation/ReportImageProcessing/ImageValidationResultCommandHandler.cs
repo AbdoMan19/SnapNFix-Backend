@@ -1,3 +1,4 @@
+using Application.Events;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -12,15 +13,18 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<ImageValidationResultCommandHandler> _logger;
     private readonly IReportService _reportService;
+    private readonly IMediator _mediator;
 
     public ImageValidationResultCommandHandler(
         IUnitOfWork unitOfWork,
         IReportService reportService,
-        ILogger<ImageValidationResultCommandHandler> logger)
+        ILogger<ImageValidationResultCommandHandler> logger, 
+        IMediator mediator)
     {
         _unitOfWork = unitOfWork;
         _logger = logger;
         _reportService = reportService;
+        _mediator = mediator;
     }
 
     public async Task<GenericResponseModel<bool>> Handle(
@@ -73,9 +77,20 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
 
                 try
                 {
-                    await _reportService.AttachReportWithIssue(report, cancellationToken);
-                    _logger.LogInformation("Successfully attached report {ReportId} to issue {IssueId}",
-                        report.Id, report.IssueId);
+                    bool foundNearbyIssue = await _reportService.AttachReportWithNearbyIssue(report, cancellationToken);
+                    if (foundNearbyIssue)
+                    {
+                        _logger.LogInformation("Successfully attached report {ReportId} to issue {IssueId}",
+                            report.Id, report.IssueId);
+                    }else
+                    {
+                        _logger.LogInformation("No nearby issue found for report {ReportId}, creating new issue", report.Id);
+                        var newIssue = await _reportService.CreateIssueWithReportAsync(report, cancellationToken);
+                        _logger.LogInformation("Created new issue for report {ReportId} with IssueId {IssueId}",
+                            report.Id, report.IssueId);
+                        await _mediator.Publish(new IssueCreated(newIssue), cancellationToken);
+                    }
+                    
                 }
                 catch (Exception ex)
                 {
@@ -92,6 +107,9 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
 
             _logger.LogInformation("Successfully processed AI validation result for TaskId: {TaskId}, Report: {ReportId}",
                 request.TaskId, report.Id);
+            
+            await _mediator.Publish(new SnapReportStatusChanged(report , oldStatus , request.ImageStatus), cancellationToken);
+ 
 
             return GenericResponseModel<bool>.Success(true);
         }

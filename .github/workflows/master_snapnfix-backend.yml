@@ -88,6 +88,66 @@ jobs:
                 "name": "AI__PhotoValidation__WebhookApiKey",
                 "value": "${{ secrets.WEBHOOK_API_KEY }}",
                 "slotSetting": false
+              },
+              {
+                "name": "Authentication__Google__ClientId",
+                "value": "${{ secrets.GOOGLE_CLIENT_ID }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Authentication__Google__ClientSecret",
+                "value": "${{ secrets.GOOGLE_CLIENT_SECRET }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Authentication__Google__RedirectUris",
+                "value": "${{ secrets.GOOGLE_REDIRECT_URI }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Jwt__Key",
+                "value": "${{ secrets.JWT_KEY }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Jwt__Issuer",
+                "value": "${{ secrets.JWT_ISSUER }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Jwt__Audience",
+                "value": "${{ secrets.JWT_AUDIENCE }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Twilio__AccountSid",
+                "value": "${{ secrets.TWILIO_ACCOUNT_SID }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Twilio__AuthToken",
+                "value": "${{ secrets.TWILIO_AUTH_TOKEN }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Twilio__FromNumber",
+                "value": "${{ secrets.TWILIO_FROM_NUMBER }}",
+                "slotSetting": false
+              },
+              {
+                "name": "AzureBlob__ContainerName",
+                "value": "${{ secrets.AZURE_BLOB_CONTAINER }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Firebase__DatabaseUrl",
+                "value": "${{ secrets.FIREBASE_DATABASE_URL }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Firebase__AuthSecret",
+                "value": "${{ secrets.FIREBASE_AUTH_SECRET }}",
+                "slotSetting": false
               }
             ]
           connection-strings-json: |
@@ -99,6 +159,11 @@ jobs:
                 "slotSetting": false
               }
             ]
+
+      - name: Create Firebase Credentials File
+        run: |
+          $firebaseCredentials = '${{ secrets.FIREBASE_CREDENTIALS }}'
+          Set-Content -Path "firebase-credentials.json" -Value $firebaseCredentials
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp

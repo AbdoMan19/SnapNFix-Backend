@@ -34,6 +34,7 @@ public class LoginWithPhoneOrEmailCommandValidator : AbstractValidator<LoginWith
         RuleFor(x => x.Platform)
             .NotEmpty()
             .WithMessage("Platform is required.");
+        
     }
     
 }

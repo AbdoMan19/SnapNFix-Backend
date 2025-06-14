@@ -5,5 +5,6 @@ namespace SnapNFix.Domain.Interfaces;
 
 public interface IReportService : IScoped
 {
-    public Task AttachReportWithIssue(SnapReport snapReport, CancellationToken cancellationToken);
+    public Task<bool> AttachReportWithNearbyIssue(SnapReport snapReport, CancellationToken cancellationToken);
+    public Task<Issue> CreateIssueWithReportAsync(SnapReport report, CancellationToken cancellationToken);
 }

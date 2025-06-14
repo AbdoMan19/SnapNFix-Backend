@@ -94,7 +94,8 @@ public class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCommand, Gen
                     request.DeviceId,
                     request.DeviceName,
                     request.Platform,
-                    request.DeviceType);
+                    request.DeviceType,
+                    request.FCMToken);
 
                 bool isNewDevice = userDevice.Id == Guid.Empty;
                 
