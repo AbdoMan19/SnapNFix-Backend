@@ -27,11 +27,10 @@ public class UserDeviceConfigurations : IEntityTypeConfiguration<UserDevice>
         builder.Property(u => u.DeviceType)
             .IsRequired()
             .HasMaxLength(50);
-        
+
         builder.Property(u => u.FCMToken)
             .IsRequired()
-            .HasMaxLength(200)
-            .HasDefaultValue(string.Empty);
+            .HasMaxLength(200);
             
         // Indexes
         builder.HasIndex(u => new { u.DeviceName, u.DeviceId })
