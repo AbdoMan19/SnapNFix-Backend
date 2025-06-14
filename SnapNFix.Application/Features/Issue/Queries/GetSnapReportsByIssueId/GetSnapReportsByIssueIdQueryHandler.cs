@@ -7,6 +7,7 @@ using SnapNFix.Application.Features.SnapReport.DTOs;
 using SnapNFix.Domain.Interfaces;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Application.Features.Issue.Queries;
+using Microsoft.EntityFrameworkCore;
 
 namespace SnapNFix.Application.Features.SnapReport.Queries;
 
@@ -29,11 +30,11 @@ public class GetSnapReportsByIssueIdQueryHandler :
   public async Task<GenericResponseModel<PagedList<ReportDetailsDto>>> Handle(
       GetSnapReportsByIssueIdQuery request, CancellationToken cancellationToken)
   {
-      var query = _unitOfWork.Repository<Domain.Entities.SnapReport>()
-        .GetQuerableData()
-        .Where(r => r.IssueId == request.Id);
-
-      query = query.OrderByDescending(r => r.CreatedAt);
+        var query = _unitOfWork.Repository<Domain.Entities.SnapReport>()
+            .GetQuerableData()
+            .Where(r => r.IssueId == request.Id)
+            .OrderByDescending(r => r.CreatedAt)
+            .Include(r => r.User);
 
     var reports = await PagedList<Domain.Entities.SnapReport>.CreateAsync(
         query,

@@ -41,11 +41,8 @@ public class IssueController : ControllerBase
   {
     var query = new GetIssueByIdQuery { Id = id };
     var result = await _mediator.Send(query);
-    
-    if (result.ErrorList.Count != 0)
-    {
-      return NotFound(result);
-    }
+
+    if (result.ErrorList.Count != 0) return BadRequest(result);
     
     return Ok(result);
   }
@@ -57,10 +54,7 @@ public class IssueController : ControllerBase
     var query = new GetSnapReportsByIssueIdQuery { Id = id };
     var result = await _mediator.Send(query);
     
-    if (result.ErrorList.Count != 0)
-    {
-      return NotFound(result);
-    }
+    if (result.ErrorList.Count != 0) return BadRequest(result);
     
     return Ok(result);
   }
@@ -78,10 +72,7 @@ public class IssueController : ControllerBase
     };
     var result = await _mediator.Send(query);
     
-    if (result.ErrorList.Count != 0)
-    {
-      return NotFound(result);
-    }
+    if (result.ErrorList.Count != 0) return BadRequest(result);
     
     return Ok(result);
   }
@@ -93,10 +84,7 @@ public class IssueController : ControllerBase
   {
     var result = await _mediator.Send(query);
     
-    if (result.ErrorList.Count != 0)
-    {
-      return NotFound(result);
-    }
+    if (result.ErrorList.Count != 0) return BadRequest(result);
     
     return Ok(result);
   }
