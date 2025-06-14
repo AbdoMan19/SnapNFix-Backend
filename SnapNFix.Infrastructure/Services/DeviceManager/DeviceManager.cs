@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
 
@@ -9,14 +10,17 @@ public class DeviceManager : IDeviceManager
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ILogger<DeviceManager> _logger;
 
-    public DeviceManager(IUnitOfWork unitOfWork, IConfiguration configuration , IHttpContextAccessor httpContextAccessor)
+    public DeviceManager(IUnitOfWork unitOfWork, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, ILogger<DeviceManager> logger)
     {
-        _httpContextAccessor = httpContextAccessor;
         _unitOfWork = unitOfWork;
+        _httpContextAccessor = httpContextAccessor;
+        _logger = logger;
     }
 
-    public async Task<UserDevice> RegisterDeviceAsync(Guid userId, string deviceId, string deviceName, string platform, string deviceType , string fcm)
+
+    public async Task<UserDevice> RegisterDeviceAsync(Guid userId, string deviceId, string deviceName, string platform, string deviceType, string fcm)
     {
         var deviceWithSameId = await _unitOfWork.Repository<UserDevice>()
             .FindBy(d => d.DeviceId == deviceId)
@@ -25,24 +29,38 @@ public class DeviceManager : IDeviceManager
 
         if (deviceWithSameId != null)
         {
-
-            if (deviceWithSameId.RefreshToken != null)
+            // If device exists but with different user, log out previous user
+            if (deviceWithSameId.UserId != userId)
             {
-                deviceWithSameId.RefreshToken.Expires = DateTime.UtcNow;
-                await _unitOfWork.Repository<RefreshToken>().Update(deviceWithSameId.RefreshToken);
+                _logger.LogInformation("Device {DeviceId} is already registered to user {PreviousUserId}. " +
+                                       "Logging out previous user and associating with user {NewUserId}",
+                    deviceId, deviceWithSameId.UserId, userId);
+                    
+                // Expire existing refresh token to log out previous user
+                if (deviceWithSameId.RefreshToken != null && !deviceWithSameId.RefreshToken.IsExpired)
+                {
+                    _logger.LogInformation("Expiring refresh token for device {DeviceId} of user {PreviousUserId}",
+                        deviceId, deviceWithSameId.UserId);
+                   
+                    deviceWithSameId.RefreshToken.Expires = DateTime.UtcNow;
+                    await _unitOfWork.Repository<RefreshToken>().Update(deviceWithSameId.RefreshToken);
+                }
             }
 
+            // Update the device with new user and information
             deviceWithSameId.UserId = userId;
             deviceWithSameId.LastUsedAt = DateTime.UtcNow;
             deviceWithSameId.Platform = platform;
             deviceWithSameId.DeviceType = deviceType;
             deviceWithSameId.DeviceName = deviceName;
             deviceWithSameId.FCMToken = fcm;
+            
 
-            await _unitOfWork.Repository<UserDevice>().Update(deviceWithSameId);
             return deviceWithSameId;
         }
 
+        _logger.LogInformation("Registering new device {DeviceId} for user {UserId}", deviceId, userId);
+        
         var newDevice = new UserDevice
         {
             UserId = userId,
@@ -50,11 +68,10 @@ public class DeviceManager : IDeviceManager
             DeviceName = deviceName,
             Platform = platform,
             DeviceType = deviceType,
-            LastUsedAt = DateTime.UtcNow
+            LastUsedAt = DateTime.UtcNow,
+            FCMToken = fcm // This will be empty string if not provided
         };
-
-        await _unitOfWork.Repository<UserDevice>().Add(newDevice);
-
+        
         return newDevice;
     }
     public async Task<UserDevice?> GetDeviceAsync(Guid userId, string deviceId)

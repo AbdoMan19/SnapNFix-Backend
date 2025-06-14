@@ -14,6 +14,7 @@ using SnapNFix.Application.Features.Auth.PhoneVerification.VerifyPhoneVerificati
 using SnapNFix.Application.Features.Auth.ForgetPassword.ResendForgetPasswordOtp;
 using SnapNFix.Application.Features.Auth.PhoneVerification.ResendPhoneVerificationOtp;
 using SnapNFix.Application.Features.Auth.GoogleLogin;
+using System.Security.Claims;
 
 namespace SnapNFix.Api.Controllers;
 
@@ -48,6 +49,11 @@ public class AuthController : ControllerBase
     [Authorize("Citizen")]
     public async Task<IActionResult> Logout()
     {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid))
+        {
+            return Unauthorized();
+        }
         var result = await _mediator.Send(new LogoutCommand());
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }

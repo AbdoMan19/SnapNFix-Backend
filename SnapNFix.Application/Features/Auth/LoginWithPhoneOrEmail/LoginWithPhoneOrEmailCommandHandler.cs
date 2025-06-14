@@ -2,6 +2,7 @@ using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Common.Services.UserValidationServices;
 using SnapNFix.Application.Features.Auth.Dtos;
@@ -18,6 +19,7 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
     private readonly ITokenService _tokenService;
     private readonly ILogger<LoginWithPhoneOrEmailCommandHandler> _logger;
     private readonly IUserValidationService _userValidationService;
+    private readonly IAuthenticationService _authenticationService;
     //device manager
     private readonly IDeviceManager _deviceManager;
 
@@ -27,6 +29,7 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
         ITokenService tokenService,
         ILogger<LoginWithPhoneOrEmailCommandHandler> logger,
         IUserValidationService userValidationService,
+        IAuthenticationService authenticationService,
         IDeviceManager deviceManager)
     {
         _unitOfWork = unitOfWork;
@@ -34,6 +37,7 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
         _tokenService = tokenService;
         _logger = logger;
         _userValidationService = userValidationService;
+        _authenticationService = authenticationService;
         _deviceManager = deviceManager;
     }
 
@@ -78,40 +82,14 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
             
             try
             {
-                var userDevice = await _deviceManager.RegisterDeviceAsync(
-                    user.Id,
+                // Use the new authentication service
+                var authResponse = await _authenticationService.AuthenticateUserAsync(
+                    identityUser,
                     request.DeviceId,
                     request.DeviceName,
                     request.Platform,
                     request.DeviceType,
                     request.FCMToken);
-
-
-                var accessToken = await _tokenService.GenerateJwtToken(identityUser, userDevice);
-                string refreshTokenString;
-
-                if (userDevice.RefreshToken != null)
-                {
-                    refreshTokenString = _tokenService.GenerateRefreshToken();
-                    userDevice.RefreshToken.Token = refreshTokenString;
-                    userDevice.RefreshToken.Expires = _tokenService.GetRefreshTokenExpirationDays();
-                    userDevice.RefreshToken.CreatedAt = DateTime.UtcNow;
-                    await _unitOfWork.Repository<Domain.Entities.RefreshToken>().Update(userDevice.RefreshToken);
-                }
-                else
-                {
-                    var refreshTokenObj = new Domain.Entities.RefreshToken
-                    {
-                        Token = _tokenService.GenerateRefreshToken(),
-                        UserDeviceId = userDevice.Id,
-                        Expires = _tokenService.GetRefreshTokenExpirationDays(),
-                        CreatedAt = DateTime.UtcNow
-                    };
-                    refreshTokenString = refreshTokenObj.Token;
-                    await _unitOfWork.Repository<Domain.Entities.RefreshToken>().Add(refreshTokenObj);
-                    userDevice.RefreshToken = refreshTokenObj;
-                    userDevice.RefreshTokenId = refreshTokenObj.Id;
-                }
 
                 await _unitOfWork.SaveChanges();
                 await transaction.CommitAsync(cancellationToken);
@@ -121,12 +99,7 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
 
                 return GenericResponseModel<LoginResponse>.Success(new LoginResponse
                 {
-                    Tokens = new AuthResponse
-                    {
-                        Token = accessToken,
-                        RefreshToken = refreshTokenString,
-                        ExpiresAt = userDevice.RefreshToken.Expires
-                    },
+                    Tokens = authResponse,
                     User = identityUser.Adapt<LoginResponse.UserInfo>()
                 });
             }
