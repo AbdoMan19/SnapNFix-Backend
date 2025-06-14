@@ -17,5 +17,5 @@ public class LoginWithPhoneOrEmailCommand : IRequest<GenericResponseModel<LoginR
     public string DeviceType { get; set; }
     
     public string Platform { get; set; }
-    public string FCMToken { get; set; } = string.Empty;
+    public string FCMToken { get; set; }
 }
