@@ -36,14 +36,16 @@ public class TokenService : ITokenService
         string deviceId,
         string deviceName,
         string platform,
-        string deviceType)
+        string deviceType,
+        string fcmToken )
     {
         var userDevice = await _deviceManager.RegisterDeviceAsync(
             user.Id,
             deviceId,
             deviceName,
             platform,
-            deviceType);
+            deviceType,
+            fcmToken);
 
         var accessToken = await GenerateJwtToken(user, userDevice);
         var refreshToken = GenerateRefreshToken(userDevice);

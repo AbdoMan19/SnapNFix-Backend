@@ -35,7 +35,7 @@ namespace SnapNFix.Application.Features.Users.Commands.RegisterUser
                 .NotEmpty();
             RuleFor(x => x.Platform)
                 .NotEmpty();
-            
+
         }
     }
 }

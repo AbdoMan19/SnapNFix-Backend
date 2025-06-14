@@ -14,5 +14,6 @@ public class RegisterUserCommand : IRequest<GenericResponseModel<LoginResponse>>
     public string DeviceName { get; set; }
     public string DeviceType { get; set; }
     public string Platform { get; set; }
+    public string FCMToken { get; set; } = string.Empty;
 
 }

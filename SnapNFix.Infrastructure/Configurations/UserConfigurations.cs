@@ -74,7 +74,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .WithOne(r => r.User)
             .HasForeignKey(r => r.UserId)
             .OnDelete(DeleteBehavior.Restrict);
-
+        
+        
+        builder.Ignore(sr => sr.FullName);
 
     }
 }

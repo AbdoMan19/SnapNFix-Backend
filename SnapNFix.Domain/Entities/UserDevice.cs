@@ -10,6 +10,8 @@ public class UserDevice
     public string Platform { get; set; }
     public string DeviceType { get; set; }
     
+    public string FCMToken { get; set; } = string.Empty;
+    
     public RefreshToken? RefreshToken { get; set; }
     public Guid? RefreshTokenId { get; set; } 
     public DateTime LastUsedAt { get; set; } = DateTime.UtcNow;

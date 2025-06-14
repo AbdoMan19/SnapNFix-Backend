@@ -83,7 +83,8 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
                     request.DeviceId,
                     request.DeviceName,
                     request.Platform,
-                    request.DeviceType);
+                    request.DeviceType,
+                    request.FCMToken);
 
 
                 var accessToken = await _tokenService.GenerateJwtToken(identityUser, userDevice);

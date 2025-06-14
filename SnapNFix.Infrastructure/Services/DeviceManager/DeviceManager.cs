@@ -16,7 +16,7 @@ public class DeviceManager : IDeviceManager
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<UserDevice> RegisterDeviceAsync(Guid userId, string deviceId, string deviceName, string platform, string deviceType)
+    public async Task<UserDevice> RegisterDeviceAsync(Guid userId, string deviceId, string deviceName, string platform, string deviceType , string fcm)
     {
         var deviceWithSameId = await _unitOfWork.Repository<UserDevice>()
             .FindBy(d => d.DeviceId == deviceId)
@@ -36,6 +36,8 @@ public class DeviceManager : IDeviceManager
             deviceWithSameId.LastUsedAt = DateTime.UtcNow;
             deviceWithSameId.Platform = platform;
             deviceWithSameId.DeviceType = deviceType;
+            deviceWithSameId.DeviceName = deviceName;
+            deviceWithSameId.FCMToken = fcm;
 
             await _unitOfWork.Repository<UserDevice>().Update(deviceWithSameId);
             return deviceWithSameId;
@@ -85,12 +87,10 @@ public class DeviceManager : IDeviceManager
         var device = await GetDeviceByIdAsync(userId, deviceId);
         
         if (device?.RefreshToken == null) return false;
-        device.LastUsedAt = DateTime.UtcNow;
-
-        await _unitOfWork.Repository<UserDevice>().Update(device);
-
-        device.RefreshToken.Expires = DateTime.UtcNow;
-        await _unitOfWork.Repository<RefreshToken>().Update(device.RefreshToken);
+        
+        _unitOfWork.Repository<RefreshToken>().Delete(device.RefreshToken.Id);
+        
+        _unitOfWork.Repository<UserDevice>().Delete(device.Id);
         
         return true;
     }
@@ -98,7 +98,7 @@ public class DeviceManager : IDeviceManager
     public async Task<int> GetActiveDeviceCountAsync(Guid userId)
     {
         return await _unitOfWork.Repository<UserDevice>()
-            .FindBy(d => d.UserId == userId)
+            .FindBy(d => d.UserId == userId && d.RefreshToken != null && !d.RefreshToken.IsExpired)
             .CountAsync();
     }
     public Guid GetCurrentDeviceId()
@@ -109,6 +109,17 @@ public class DeviceManager : IDeviceManager
             return Guid.Empty;
         }
         return DeviceId;
+    }
+    //get fcm of active device
+    public async Task<List<string>> GetActiveDevicesFCMAsync(Guid userId)
+    {
+        var tokens = await _unitOfWork.Repository<UserDevice>()
+            .FindBy(d => d.UserId == userId )
+            .Where(d => !string.IsNullOrEmpty(d.FCMToken) && d.RefreshToken != null && !d.RefreshToken.IsExpired)
+            .Select(d =>  d.FCMToken )
+            .ToListAsync();
+
+        return tokens;
     }
 
 }

@@ -14,4 +14,5 @@ public class GoogleLoginCommand : IRequest<GenericResponseModel<LoginResponse>>
     public string DeviceType { get; set; }
     
     public string Platform { get; set; }
+    public string FCMToken { get; set; } = string.Empty;
 }
