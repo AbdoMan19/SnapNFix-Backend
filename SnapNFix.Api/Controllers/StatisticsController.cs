@@ -1,6 +1,14 @@
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SnapNFix.Domain.Interfaces;
+using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Application.Features.Statistics.Queries.GetDashboardSummary;
+using SnapNFix.Application.Features.Statistics.Queries.GetMetrics;
+using SnapNFix.Application.Features.Statistics.Queries.GetCategoryDistribution;
+using SnapNFix.Application.Features.Statistics.Queries.GetMonthlyTarget;
+using SnapNFix.Application.Features.Statistics.Queries.GetIncidentTrends;
+using SnapNFix.Application.Features.Statistics.Queries.GetGeographicDistribution;
+using SnapNFix.Application.Features.Statistics.Queries.GetStatistics;
 
 namespace SnapNFix.Api.Controllers;
 
@@ -9,141 +17,86 @@ namespace SnapNFix.Api.Controllers;
 [Authorize("Admin")]
 public class StatisticsController : ControllerBase
 {
-    private readonly IStatisticsService _statisticsService;
-    private readonly ILogger<StatisticsController> _logger;
+    private readonly IMediator _mediator;
 
-    public StatisticsController(
-        IStatisticsService statisticsService,
-        ILogger<StatisticsController> logger)
+    public StatisticsController(IMediator mediator)
     {
-        _statisticsService = statisticsService;
-        _logger = logger;
+        _mediator = mediator;
     }
 
     [HttpGet("dashboard-summary")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<StatisticsDto>> GetDashboardSummary(CancellationToken cancellationToken)
+    public async Task<ActionResult<GenericResponseModel<StatisticsDto>>> GetDashboardSummary(CancellationToken cancellationToken)
     {
-        try
-        {
-            var statistics = await _statisticsService.GetDashboardSummaryAsync(cancellationToken);
-            return Ok(statistics);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error retrieving dashboard summary");
-            return StatusCode(500, "An error occurred while retrieving dashboard summary");
-        }
+        var result = await _mediator.Send(new GetDashboardSummaryQuery(), cancellationToken);
+        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
 
     [HttpGet("metrics")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<MetricsOverviewDto>> GetMetrics(CancellationToken cancellationToken)
+    public async Task<ActionResult<GenericResponseModel<MetricsOverviewDto>>> GetMetrics(CancellationToken cancellationToken)
     {
-        try
-        {
-            var metrics = await _statisticsService.GetMetricsAsync(cancellationToken);
-            return Ok(metrics);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error retrieving metrics");
-            return StatusCode(500, "An error occurred while retrieving metrics");
-        }
+        var result = await _mediator.Send(new GetMetricsQuery(), cancellationToken);
+        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
 
     [HttpGet("categories")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<List<CategoryDistributionDto>>> GetCategoryDistribution(CancellationToken cancellationToken)
+    public async Task<ActionResult<GenericResponseModel<List<CategoryDistributionDto>>>> GetCategoryDistribution(CancellationToken cancellationToken)
     {
-        try
-        {
-            var categories = await _statisticsService.GetCategoryDistributionAsync(cancellationToken);
-            return Ok(categories);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error retrieving category distribution");
-            return StatusCode(500, "An error occurred while retrieving category distribution");
-        }
+        var result = await _mediator.Send(new GetCategoryDistributionQuery(), cancellationToken);
+        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
 
     [HttpGet("monthly-target")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<MonthlyTargetDto>> GetMonthlyTarget(CancellationToken cancellationToken)
+    public async Task<ActionResult<GenericResponseModel<MonthlyTargetDto>>> GetMonthlyTarget(CancellationToken cancellationToken)
     {
-        try
-        {
-            var target = await _statisticsService.GetMonthlyTargetAsync(cancellationToken);
-            return Ok(target);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error retrieving monthly target");
-            return StatusCode(500, "An error occurred while retrieving monthly target");
-        }
+        var result = await _mediator.Send(new GetMonthlyTargetQuery(), cancellationToken);
+        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
 
     [HttpGet("trends")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<List<IncidentTrendDto>>> GetIncidentTrends(
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<GenericResponseModel<List<IncidentTrendDto>>>> GetIncidentTrends(
         [FromQuery] string interval = "monthly", 
         CancellationToken cancellationToken = default)
     {
-        if (!new[] { "monthly", "quarterly", "yearly" }.Contains(interval.ToLower()))
-        {
-            return BadRequest("Invalid interval. Use 'monthly', 'quarterly', or 'yearly'");
-        }
-
-        try
-        {
-            var trends = await _statisticsService.GetIncidentTrendsAsync(interval, cancellationToken);
-            return Ok(trends);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error retrieving incident trends for interval {Interval}", interval);
-            return StatusCode(500, "An error occurred while retrieving incident trends");
-        }
+        var query = new GetIncidentTrendsQuery { Interval = interval };
+        var result = await _mediator.Send(query, cancellationToken);
+        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
 
     [HttpGet("geographic-distribution")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<List<GeographicDistributionDto>>> GetGeographicDistribution(
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<GenericResponseModel<List<GeographicDistributionDto>>>> GetGeographicDistribution(
         [FromQuery] int limit = 10, 
         CancellationToken cancellationToken = default)
     {
-        try
-        {
-            var geoData = await _statisticsService.GetGeographicDistributionAsync(limit, cancellationToken);
-            return Ok(geoData);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error retrieving geographic distribution");
-            return StatusCode(500, "An error occurred while retrieving geographic distribution");
-        }
+        var query = new GetGeographicDistributionQuery { Limit = limit };
+        var result = await _mediator.Send(query, cancellationToken);
+        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
 
     [HttpGet("statistics")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<StatisticsDto>> GetStatistics(CancellationToken cancellationToken)
+    public async Task<ActionResult<GenericResponseModel<StatisticsDto>>> GetStatistics(CancellationToken cancellationToken)
     {
-        try
-        {
-            var statistics = await _statisticsService.GetStatisticsAsync(cancellationToken);
-            return Ok(statistics);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error retrieving Statistics statistics");
-            return StatusCode(500, "An error occurred while retrieving Statistics statistics");
-        }
+        var result = await _mediator.Send(new GetStatisticsQuery(), cancellationToken);
+        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
 }
