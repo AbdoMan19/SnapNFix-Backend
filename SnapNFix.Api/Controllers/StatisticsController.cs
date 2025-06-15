@@ -69,10 +69,9 @@ public class StatisticsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<GenericResponseModel<List<IncidentTrendDto>>>> GetIncidentTrends(
-        [FromQuery] string interval = "monthly", 
+        [FromQuery] GetIncidentTrendsQuery query, 
         CancellationToken cancellationToken = default)
     {
-        var query = new GetIncidentTrendsQuery { Interval = interval };
         var result = await _mediator.Send(query, cancellationToken);
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }

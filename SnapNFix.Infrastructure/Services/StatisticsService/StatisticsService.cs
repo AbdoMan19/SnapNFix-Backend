@@ -44,7 +44,7 @@ public class StatisticsService : IStatisticsService
         };
 
         _cache.Set(cacheKey, summary, TimeSpan.FromMinutes(FastCacheMinutes));
-        
+
         return summary;
     }
 
@@ -68,16 +68,16 @@ public class StatisticsService : IStatisticsService
         {
             snapReportRepo.FindBy(r => r.ImageStatus == ImageStatus.Approved && r.IssueId != null)
                 .CountAsync(cancellationToken),
-            
+
             issueRepo.FindBy(i => i.Status == IssueStatus.Completed)
                 .CountAsync(cancellationToken),
-            
+
             issueRepo.FindBy(i => i.Status == IssueStatus.Pending)
                 .CountAsync(cancellationToken),
-            
+
             issueRepo.FindBy(i => i.CreatedAt >= startOfMonth)
                 .CountAsync(cancellationToken),
-            
+
             issueRepo.FindBy(i => i.CreatedAt >= startOfLastMonth && i.CreatedAt < startOfMonth)
                 .CountAsync(cancellationToken),
 
@@ -95,7 +95,7 @@ public class StatisticsService : IStatisticsService
         };
 
         var results = await Task.WhenAll(tasks);
-        
+
         var totalIncidents = results[0];
         var resolvedIncidents = results[1];
         var pendingIncidents = results[2];
@@ -130,7 +130,7 @@ public class StatisticsService : IStatisticsService
     public async Task<List<CategoryDistributionDto>> GetCategoryDistributionAsync(CancellationToken cancellationToken = default)
     {
         const string cacheKey = "category_distribution";
-        
+
         if (_cache.TryGetValue(cacheKey, out List<CategoryDistributionDto> cachedCategories))
         {
             return cachedCategories;
@@ -139,7 +139,7 @@ public class StatisticsService : IStatisticsService
         var categoryStats = await _unitOfWork.Repository<Issue>()
             .GetQuerableData()
             .GroupBy(i => i.Category)
-            .Select(g => new 
+            .Select(g => new
             {
                 Category = g.Key,
                 Total = g.Count(),
@@ -166,21 +166,21 @@ public class StatisticsService : IStatisticsService
     public async Task<MonthlyTargetDto> GetMonthlyTargetAsync(CancellationToken cancellationToken = default)
     {
         const string cacheKey = "monthly_target";
-        
+
         if (_cache.TryGetValue(cacheKey, out MonthlyTargetDto cachedTarget))
         {
             return cachedTarget;
         }
 
         const double targetResolutionRate = 95.0;
-        
+
         var now = DateTime.UtcNow;
         var startOfMonth = new DateTime(now.Year, now.Month, 1);
 
         var monthlyStats = await _unitOfWork.Repository<Issue>()
             .FindBy(i => i.CreatedAt >= startOfMonth)
             .GroupBy(i => 1)
-            .Select(g => new 
+            .Select(g => new
             {
                 Total = g.Count(),
                 Resolved = g.Count(i => i.Status == IssueStatus.Completed)
@@ -201,7 +201,7 @@ public class StatisticsService : IStatisticsService
                 Current = 0,
                 Improvement = 0
             };
-            
+
             _cache.Set(cacheKey, defaultTarget, TimeSpan.FromMinutes(FastCacheMinutes));
             return defaultTarget;
         }
@@ -209,7 +209,7 @@ public class StatisticsService : IStatisticsService
         var currentResolutionRate = Math.Round((double)monthlyStats.Resolved / monthlyStats.Total * 100, 2);
         var progress = Math.Round(currentResolutionRate / targetResolutionRate * 100, 2);
         var incidentsToTarget = Math.Max(0, (int)Math.Ceiling(monthlyStats.Total * (targetResolutionRate / 100)) - monthlyStats.Resolved);
-        
+
         var status = currentResolutionRate >= targetResolutionRate ? "Ahead" :
                     currentResolutionRate >= targetResolutionRate * 0.9 ? "On Track" : "Behind";
 
@@ -230,20 +230,20 @@ public class StatisticsService : IStatisticsService
         return target;
     }
 
-    public async Task<List<IncidentTrendDto>> GetIncidentTrendsAsync(string interval = "monthly", CancellationToken cancellationToken = default)
+    public async Task<List<IncidentTrendDto>> GetIncidentTrendsAsync(StatisticsInterval interval = StatisticsInterval.Monthly, CancellationToken cancellationToken = default)
     {
-        var cacheKey = $"incident_trends_{interval.ToLower()}";
-        
+        var cacheKey = $"incident_trends_{interval}";
+
         if (_cache.TryGetValue(cacheKey, out List<IncidentTrendDto> cachedTrends))
         {
             return cachedTrends;
         }
 
-        var trends = interval.ToLower() switch
+        var trends = interval switch
         {
-            "monthly" => await GetMonthlyTrendsAsync(cancellationToken),
-            "quarterly" => await GetQuarterlyTrendsAsync(cancellationToken),
-            "yearly" => await GetYearlyTrendsAsync(cancellationToken),
+            StatisticsInterval.Monthly => await GetMonthlyTrendsAsync(cancellationToken),
+            StatisticsInterval.Quarterly => await GetQuarterlyTrendsAsync(cancellationToken),
+            StatisticsInterval.Yearly => await GetYearlyTrendsAsync(cancellationToken),
             _ => await GetMonthlyTrendsAsync(cancellationToken)
         };
 
@@ -251,40 +251,6 @@ public class StatisticsService : IStatisticsService
         return trends;
     }
 
-    public async Task<List<GeographicDistributionDto>> GetGeographicDistributionAsync(int limit = 10, CancellationToken cancellationToken = default)
-    {
-        const string cacheKey = "geographic_distribution";
-        
-        if (_cache.TryGetValue(cacheKey, out List<GeographicDistributionDto> cachedGeoData))
-        {
-            return cachedGeoData.Take(limit).ToList();
-        }
-
-        var geoData = await _unitOfWork.Repository<Issue>()
-            .GetQuerableData()
-            .Where(i => !string.IsNullOrEmpty(i.City))
-            .GroupBy(i => new { i.City })
-            .Select(g => new
-            {
-                City = g.Key.City,
-                IncidentCount = g.Count(),
-            })
-            .OrderByDescending(g => g.IncidentCount)
-            .Take(limit)
-            .ToListAsync(cancellationToken);
-
-        var result = geoData.Select(g => new GeographicDistributionDto
-        {
-            City = g.City,
-            IncidentCount = g.IncidentCount,
-            State = "",
-            Latitude = 0,
-            Longitude = 0
-        }).ToList();
-
-        _cache.Set(cacheKey, result, TimeSpan.FromMinutes(GeoCacheMinutes));
-        return result;
-    }
 
     public async Task<StatisticsDto> GetStatisticsAsync(CancellationToken cancellationToken = default)
     {
@@ -304,7 +270,7 @@ public class StatisticsService : IStatisticsService
         };
 
         _cache.Set(cacheKey, statistics, TimeSpan.FromMinutes(SlowCacheMinutes));
-        
+
         _logger.LogInformation("Full statistics generated and cached");
         return statistics;
     }
@@ -347,10 +313,10 @@ public class StatisticsService : IStatisticsService
             .ToListAsync(cancellationToken);
 
         return quarterlyData
-            .GroupBy(i => new 
-            { 
-                Year = i.CreatedAt.Year, 
-                Quarter = (i.CreatedAt.Month - 1) / 3 + 1 
+            .GroupBy(i => new
+            {
+                Year = i.CreatedAt.Year,
+                Quarter = (i.CreatedAt.Month - 1) / 3 + 1
             })
             .Select(g => new IncidentTrendDto
             {
@@ -388,6 +354,29 @@ public class StatisticsService : IStatisticsService
             ResolvedIncidents = y.ResolvedIncidents,
             PendingIncidents = y.PendingIncidents,
             Date = new DateTime(y.Year, 1, 1)
+        }).ToList();
+    }
+    
+
+    public async Task<List<GeographicDistributionDto>> GetGeographicDistributionAsync(int limit = 10, CancellationToken cancellationToken = default)
+    {
+        var cityData = await _unitOfWork.Repository<Issue>()
+            .GetQuerableData()
+            .Where(i => !string.IsNullOrEmpty(i.City))
+            .GroupBy(i => new { i.City })
+            .Select(g => new
+            {
+                City = g.Key.City,
+                IncidentCount = g.Count(),
+            })
+            .OrderByDescending(g => g.IncidentCount)
+            .Take(limit)
+            .ToListAsync(cancellationToken);
+
+        return cityData.Select(g => new GeographicDistributionDto
+        {
+            City = g.City,
+            IncidentCount = g.IncidentCount
         }).ToList();
     }
 }

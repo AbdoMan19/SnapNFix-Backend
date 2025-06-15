@@ -1,4 +1,5 @@
 using FluentValidation;
+using SnapNFix.Domain.Enums;
 
 namespace SnapNFix.Application.Features.Statistics.Queries.GetGeographicDistribution;
 

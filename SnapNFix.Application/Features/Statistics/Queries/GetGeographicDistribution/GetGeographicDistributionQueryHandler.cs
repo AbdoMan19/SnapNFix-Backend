@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Domain.Interfaces;
+using SnapNFix.Domain.Enums;
 
 namespace SnapNFix.Application.Features.Statistics.Queries.GetGeographicDistribution;
 
@@ -24,7 +25,9 @@ public class GetGeographicDistributionQueryHandler : IRequestHandler<GetGeograph
     {
         try
         {
-            var geoData = await _statisticsService.GetGeographicDistributionAsync(request.Limit, cancellationToken);
+            var geoData = await _statisticsService.GetGeographicDistributionAsync(
+                request.Limit,  
+                cancellationToken);
             return GenericResponseModel<List<GeographicDistributionDto>>.Success(geoData);
         }
         catch (Exception ex)

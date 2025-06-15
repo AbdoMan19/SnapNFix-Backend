@@ -37,10 +37,7 @@ public class IncidentTrendDto
 public class GeographicDistributionDto
 {
     public string City { get; set; } = string.Empty;
-    public string State { get; set; } = string.Empty;
     public int IncidentCount { get; set; }
-    public double Latitude { get; set; }
-    public double Longitude { get; set; }
 }
 
 public class MonthlyTargetDto

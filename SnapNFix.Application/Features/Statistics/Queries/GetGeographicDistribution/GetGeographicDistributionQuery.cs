@@ -1,6 +1,7 @@
 using FluentValidation;
 using MediatR;
 using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Domain.Enums;
 
 namespace SnapNFix.Application.Features.Statistics.Queries.GetGeographicDistribution;
 

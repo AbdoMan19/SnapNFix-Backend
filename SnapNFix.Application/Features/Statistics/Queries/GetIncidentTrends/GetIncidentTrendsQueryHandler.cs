@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Domain.Interfaces;
+using SnapNFix.Domain.Enums;
 
 namespace SnapNFix.Application.Features.Statistics.Queries.GetIncidentTrends;
 
