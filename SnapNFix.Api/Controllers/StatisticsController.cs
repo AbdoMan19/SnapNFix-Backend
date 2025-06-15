@@ -14,7 +14,7 @@ namespace SnapNFix.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize("Admin")]
+[Authorize(Roles = "Admin,SuperAdmin")]
 public class StatisticsController : ControllerBase
 {
     private readonly IMediator _mediator;
