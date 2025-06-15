@@ -60,8 +60,7 @@ public class RegisterAdminCommandHandler : IRequestHandler<RegisterAdminCommand,
                 LastName = request.LastName,
                 Email = request.Email,
                 UserName = request.Email, 
-                EmailConfirmed = true, 
-                IsAdminUser = true,
+                EmailConfirmed = true,
                 PhoneNumber = null 
             };
 

@@ -36,9 +36,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .IsRequired()
             .HasMaxLength(256);
 
-        builder.Property(u => u.IsAdminUser)
-            .IsRequired()
-            .HasDefaultValue(false);
 
         builder.Property(u => u.CreatedAt)
             .IsRequired()
@@ -68,7 +65,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasIndex(u => u.IsDeleted);
         builder.HasIndex(u => u.Gender);
         builder.HasIndex(u => u.DeletedAt);
-        builder.HasIndex(u => u.IsAdminUser);
         builder.HasIndex(u => new { u.FirstName, u.LastName })
             .HasFilter("\"DeletedAt\" IS NULL");
         

@@ -58,17 +58,6 @@ public class AdminLoginCommandHandler : IRequestHandler<AdminLoginCommand, Gener
                 return GenericResponseModel<LoginResponse>.Failure(Constants.FailureMessage, invalidCredentialsError);
             }
 
-            if (!user.IsAdminUser)
-            {
-                _logger.LogWarning("Admin login failed: User {UserId} is not an admin user", user.Id);
-                return GenericResponseModel<LoginResponse>.Failure(
-                    Constants.FailureMessage,
-                    new List<ErrorResponseModel>
-                    {
-                        ErrorResponseModel.Create("Authorization", "Access denied: Admin privileges required")
-                    });
-            }
-
             var userRoles = await _userManager.GetRolesAsync(user);
             var hasAdminRole = userRoles.Contains("Admin") || userRoles.Contains("SuperAdmin");
             
