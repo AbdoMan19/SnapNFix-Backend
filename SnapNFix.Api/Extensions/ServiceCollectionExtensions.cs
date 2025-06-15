@@ -71,6 +71,8 @@ public static class ServiceCollectionExtensions
             
             options.AddPolicy("Citizen", policy => policy.RequireRole("Citizen"));
 
+            options.AddPolicy("SuperAdmin", policy => policy.RequireRole("SuperAdmin"));
+
             options.AddPolicy("RequirePhoneVerification", policy =>
                     policy.RequireClaim("purpose", TokenPurpose.PhoneVerification.ToString())
                         .RequireClaim("contact"));
