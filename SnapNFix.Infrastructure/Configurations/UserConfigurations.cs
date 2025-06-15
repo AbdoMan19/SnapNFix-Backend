@@ -8,10 +8,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        // Primary Key
         builder.HasKey(u => u.Id);
         
-        // Properties
         builder.Property(u => u.FirstName)
             .IsRequired()
             .HasMaxLength(50);
@@ -21,14 +19,26 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasMaxLength(50);
             
         builder.Property(u => u.PhoneNumber)
-            .IsRequired();
+            .IsRequired(false); 
             
         builder.HasIndex(u => u.PhoneNumber)
-            .IsUnique();
+            .IsUnique()
+            .HasFilter("\"PhoneNumber\" IS NOT NULL");
             
-        builder.Property(u => u.Email).IsRequired(false);
+        builder.Property(u => u.Email)
+            .IsRequired()
+            .HasMaxLength(256);
 
-        builder.Property(u => u.NormalizedEmail).IsRequired(false);
+        builder.HasIndex(u => u.Email)
+            .IsUnique();
+
+        builder.Property(u => u.NormalizedEmail)
+            .IsRequired()
+            .HasMaxLength(256);
+
+        builder.Property(u => u.IsAdminUser)
+            .IsRequired()
+            .HasDefaultValue(false);
 
         builder.Property(u => u.CreatedAt)
             .IsRequired()
@@ -44,7 +54,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasColumnType("date")
             .IsRequired(false);
 
-
         builder.Property(u => u.Gender)
             .HasConversion<string>()
             .HasMaxLength(20)
@@ -54,17 +63,15 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasColumnType("date")
             .IsRequired(false);
         
-
-        // Indexes
         builder.HasIndex(u => new { u.FirstName, u.LastName });
         builder.HasIndex(u => u.CreatedAt);
         builder.HasIndex(u => u.IsDeleted);
         builder.HasIndex(u => u.Gender);
         builder.HasIndex(u => u.DeletedAt);
-         builder.HasIndex(u => new { u.FirstName, u.LastName })
-            .HasFilter("\"DeletedAt\" IS NULL"); // Performance index for name searches
+        builder.HasIndex(u => u.IsAdminUser);
+        builder.HasIndex(u => new { u.FirstName, u.LastName })
+            .HasFilter("\"DeletedAt\" IS NULL");
         
-        // Relationships
         builder.HasMany(u => u.SnapReports)
             .WithOne(r => r.User)
             .HasForeignKey(r => r.UserId)
@@ -75,8 +82,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasForeignKey(r => r.UserId)
             .OnDelete(DeleteBehavior.Restrict);
         
-        
         builder.Ignore(sr => sr.FullName);
-
     }
 }
