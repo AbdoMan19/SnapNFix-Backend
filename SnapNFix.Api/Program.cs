@@ -23,7 +23,7 @@ namespace SnapNFix.Api;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -71,6 +71,32 @@ public class Program
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<SnapNFixContext>();
             dbContext.Database.Migrate();
+            
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+            
+            if (!await roleManager.RoleExistsAsync("SuperAdmin"))
+            {
+                await roleManager.CreateAsync(new IdentityRole<Guid>("SuperAdmin"));
+            }
+            
+            var superAdminEmail = "superadmin@snapnfix.com";
+            var existingAdmin = await userManager.FindByEmailAsync(superAdminEmail);
+            
+            if (existingAdmin == null)
+            {
+                var superAdmin = new User
+                {
+                    FirstName = "Super",
+                    LastName = "Admin", 
+                    Email = superAdminEmail,
+                    UserName = superAdminEmail,
+                    EmailConfirmed = true
+                };
+                
+                await userManager.CreateAsync(superAdmin, "SuperAdmin@123");
+                await userManager.AddToRoleAsync(superAdmin, "SuperAdmin");
+            }
         }
 
         app.UseWebApiMiddleware();

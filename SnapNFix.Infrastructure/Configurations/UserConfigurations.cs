@@ -26,14 +26,12 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasFilter("\"PhoneNumber\" IS NOT NULL");
             
         builder.Property(u => u.Email)
-            .IsRequired()
+            .IsRequired(false)
             .HasMaxLength(256);
 
-        builder.HasIndex(u => u.Email)
-            .IsUnique();
 
         builder.Property(u => u.NormalizedEmail)
-            .IsRequired()
+            .IsRequired(false)
             .HasMaxLength(256);
 
 
