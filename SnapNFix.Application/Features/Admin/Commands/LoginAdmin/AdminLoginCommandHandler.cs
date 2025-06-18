@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Application.Common.Services.UserValidationServices;
 using SnapNFix.Application.Features.Auth.Dtos;
 using SnapNFix.Application.Utilities;
 using SnapNFix.Domain.Entities;
@@ -13,17 +14,22 @@ namespace SnapNFix.Application.Features.Admin.Commands.AdminLogin;
 
 public class AdminLoginCommandHandler : IRequestHandler<AdminLoginCommand, GenericResponseModel<LoginResponse>>
 {
-    private readonly UserManager<User> _userManager;
     private readonly ILogger<AdminLoginCommandHandler> _logger;
     private readonly IAuthenticationService _authenticationService;
     private readonly IUnitOfWork _unitOfWork;
 
+    private readonly UserManager<User> _userManager;
+
+    private readonly IUserValidationService _userValidationService;
+
     public AdminLoginCommandHandler(
+        IUserValidationService userValidationService,
         UserManager<User> userManager,
         ILogger<AdminLoginCommandHandler> logger,
         IAuthenticationService authenticationService,
         IUnitOfWork unitOfWork)
     {
+        _userValidationService = userValidationService;
         _userManager = userManager;
         _logger = logger;
         _authenticationService = authenticationService;
@@ -43,11 +49,11 @@ public class AdminLoginCommandHandler : IRequestHandler<AdminLoginCommand, Gener
                 ErrorResponseModel.Create("Authentication", "Invalid credentials or insufficient permissions")
             };
 
-            var user = await _userManager.FindByEmailAsync(request.Email);
-            if (user == null || user.IsDeleted || user.IsSuspended)
+            var (user, error) = await _userValidationService.ValidateUserAsync<LoginResponse>(request.Email);
+            if (error != null)
             {
-                _logger.LogWarning("Admin login failed: User not found or inactive for email {Email}", request.Email);
-                return GenericResponseModel<LoginResponse>.Failure(Constants.FailureMessage, invalidCredentialsError);
+                _logger.LogWarning("Admin login failed: {ErrorMessage}", error.ErrorList.FirstOrDefault()?.Message);
+                return error;
             }
 
             var passwordValid = await _userManager.CheckPasswordAsync(user, request.Password);
