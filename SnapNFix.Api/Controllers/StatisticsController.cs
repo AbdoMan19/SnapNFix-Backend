@@ -35,9 +35,6 @@ public class StatisticsController : ControllerBase
     }
 
     [HttpGet("metrics")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<GenericResponseModel<MetricsOverviewDto>>> GetMetrics(CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new GetMetricsQuery(), cancellationToken);

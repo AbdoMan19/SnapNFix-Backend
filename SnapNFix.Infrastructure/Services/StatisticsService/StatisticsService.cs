@@ -60,59 +60,36 @@ public class StatisticsService : IStatisticsService
         var issueRepo = _unitOfWork.Repository<Issue>();
 
         var now = DateTime.UtcNow;
-        var startOfMonth = new DateTime(now.Year, now.Month, 1);
+        var startOfMonth = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
         var startOfLastMonth = startOfMonth.AddMonths(-1);
 
-        var tasks = new[]
-        {
-            // Count all issues (total incidents)
-            issueRepo.GetQuerableData()
-                .CountAsync(cancellationToken),
+        // Execute queries sequentially to avoid DbContext concurrency issues
+        var totalIncidents = await issueRepo.GetQuerableData()
+            .CountAsync(cancellationToken);
 
-            // Count resolved issues
-            issueRepo.FindBy(i => i.Status == IssueStatus.Completed)
-                .CountAsync(cancellationToken),
+        var resolvedIncidents = await issueRepo.FindBy(i => i.Status == IssueStatus.Completed)
+            .CountAsync(cancellationToken);
 
-            // Count pending issues
-            issueRepo.FindBy(i => i.Status == IssueStatus.Pending)
-                .CountAsync(cancellationToken),
+        var pendingIncidents = await issueRepo.FindBy(i => i.Status == IssueStatus.Pending)
+            .CountAsync(cancellationToken);
 
-            // Count new issues this month
-            issueRepo.FindBy(i => i.CreatedAt >= startOfMonth)
-                .CountAsync(cancellationToken),
+        var newThisMonth = await issueRepo.FindBy(i => i.CreatedAt >= startOfMonth)
+            .CountAsync(cancellationToken);
 
-            // Count new issues last month
-            issueRepo.FindBy(i => i.CreatedAt >= startOfLastMonth && i.CreatedAt < startOfMonth)
-                .CountAsync(cancellationToken),
+        var newLastMonth = await issueRepo.FindBy(i => i.CreatedAt >= startOfLastMonth && i.CreatedAt < startOfMonth)
+            .CountAsync(cancellationToken);
 
-            // Count resolved issues this month
-            issueRepo.FindBy(i => i.Status == IssueStatus.Completed && i.CreatedAt >= startOfMonth)
-                .CountAsync(cancellationToken),
+        var resolvedThisMonth = await issueRepo.FindBy(i => i.Status == IssueStatus.Completed && i.CreatedAt >= startOfMonth)
+            .CountAsync(cancellationToken);
 
-            // Count resolved issues last month
-            issueRepo.FindBy(i => i.Status == IssueStatus.Completed && i.CreatedAt >= startOfLastMonth && i.CreatedAt < startOfMonth)
-                .CountAsync(cancellationToken),
+        var resolvedLastMonth = await issueRepo.FindBy(i => i.Status == IssueStatus.Completed && i.CreatedAt >= startOfLastMonth && i.CreatedAt < startOfMonth)
+            .CountAsync(cancellationToken);
 
-            // Count pending issues this month
-            issueRepo.FindBy(i => i.Status == IssueStatus.Pending && i.CreatedAt >= startOfMonth)
-                .CountAsync(cancellationToken),
+        var pendingThisMonth = await issueRepo.FindBy(i => i.Status == IssueStatus.Pending && i.CreatedAt >= startOfMonth)
+            .CountAsync(cancellationToken);
 
-            // Count pending issues last month
-            issueRepo.FindBy(i => i.Status == IssueStatus.Pending && i.CreatedAt >= startOfLastMonth && i.CreatedAt < startOfMonth)
-                .CountAsync(cancellationToken)
-        };
-
-        var results = await Task.WhenAll(tasks);
-
-        var totalIncidents = results[0];
-        var resolvedIncidents = results[1];
-        var pendingIncidents = results[2];
-        var newThisMonth = results[3];
-        var newLastMonth = results[4];
-        var resolvedThisMonth = results[5];
-        var resolvedLastMonth = results[6];
-        var pendingThisMonth = results[7];
-        var pendingLastMonth = results[8];
+        var pendingLastMonth = await issueRepo.FindBy(i => i.Status == IssueStatus.Pending && i.CreatedAt >= startOfLastMonth && i.CreatedAt < startOfMonth)
+            .CountAsync(cancellationToken);
 
         var resolutionRate = totalIncidents > 0 ? Math.Round((double)resolvedIncidents / totalIncidents * 100, 2) : 0;
         var monthlyGrowthPercentage = newLastMonth > 0 ? Math.Round((double)(newThisMonth - newLastMonth) / newLastMonth * 100, 2) : 0;
@@ -183,7 +160,7 @@ public class StatisticsService : IStatisticsService
         const double targetResolutionRate = 95.0;
 
         var now = DateTime.UtcNow;
-        var startOfMonth = new DateTime(now.Year, now.Month, 1);
+        var startOfMonth = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
 
         var monthlyStats = await _unitOfWork.Repository<Issue>()
             .FindBy(i => i.CreatedAt >= startOfMonth)
@@ -259,7 +236,6 @@ public class StatisticsService : IStatisticsService
         return trends;
     }
 
-
     public async Task<StatisticsDto> GetStatisticsAsync(CancellationToken cancellationToken = default)
     {
         const string cacheKey = "full_statistics";
@@ -288,8 +264,12 @@ public class StatisticsService : IStatisticsService
         var startDate = DateTime.UtcNow.AddMonths(-11).Date;
         var endDate = DateTime.UtcNow.Date;
 
+        // Convert to UTC to avoid timezone issues
+        var startDateUtc = DateTime.SpecifyKind(startDate, DateTimeKind.Utc);
+        var endDateUtc = DateTime.SpecifyKind(endDate.AddDays(1), DateTimeKind.Utc); // Add 1 day to include the end date
+
         var monthlyData = await _unitOfWork.Repository<Issue>()
-            .FindBy(i => i.CreatedAt >= startDate && i.CreatedAt <= endDate)
+            .FindBy(i => i.CreatedAt >= startDateUtc && i.CreatedAt < endDateUtc)
             .GroupBy(i => new { Year = i.CreatedAt.Year, Month = i.CreatedAt.Month })
             .Select(g => new
             {
@@ -315,9 +295,10 @@ public class StatisticsService : IStatisticsService
     private async Task<List<IncidentTrendDto>> GetQuarterlyTrendsAsync(CancellationToken cancellationToken)
     {
         var startDate = DateTime.UtcNow.AddYears(-2).Date;
+        var startDateUtc = DateTime.SpecifyKind(startDate, DateTimeKind.Utc);
 
         var quarterlyData = await _unitOfWork.Repository<Issue>()
-            .FindBy(i => i.CreatedAt >= startDate)
+            .FindBy(i => i.CreatedAt >= startDateUtc)
             .ToListAsync(cancellationToken);
 
         return quarterlyData
@@ -341,9 +322,10 @@ public class StatisticsService : IStatisticsService
     private async Task<List<IncidentTrendDto>> GetYearlyTrendsAsync(CancellationToken cancellationToken)
     {
         var startDate = DateTime.UtcNow.AddYears(-5).Date;
+        var startDateUtc = DateTime.SpecifyKind(startDate, DateTimeKind.Utc);
 
         var yearlyData = await _unitOfWork.Repository<Issue>()
-            .FindBy(i => i.CreatedAt >= startDate)
+            .FindBy(i => i.CreatedAt >= startDateUtc)
             .GroupBy(i => i.CreatedAt.Year)
             .Select(g => new
             {
@@ -364,7 +346,6 @@ public class StatisticsService : IStatisticsService
             Date = new DateTime(y.Year, 1, 1)
         }).ToList();
     }
-    
 
     public async Task<List<GeographicDistributionDto>> GetGeographicDistributionAsync(int limit = 10, CancellationToken cancellationToken = default)
     {
