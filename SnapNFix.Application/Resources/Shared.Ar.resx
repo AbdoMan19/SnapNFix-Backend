@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <root>
     <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
         <xsd:element name="root" msdata:IsDataSet="true">
@@ -18,4 +17,293 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
+
+    <!-- Success Messages -->
+    <data name="OperationSuccessful" xml:space="preserve">
+        <value>تمت العملية بنجاح</value>
+    </data>
+    <data name="LoginSuccess" xml:space="preserve">
+        <value>تم تسجيل الدخول بنجاح</value>
+    </data>
+    <data name="RegistrationSuccess" xml:space="preserve">
+        <value>تم التسجيل بنجاح</value>
+    </data>
+    <data name="LogoutSuccess" xml:space="preserve">
+        <value>تم تسجيل الخروج بنجاح</value>
+    </data>
+    <data name="OtpSent" xml:space="preserve">
+        <value>تم إرسال رمز التحقق بنجاح</value>
+    </data>
+    <data name="PhoneVerified" xml:space="preserve">
+        <value>تم التحقق من رقم الهاتف بنجاح</value>
+    </data>
+    <data name="PasswordReset" xml:space="preserve">
+        <value>تم إعادة تعيين كلمة المرور بنجاح</value>
+    </data>
+    <data name="ProfileUpdated" xml:space="preserve">
+        <value>تم تحديث الملف الشخصي بنجاح</value>
+    </data>
+    <data name="ReportCreated" xml:space="preserve">
+        <value>تم إنشاء البلاغ بنجاح</value>
+    </data>
+    <data name="ReportUpdated" xml:space="preserve">
+        <value>تم تحديث البلاغ بنجاح</value>
+    </data>
+
+    <!-- Error Messages -->
+    <data name="OperationFailed" xml:space="preserve">
+        <value>فشلت العملية</value>
+    </data>
+    <data name="UnexpectedError" xml:space="preserve">
+        <value>حدث خطأ غير متوقع</value>
+    </data>
+    <data name="ValidationError" xml:space="preserve">
+        <value>فشل في التحقق من صحة البيانات</value>
+    </data>
+    
+    <!-- Authentication Errors -->
+    <data name="InvalidCredentials" xml:space="preserve">
+        <value>البريد الإلكتروني/الهاتف أو كلمة المرور غير صحيحة</value>
+    </data>
+    <data name="UserNotFound" xml:space="preserve">
+        <value>المستخدم غير موجود</value>
+    </data>
+    <data name="EmailOrPhoneNotFound" xml:space="preserve">
+        <value>البريد الإلكتروني أو رقم الهاتف غير موجود</value>
+    </data>
+    <data name="AccountSuspended" xml:space="preserve">
+        <value>الحساب معلق</value>
+    </data>
+    <data name="AccountLocked" xml:space="preserve">
+        <value>الحساب مقفل مؤقتاً</value>
+    </data>
+    <data name="EmailNotConfirmed" xml:space="preserve">
+        <value>البريد الإلكتروني غير مؤكد</value>
+    </data>
+    <data name="PhoneNotConfirmed" xml:space="preserve">
+        <value>رقم الهاتف غير مؤكد</value>
+    </data>
+    <data name="InvalidRefreshToken" xml:space="preserve">
+        <value>رمز التحديث غير صالح أو منتهي الصلاحية</value>
+    </data>
+    <data name="InvalidGoogleToken" xml:space="preserve">
+        <value>رمز جوجل غير صالح</value>
+    </data>
+    <data name="AccessDenied" xml:space="preserve">
+        <value>تم رفض الوصول</value>
+    </data>
+    <data name="AdminRoleRequired" xml:space="preserve">
+        <value>صلاحية المدير مطلوبة</value>
+    </data>
+
+    <!-- Validation Messages -->
+    <data name="FieldRequired" xml:space="preserve">
+        <value>{0} مطلوب</value>
+    </data>
+    <data name="EmailRequired" xml:space="preserve">
+        <value>البريد الإلكتروني مطلوب</value>
+    </data>
+    <data name="PhoneRequired" xml:space="preserve">
+        <value>رقم الهاتف مطلوب</value>
+    </data>
+    <data name="PasswordRequired" xml:space="preserve">
+        <value>كلمة المرور مطلوبة</value>
+    </data>
+    <data name="FirstNameRequired" xml:space="preserve">
+        <value>الاسم الأول مطلوب</value>
+    </data>
+    <data name="LastNameRequired" xml:space="preserve">
+        <value>الاسم الأخير مطلوب</value>
+    </data>
+    <data name="InvalidEmail" xml:space="preserve">
+        <value>تنسيق البريد الإلكتروني غير صحيح</value>
+    </data>
+    <data name="InvalidPhoneNumber" xml:space="preserve">
+        <value>تنسيق رقم الهاتف المصري غير صحيح</value>
+    </data>
+    <data name="InvalidOtp" xml:space="preserve">
+        <value>رمز التحقق غير صحيح</value>
+    </data>
+    <data name="PasswordTooShort" xml:space="preserve">
+        <value>كلمة المرور يجب أن تكون 8 أحرف على الأقل</value>
+    </data>
+    <data name="PasswordMissingUpper" xml:space="preserve">
+        <value>كلمة المرور يجب أن تحتوي على حرف كبير واحد على الأقل</value>
+    </data>
+    <data name="PasswordMissingLower" xml:space="preserve">
+        <value>كلمة المرور يجب أن تحتوي على حرف صغير واحد على الأقل</value>
+    </data>
+    <data name="PasswordMissingNumber" xml:space="preserve">
+        <value>كلمة المرور يجب أن تحتوي على رقم واحد على الأقل</value>
+    </data>
+    <data name="PasswordMissingSpecial" xml:space="preserve">
+        <value>كلمة المرور يجب أن تحتوي على رمز خاص واحد على الأقل</value>
+    </data>
+    <data name="PasswordsDoNotMatch" xml:space="preserve">
+        <value>كلمات المرور غير متطابقة</value>
+    </data>
+    <data name="EmailAlreadyExists" xml:space="preserve">
+        <value>البريد الإلكتروني موجود بالفعل</value>
+    </data>
+    <data name="PhoneAlreadyExists" xml:space="preserve">
+        <value>رقم الهاتف موجود بالفعل</value>
+    </data>
+
+    <!-- Location and Report Messages -->
+    <data name="LocationOutsideEgypt" xml:space="preserve">
+        <value>يمكن إنشاء البلاغات داخل حدود مصر فقط</value>
+    </data>
+    <data name="LocationTooFarSouth" xml:space="preserve">
+        <value>الموقع بعيد جداً جنوباً. يمكن إنشاء البلاغات داخل حدود مصر فقط</value>
+    </data>
+    <data name="LocationTooFarNorth" xml:space="preserve">
+        <value>الموقع بعيد جداً شمالاً. يمكن إنشاء البلاغات داخل حدود مصر فقط</value>
+    </data>
+    <data name="LocationTooFarWest" xml:space="preserve">
+        <value>الموقع بعيد جداً غرباً. يمكن إنشاء البلاغات داخل حدود مصر فقط</value>
+    </data>
+    <data name="LocationTooFarEast" xml:space="preserve">
+        <value>الموقع بعيد جداً شرقاً. يمكن إنشاء البلاغات داخل حدود مصر فقط</value>
+    </data>
+    <data name="ImageRequired" xml:space="preserve">
+        <value>الصورة مطلوبة</value>
+    </data>
+    <data name="InvalidImageFormat" xml:space="preserve">
+        <value>تنسيق الصورة غير صحيح. فقط JPG، JPEG، PNG مسموحة</value>
+    </data>
+    <data name="ImageTooLarge" xml:space="preserve">
+        <value>حجم الصورة يجب ألا يتجاوز {0} ميجابايت</value>
+    </data>
+    <data name="InvalidImageFile" xml:space="preserve">
+        <value>الملف ليس صورة صالحة</value>
+    </data>
+    <data name="ReportNotFound" xml:space="preserve">
+        <value>البلاغ غير موجود</value>
+    </data>
+    <data name="IssueNotFound" xml:space="preserve">
+        <value>المشكلة غير موجودة</value>
+    </data>
+
+    <!-- Device and Security Messages -->
+    <data name="DeviceIdRequired" xml:space="preserve">
+        <value>معرف الجهاز مطلوب</value>
+    </data>
+    <data name="DeviceNameRequired" xml:space="preserve">
+        <value>اسم الجهاز مطلوب</value>
+    </data>
+    <data name="PlatformRequired" xml:space="preserve">
+        <value>المنصة مطلوبة</value>
+    </data>
+    <data name="ContactNotFound" xml:space="preserve">
+        <value>رقم الاتصال غير موجود</value>
+    </data>
+    <data name="TokenGenerationFailed" xml:space="preserve">
+        <value>فشل في إنشاء الرمز المميز</value>
+    </data>
+
+    <!-- Status and Category Names -->
+    <data name="StatusPending" xml:space="preserve">
+        <value>قيد الانتظار</value>
+    </data>
+    <data name="StatusApproved" xml:space="preserve">
+        <value>موافق عليه</value>
+    </data>
+    <data name="StatusDeclined" xml:space="preserve">
+        <value>مرفوض</value>
+    </data>
+    <data name="StatusInProgress" xml:space="preserve">
+        <value>قيد التنفيذ</value>
+    </data>
+    <data name="StatusCompleted" xml:space="preserve">
+        <value>مكتمل</value>
+    </data>
+    
+    <data name="CategoryNotSpecified" xml:space="preserve">
+        <value>غير محدد</value>
+    </data>
+    <data name="CategoryPothole" xml:space="preserve">
+        <value>حفرة في الطريق</value>
+    </data>
+    <data name="CategoryGarbage" xml:space="preserve">
+        <value>قمامة</value>
+    </data>
+    <data name="CategoryDefectiveManhole" xml:space="preserve">
+        <value>غطاء بالوعة معطل</value>
+    </data>
+    <data name="CategoryNonDefectiveManhole" xml:space="preserve">
+        <value>غطاء بالوعة سليم</value>
+    </data>
+
+    <data name="SeverityLow" xml:space="preserve">
+        <value>منخفض</value>
+    </data>
+    <data name="SeverityMedium" xml:space="preserve">
+        <value>متوسط</value>
+    </data>
+    <data name="SeverityHigh" xml:space="preserve">
+        <value>عالي</value>
+    </data>
+    <data name="SeverityNotSpecified" xml:space="preserve">
+        <value>غير محدد</value>
+    </data>
+
+    <!-- Gender -->
+    <data name="GenderMale" xml:space="preserve">
+        <value>ذكر</value>
+    </data>
+    <data name="GenderFemale" xml:space="preserve">
+        <value>أنثى</value>
+    </data>
+    <data name="GenderNotSpecified" xml:space="preserve">
+        <value>غير محدد</value>
+    </data>
+
+    <!-- Statistics -->
+    <data name="StatisticsRetrievalError" xml:space="preserve">
+        <value>حدث خطأ أثناء استرداد الإحصائيات</value>
+    </data>
+    <data name="NoDataAvailable" xml:space="preserve">
+        <value>لا توجد بيانات متاحة</value>
+    </data>
+    <data name="TargetStatusAhead" xml:space="preserve">
+        <value>متقدم</value>
+    </data>
+    <data name="TargetStatusOnTrack" xml:space="preserve">
+        <value>في المسار الصحيح</value>
+    </data>
+    <data name="TargetStatusBehind" xml:space="preserve">
+        <value>متأخر</value>
+    </data>
+
+    <!-- Common Actions -->
+    <data name="Create" xml:space="preserve">
+        <value>إنشاء</value>
+    </data>
+    <data name="Update" xml:space="preserve">
+        <value>تحديث</value>
+    </data>
+    <data name="Delete" xml:space="preserve">
+        <value>حذف</value>
+    </data>
+    <data name="Search" xml:space="preserve">
+        <value>بحث</value>
+    </data>
+    <data name="Filter" xml:space="preserve">
+        <value>تصفية</value>
+    </data>
+    <data name="Sort" xml:space="preserve">
+        <value>ترتيب</value>
+    </data>
+    <data name="Submit" xml:space="preserve">
+        <value>إرسال</value>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>إلغاء</value>
+    </data>
+    <data name="Confirm" xml:space="preserve">
+        <value>تأكيد</value>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>حفظ</value>
+    </data>
 </root>
