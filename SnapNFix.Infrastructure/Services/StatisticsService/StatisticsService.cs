@@ -57,7 +57,6 @@ public class StatisticsService : IStatisticsService
             return cachedMetrics;
         }
 
-        var snapReportRepo = _unitOfWork.Repository<SnapReport>();
         var issueRepo = _unitOfWork.Repository<Issue>();
 
         var now = DateTime.UtcNow;
@@ -66,30 +65,39 @@ public class StatisticsService : IStatisticsService
 
         var tasks = new[]
         {
-            snapReportRepo.FindBy(r => r.ImageStatus == ImageStatus.Approved && r.IssueId != null)
+            // Count all issues (total incidents)
+            issueRepo.GetQuerableData()
                 .CountAsync(cancellationToken),
 
+            // Count resolved issues
             issueRepo.FindBy(i => i.Status == IssueStatus.Completed)
                 .CountAsync(cancellationToken),
 
+            // Count pending issues
             issueRepo.FindBy(i => i.Status == IssueStatus.Pending)
                 .CountAsync(cancellationToken),
 
+            // Count new issues this month
             issueRepo.FindBy(i => i.CreatedAt >= startOfMonth)
                 .CountAsync(cancellationToken),
 
+            // Count new issues last month
             issueRepo.FindBy(i => i.CreatedAt >= startOfLastMonth && i.CreatedAt < startOfMonth)
                 .CountAsync(cancellationToken),
 
+            // Count resolved issues this month
             issueRepo.FindBy(i => i.Status == IssueStatus.Completed && i.CreatedAt >= startOfMonth)
                 .CountAsync(cancellationToken),
 
+            // Count resolved issues last month
             issueRepo.FindBy(i => i.Status == IssueStatus.Completed && i.CreatedAt >= startOfLastMonth && i.CreatedAt < startOfMonth)
                 .CountAsync(cancellationToken),
 
+            // Count pending issues this month
             issueRepo.FindBy(i => i.Status == IssueStatus.Pending && i.CreatedAt >= startOfMonth)
                 .CountAsync(cancellationToken),
 
+            // Count pending issues last month
             issueRepo.FindBy(i => i.Status == IssueStatus.Pending && i.CreatedAt >= startOfLastMonth && i.CreatedAt < startOfMonth)
                 .CountAsync(cancellationToken)
         };
