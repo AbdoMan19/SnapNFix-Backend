@@ -1,10 +1,10 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Domain.Enums;
-using SnapNFix.Domain.Interfaces;
+using SnapNFix.Application.Common.Interfaces;
 
 namespace SnapNFix.Application.Features.Auth.PhoneVerification.ResendPhoneVerificationOtp;
 

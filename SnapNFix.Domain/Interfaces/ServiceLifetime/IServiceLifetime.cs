@@ -1,4 +1,4 @@
-namespace SnapNFix.Domain.Interfaces.ServiceLifetime;
+﻿namespace SnapNFix.Application.Common.Interfaces.ServiceLifetime;
 
 public interface IScoped { }
 public interface ISingleton { }

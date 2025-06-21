@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;

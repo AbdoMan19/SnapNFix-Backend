@@ -1,12 +1,13 @@
-using System.Security.Claims;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Common.Services.UserValidationServices;
-
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
+using System.Security.Claims;
+
 
 namespace SnapNFix.Application.Features.Auth.ForgetPassword.ResendForgetPasswordOtp;
 
@@ -56,3 +57,4 @@ public class ResendForgetPasswordOtpCommandHandler : IRequestHandler<ResendForge
     return GenericResponseModel<bool>.Success(true);
   }
 }
+

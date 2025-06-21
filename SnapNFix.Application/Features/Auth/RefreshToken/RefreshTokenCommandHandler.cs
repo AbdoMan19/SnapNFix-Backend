@@ -1,15 +1,16 @@
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Auth.Dtos;
 using SnapNFix.Application.Utilities;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
+using System.Threading;
+using System;
 
 namespace SnapNFix.Application.Features.Auth.RefreshToken;
 
@@ -106,3 +107,4 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, G
         }
     }
 }
+

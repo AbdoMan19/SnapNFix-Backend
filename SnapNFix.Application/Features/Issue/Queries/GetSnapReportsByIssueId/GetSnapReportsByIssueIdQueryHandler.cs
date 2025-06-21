@@ -8,6 +8,7 @@ using SnapNFix.Domain.Interfaces;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Application.Features.Issue.Queries;
 using Microsoft.EntityFrameworkCore;
+using SnapNFix.Application.Common.Interfaces;
 
 namespace SnapNFix.Application.Features.SnapReport.Queries;
 

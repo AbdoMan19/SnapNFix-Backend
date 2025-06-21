@@ -1,4 +1,4 @@
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SnapNFix.Application.Common.ResponseModel;
@@ -6,7 +6,7 @@ using SnapNFix.Application.Features.SnapReport.Commands.CreateSnapReport;
 using SnapNFix.Application.Features.SnapReport.DTOs;
 using SnapNFix.Application.Features.SnapReport.Queries;
 using SnapNFix.Application.Features.SnapReport.Queries.GetUserReportsStatistics;
-using SnapNFix.Domain.Interfaces;
+using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Infrastructure.Services.UserService;
 
 

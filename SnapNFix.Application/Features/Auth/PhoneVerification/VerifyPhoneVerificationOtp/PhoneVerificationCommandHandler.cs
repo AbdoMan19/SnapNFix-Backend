@@ -1,13 +1,14 @@
-using System.Security.Claims;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Utilities;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
+using System.Security.Claims;
 
 namespace SnapNFix.Application.Features.Auth.PhoneVerification.VerifyPhoneVerificationOtp;
 
@@ -57,3 +58,4 @@ public class PhoneVerificationCommandHandler : IRequestHandler<PhoneVerification
         return GenericResponseModel<string>.Success(token);
     }
 }
+

@@ -1,10 +1,10 @@
-using Google.Apis.Util;
+﻿using Google.Apis.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
-using SnapNFix.Domain.Interfaces;
+using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Infrastructure.Options;
 using Azure.Storage.Blobs;
 

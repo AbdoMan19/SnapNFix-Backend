@@ -1,4 +1,4 @@
-using Application.DTOs;
+﻿using Application.DTOs;
 using FirebaseAdmin;
 using FirebaseAdmin.Messaging;
 using Google.Apis.Auth.OAuth2;
@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Domain.Enums;
-using SnapNFix.Domain.Interfaces;
+using SnapNFix.Application.Common.Interfaces;
 
 namespace SnapNFix.Infrastructure.Services.FirebaseNotificationService
 {
@@ -130,3 +130,4 @@ namespace SnapNFix.Infrastructure.Services.FirebaseNotificationService
         }
     }
 }
+

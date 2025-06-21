@@ -7,10 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Common\Exceptions\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\SnapNFix.Domain\SnapNFix.Domain.csproj" />
     </ItemGroup>
 
@@ -44,6 +40,10 @@
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>Shared.Ar.Designer.cs</LastGenOutput>
       </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Common\Interfaces\" />
     </ItemGroup>
 
 </Project>

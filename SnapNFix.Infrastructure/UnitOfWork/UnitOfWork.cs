@@ -1,6 +1,7 @@
-using System.Collections;
+﻿using System.Collections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Domain.Interfaces;
 using SnapNFix.Infrastructure.Context;
 using SnapNFix.Infrastructure.GenericRepository;

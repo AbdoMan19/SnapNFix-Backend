@@ -1,10 +1,10 @@
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Application.Events;
 using Domain.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using SnapNFix.Domain.Interfaces;
+using SnapNFix.Application.Common.Interfaces;
 
 namespace Application.EventHandlers
 {

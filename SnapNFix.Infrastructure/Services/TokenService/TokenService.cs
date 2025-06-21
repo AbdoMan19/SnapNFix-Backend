@@ -1,4 +1,4 @@
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
+using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Infrastructure.Services.TokenService;

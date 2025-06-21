@@ -1,12 +1,12 @@
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Admin.Commands.RegisterAdmin;
+using SnapNFix.Application.Utilities;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
-using SnapNFix.Application.Utilities;
 
 namespace SnapNFix.Application.Features.Admin.Commands.RegisterAdmin;
 
@@ -117,3 +117,4 @@ public class RegisterAdminCommandHandler : IRequestHandler<RegisterAdminCommand,
         }
     }
 }
+

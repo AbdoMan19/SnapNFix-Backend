@@ -1,5 +1,6 @@
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
+using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Domain.Interfaces;
 
@@ -65,3 +66,4 @@ public class LogoutCommandHandler : IRequestHandler<LogoutCommand, GenericRespon
         }
     }
 }
+

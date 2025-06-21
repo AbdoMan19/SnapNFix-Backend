@@ -1,4 +1,4 @@
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -6,7 +6,7 @@ using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Utilities;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
-using SnapNFix.Domain.Interfaces;
+using SnapNFix.Application.Common.Interfaces;
 
 namespace SnapNFix.Application.Features.Auth.ForgetPassword.VerifyForgetPasswordOtp;
 

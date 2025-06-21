@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using System.Threading.RateLimiting;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Identity;
@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SnapNFix.Api.Handlers;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
-using SnapNFix.Domain.Interfaces.ServiceLifetime;
+using SnapNFix.Application.Common.Interfaces.ServiceLifetime;
 using SnapNFix.Infrastructure.Context;
 
 namespace SnapNFix.Api.Extensions;
@@ -114,3 +114,4 @@ public static class ServiceCollectionExtensions
             .WithTransientLifetime());
     }
 }
+

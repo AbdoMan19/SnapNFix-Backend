@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using SnapNFix.Domain.Interfaces.ServiceLifetime;
+using SnapNFix.Application.Common.Interfaces.ServiceLifetime;
 
 namespace SnapNFix.Domain.Interfaces;
 

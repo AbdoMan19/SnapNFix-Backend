@@ -1,4 +1,4 @@
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SnapNFix.Application.Common.Models;
@@ -7,7 +7,7 @@ using SnapNFix.Application.Features.Issue.DTOs;
 using SnapNFix.Application.Features.Issue.Queries;
 using SnapNFix.Application.Features.SnapReport.DTOs;
 using SnapNFix.Application.Features.FastReport.DTOs; // Add this line
-using SnapNFix.Domain.Interfaces;
+using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Infrastructure.Services.UserService;
 
 namespace SnapNFix.Api.Controllers;

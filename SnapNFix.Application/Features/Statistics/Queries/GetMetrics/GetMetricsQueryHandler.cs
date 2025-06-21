@@ -1,7 +1,7 @@
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
-using SnapNFix.Domain.Interfaces;
+using SnapNFix.Application.Common.Interfaces;
 
 namespace SnapNFix.Application.Features.Statistics.Queries.GetMetrics;
 

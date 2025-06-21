@@ -1,9 +1,10 @@
-using Mapster;
+﻿using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using NetTopologySuite;
 using NetTopologySuite.Geometries;
+using NetTopologySuite;
+using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Common.Services.LocationValidation;
 using SnapNFix.Application.Features.SnapReport.DTOs;
@@ -132,3 +133,4 @@ public class CreateSnapReportCommandHandler : IRequestHandler<CreateSnapReportCo
         }
     }
 }
+

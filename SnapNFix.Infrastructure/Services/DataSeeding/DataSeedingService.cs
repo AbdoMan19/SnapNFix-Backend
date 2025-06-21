@@ -1,11 +1,11 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
-using SnapNFix.Domain.Interfaces;
+using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Infrastructure.Context;
 using System.Text;
 

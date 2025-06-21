@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Scrutor;
-using SnapNFix.Domain.Interfaces.ServiceLifetime;
+using SnapNFix.Application.Common.Interfaces.ServiceLifetime;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Infrastructure.Context;
 using SnapNFix.Infrastructure.Options;
 using SnapNFix.Infrastructure.Services;
+using StackExchange.Redis;
 
 namespace SnapNFix.Infrastructure.Extensions;
 
@@ -48,6 +50,15 @@ public static class DependencyInjection
         
         services.Configure<PhotoValidationOptions>(
             configuration.GetSection("AI").GetSection("PhotoValidation"));
+        
+        services.Configure<RedisOptions>(
+            configuration.GetSection("Redis"));
+        
+        /*services.AddStackExchangeRedisCache(options =>
+        {
+             options.Configuration = configuration.GetConnectionString("Redis");
+             options.InstanceName = "SnapNFix:";
+        });*/
 
         return services;
     }

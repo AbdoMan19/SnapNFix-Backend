@@ -1,4 +1,5 @@
-using FluentValidation;
+﻿using FluentValidation;
+using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Application.Features.Users.Commands.RegisterUser
@@ -39,3 +40,4 @@ namespace SnapNFix.Application.Features.Users.Commands.RegisterUser
         }
     }
 }
+

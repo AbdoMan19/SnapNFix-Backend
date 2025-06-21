@@ -1,9 +1,10 @@
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
+using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
-
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
+
 
 namespace SnapNFix.Application.Features.Auth.PhoneVerification.RequestPhoneVerificationOtp;
 
@@ -52,3 +53,4 @@ public class RequestPhoneVerificationOtpCommandHandler : IRequestHandler<Request
         return GenericResponseModel<string>.Success(token);
     }
 }
+

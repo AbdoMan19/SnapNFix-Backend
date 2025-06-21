@@ -1,4 +1,4 @@
-using Mapster;
+﻿using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -108,3 +108,4 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
         }
     }
 }
+

@@ -1,3 +1,4 @@
+﻿using Constants = SnapNFix.Application.Utilities.Constants;
 using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -8,7 +9,6 @@ using SnapNFix.Application.Common.Services.UserValidationServices;
 using SnapNFix.Application.Features.Auth.Dtos;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
-using Constants = SnapNFix.Application.Utilities.Constants;
 
 namespace SnapNFix.Application.Features.Auth.LoginWithPhoneOrEmail;
 
@@ -117,3 +117,4 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
         }
     }
 }
+

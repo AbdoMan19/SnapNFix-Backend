@@ -1,4 +1,4 @@
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
@@ -7,7 +7,7 @@ using SnapNFix.Application.Features.Auth.Dtos;
 using SnapNFix.Application.Common.Services.UserValidationServices;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
-using SnapNFix.Domain.Interfaces;
+using SnapNFix.Application.Common.Interfaces;
 using Constants = SnapNFix.Application.Utilities.Constants;
 
 namespace SnapNFix.Application.Features.Auth.ForgetPassword.RequestForgetPasswordOtp;

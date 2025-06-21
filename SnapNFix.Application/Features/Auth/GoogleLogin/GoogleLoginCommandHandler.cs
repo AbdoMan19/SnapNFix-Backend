@@ -1,9 +1,10 @@
-using Google.Apis.Auth;
+﻿using Google.Apis.Auth;
 using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Auth.Dtos;
 using SnapNFix.Application.Utilities;
@@ -175,3 +176,4 @@ public class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCommand, Gen
         }
     }
 }
+

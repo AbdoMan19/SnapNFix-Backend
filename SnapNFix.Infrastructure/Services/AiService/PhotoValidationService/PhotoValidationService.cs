@@ -1,8 +1,9 @@
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SnapNFix.Domain.Entities;
+using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Domain.Interfaces;
 using SnapNFix.Infrastructure.Options;
 

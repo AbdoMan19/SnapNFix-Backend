@@ -1,7 +1,8 @@
-using Application.Events;
+﻿using Application.Events;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
@@ -151,3 +152,4 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
         }
     }
 }
+

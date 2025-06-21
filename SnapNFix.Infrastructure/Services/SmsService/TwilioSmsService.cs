@@ -1,6 +1,6 @@
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using SnapNFix.Domain.Interfaces;
+using SnapNFix.Application.Common.Interfaces;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;

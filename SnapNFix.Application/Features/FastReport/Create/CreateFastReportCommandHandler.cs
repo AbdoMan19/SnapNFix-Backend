@@ -1,9 +1,10 @@
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
-
+using SnapNFix.Application.Common.Interfaces;
+using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Domain.Interfaces;
 
-using SnapNFix.Application.Common.ResponseModel;
+
 
 namespace SnapNFix.Application.Features.FastReport.Create;
 
@@ -58,3 +59,4 @@ public class CreateFastReportCommandHandler : IRequestHandler<CreateFastReportCo
         }
     }
 }
+

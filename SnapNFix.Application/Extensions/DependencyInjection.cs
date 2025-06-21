@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using FluentValidation;
 using Mapster;
 using MapsterMapper;
@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Scrutor;
 using SnapNFix.Application.Common.Behaviors;
-using SnapNFix.Domain.Interfaces.ServiceLifetime;
+using SnapNFix.Application.Common.Interfaces.ServiceLifetime;
 
 namespace SnapNFix.Application.Extensions;
 
@@ -22,8 +22,7 @@ public static class DependencyInjection
         services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssemblies(assembly);
-            cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
-        });
+            cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));});
 
         // Register Mapster
         var config = TypeAdapterConfig.GlobalSettings;
