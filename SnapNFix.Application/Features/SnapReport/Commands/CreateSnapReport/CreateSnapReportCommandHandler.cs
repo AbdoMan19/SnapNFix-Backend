@@ -7,6 +7,7 @@ using NetTopologySuite.Geometries;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Common.Services.LocationValidation;
 using SnapNFix.Application.Features.SnapReport.DTOs;
+using SnapNFix.Application.Resources;
 using SnapNFix.Application.Utilities;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
@@ -116,19 +117,19 @@ public class CreateSnapReportCommandHandler : IRequestHandler<CreateSnapReportCo
             {
                 await transaction.RollbackAsync(cancellationToken);
                 _logger.LogError(dbEx, "Database error creating snap report");
-                return GenericResponseModel<ReportDetailsDto>.Failure("Database error occurred while saving the report");
+                return GenericResponseModel<ReportDetailsDto>.Failure(Shared.OperationFailed);
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync(cancellationToken);
                 _logger.LogError(ex, "Error during snap report creation transaction");
-                return GenericResponseModel<ReportDetailsDto>.Failure("Failed to create report");
+                return GenericResponseModel<ReportDetailsDto>.Failure(Shared.OperationFailed);
             }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unhandled exception creating snap report");
-            return GenericResponseModel<ReportDetailsDto>.Failure("An unexpected error occurred");
+            return GenericResponseModel<ReportDetailsDto>.Failure(Shared.OperationFailed);
         }
     }
 }
