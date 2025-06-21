@@ -1,4 +1,5 @@
 using FluentValidation;
+using SnapNFix.Application.Resources;
 
 namespace SnapNFix.Application.Features.Auth.ResetPassword;
 
@@ -8,11 +9,11 @@ public class ResetPasswordCommandValidator : AbstractValidator<ResetPasswordComm
     {
 
         RuleFor(x => x.NewPassword)
-            .NotEmpty().WithMessage("Password is required")
-            .MinimumLength(8).WithMessage("Password must be at least 8 characters")
-            .Matches("[A-Z]").WithMessage("Password must contain at least one uppercase letter")
-            .Matches("[a-z]").WithMessage("Password must contain at least one lowercase letter")
-            .Matches("[0-9]").WithMessage("Password must contain at least one number")
-            .Matches("[^a-zA-Z0-9]").WithMessage("Password must contain at least one special character");
+            .NotEmpty().WithMessage(Shared.PasswordRequired)
+            .MinimumLength(8).WithMessage(Shared.PasswordTooShort)
+            .Matches("[A-Z]").WithMessage(Shared.PasswordMissingUpper)
+            .Matches("[a-z]").WithMessage(Shared.PasswordMissingLower)
+            .Matches("[0-9]").WithMessage(Shared.PasswordMissingNumber)
+            .Matches("[^a-zA-Z0-9]").WithMessage(Shared.PasswordMissingSpecial);
     }
 }

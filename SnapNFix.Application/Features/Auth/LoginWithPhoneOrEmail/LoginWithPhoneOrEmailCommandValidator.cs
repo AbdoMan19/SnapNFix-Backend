@@ -1,4 +1,5 @@
 using FluentValidation;
+using SnapNFix.Application.Resources;
 
 
 namespace SnapNFix.Application.Features.Auth.LoginWithPhoneOrEmail;
@@ -10,33 +11,33 @@ public class LoginWithPhoneOrEmailCommandValidator : AbstractValidator<LoginWith
         
         RuleFor(f => f.EmailOrPhoneNumber)
             .NotEmpty()
-            .WithMessage("Email or Phone Number is required.")
+            .WithMessage(Shared.EmailOrPhoneNumberRequired)
             .Matches(@"(^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)|(^(\+20|0)?1[0125][0-9]{8}$)")
-            .WithMessage("Input must be a valid email or Egyptian phone number.");
+            .WithMessage(Shared.InvalidEmailOrPhoneNumber);
 
         RuleFor(x => x.Password)
-                .NotEmpty().WithMessage("{PropertyName} is required")
-                .MinimumLength(8).WithMessage("{PropertyName} must be at least 8 characters")
-                .Matches("[A-Z]").WithMessage("{PropertyName} must contain at least one uppercase letter")
-                .Matches("[a-z]").WithMessage("{PropertyName} must contain at least one lowercase letter")
-                .Matches("[0-9]").WithMessage("{PropertyName} must contain at least one number")
-                .Matches("[^a-zA-Z0-9]").WithMessage("{PropertyName} must contain at least one special character");
-        
+                .NotEmpty().WithMessage(Shared.PasswordRequired)
+                .MinimumLength(8).WithMessage(Shared.PasswordTooShort)
+                .Matches("[A-Z]").WithMessage(Shared.PasswordMissingUpper)
+                .Matches("[a-z]").WithMessage(Shared.PasswordMissingLower)
+                .Matches("[0-9]").WithMessage(Shared.PasswordMissingNumber)
+                .Matches("[^a-zA-Z0-9]").WithMessage(Shared.PasswordMissingSpecial);
+
         RuleFor(x => x.DeviceId)
             .NotEmpty()
-            .WithMessage("Device Id is required.");
+            .WithMessage(Shared.DeviceIdRequired);
         RuleFor(x => x.DeviceName)
             .NotEmpty()
-            .WithMessage("Device Name is required.");
+            .WithMessage(Shared.DeviceNameRequired);
         RuleFor(x => x.DeviceType)
             .NotEmpty()
-            .WithMessage("Device Type is required.");
+            .WithMessage(Shared.DeviceTypeRequired);
         RuleFor(x => x.Platform)
             .NotEmpty()
-            .WithMessage("Platform is required.");
+            .WithMessage(Shared.PlatformRequired);
         RuleFor(x => x.FCMToken)
             .NotEmpty()
-            .WithMessage("FCM Token is required.");
+            .WithMessage(Shared.FCMTokenRequired);
 
     }
     

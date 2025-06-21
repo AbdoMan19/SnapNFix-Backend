@@ -4,7 +4,6 @@ public static class MiddlewareExtension
 {
     public static WebApplication UseWebApiMiddleware(this WebApplication app)
     {
-
         if (app.Environment.IsDevelopment() || app.Environment.IsStaging() || app.Environment.IsProduction())
         {
             app.UseDeveloperExceptionPage();
@@ -30,6 +29,10 @@ public static class MiddlewareExtension
         app.UseHsts();
         app.UseExceptionHandler();
         app.UseHttpsRedirection();
+        
+        // Add localization middleware here
+        app.UseRequestLocalization();
+        
         //app.UseMiddleware<IpRateLimitingMiddleware>();
         //app.UseRateLimiter();
         app.UseCors("DefaultPolicy");

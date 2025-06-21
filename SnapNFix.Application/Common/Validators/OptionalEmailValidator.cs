@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
+using SnapNFix.Application.Resources;
 
 public class OptionalEmailValidator<TUser> : IUserValidator<TUser> where TUser : IdentityUser<Guid>
 {
@@ -14,15 +15,15 @@ public class OptionalEmailValidator<TUser> : IUserValidator<TUser> where TUser :
             {
                 errors.Add(new IdentityError
                 {
-                    Code = "InvalidEmail",
-                    Description = "The email address is not valid."
+                    Code = Shared.InvalidEmail,
+                    Description = Shared.InvalidEmailDescription
                 });
             } else if (await manager.FindByEmailAsync(user.Email) != null)
             {
                 errors.Add(new IdentityError
                 {
-                    Code = "DuplicateEmail",
-                    Description = "The email address is already exist."
+                    Code = Shared.DuplicateEmail,
+                    Description = Shared.DuplicateEmailDescription
                 });
             }
         }

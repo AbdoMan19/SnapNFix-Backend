@@ -86,6 +86,9 @@
     <data name="InvalidRefreshToken" xml:space="preserve">
         <value>Invalid or expired refresh token</value>
     </data>
+    <data name="RefreshTokenRequired" xml:space="preserve">
+        <value>Refresh token is required</value>
+    </data>
     <data name="InvalidGoogleToken" xml:space="preserve">
         <value>Invalid Google token</value>
     </data>
@@ -94,6 +97,27 @@
     </data>
     <data name="AdminRoleRequired" xml:space="preserve">
         <value>Admin role required</value>
+    </data>
+    <data name="InvalidPassword" xml:space="preserve">
+        <value>The password is invalid</value>
+    </data>
+    <data name="UserLockedOut" xml:space="preserve">
+        <value>The user account is locked out</value>
+    </data>
+    <data name="RegistrationFailed" xml:space="preserve">
+        <value>Registration failed</value>
+    </data>
+    <data name="EmailAlreadyRegistered" xml:space="preserve">
+        <value>Email is already registered</value>
+    </data>
+    <data name="PhoneAlreadyRegistered" xml:space="preserve">
+        <value>Phone number is already registered</value>
+    </data>
+    <data name="InvalidVerificationCode" xml:space="preserve">
+        <value>Invalid verification code</value>
+    </data>
+    <data name="LogoutFailed" xml:space="preserve">
+        <value>Failed to logout</value>
     </data>
 
     <!-- Validation Messages -->
@@ -106,6 +130,15 @@
     <data name="PhoneRequired" xml:space="preserve">
         <value>Phone number is required</value>
     </data>
+    <data name="PhoneNumberRequired" xml:space="preserve">
+        <value>Phone number is required</value>
+    </data>
+    <data name="EmailOrPhoneNumberRequired" xml:space="preserve">
+        <value>Email or phone number is required</value>
+    </data>
+    <data name="InvalidEmailOrPhoneNumber" xml:space="preserve">
+        <value>Please enter a valid email address or Egyptian phone number</value>
+    </data>
     <data name="PasswordRequired" xml:space="preserve">
         <value>Password is required</value>
     </data>
@@ -115,7 +148,16 @@
     <data name="LastNameRequired" xml:space="preserve">
         <value>Last name is required</value>
     </data>
+    <data name="ConfirmPasswordRequired" xml:space="preserve">
+        <value>Confirm password is required</value>
+    </data>
+    <data name="OtpRequired" xml:space="preserve">
+        <value>OTP is required</value>
+    </data>
     <data name="InvalidEmail" xml:space="preserve">
+        <value>Invalid email format</value>
+    </data>
+    <data name="InvalidEmailFormat" xml:space="preserve">
         <value>Invalid email format</value>
     </data>
     <data name="InvalidPhoneNumber" xml:space="preserve">
@@ -123,6 +165,9 @@
     </data>
     <data name="InvalidOtp" xml:space="preserve">
         <value>Invalid OTP code</value>
+    </data>
+    <data name="InvalidOtpLength" xml:space="preserve">
+        <value>Invalid OTP length</value>
     </data>
     <data name="PasswordTooShort" xml:space="preserve">
         <value>Password must be at least 8 characters</value>
@@ -147,6 +192,20 @@
     </data>
     <data name="PhoneAlreadyExists" xml:space="preserve">
         <value>Phone number already exists</value>
+    </data>
+
+    <!-- Name Validation -->
+    <data name="FirstNameLength" xml:space="preserve">
+        <value>First name must be between 2 and 50 characters</value>
+    </data>
+    <data name="FirstNameInvalid" xml:space="preserve">
+        <value>First name can only contain letters (Arabic and English)</value>
+    </data>
+    <data name="LastNameLength" xml:space="preserve">
+        <value>Last name must be between 2 and 50 characters</value>
+    </data>
+    <data name="LastNameInvalid" xml:space="preserve">
+        <value>Last name can only contain letters (Arabic and English)</value>
     </data>
 
     <!-- Location and Report Messages -->
@@ -191,6 +250,9 @@
     <data name="DeviceNameRequired" xml:space="preserve">
         <value>Device name is required</value>
     </data>
+    <data name="DeviceTypeRequired" xml:space="preserve">
+        <value>Device type is required</value>
+    </data>
     <data name="PlatformRequired" xml:space="preserve">
         <value>Platform is required</value>
     </data>
@@ -199,6 +261,135 @@
     </data>
     <data name="TokenGenerationFailed" xml:space="preserve">
         <value>Failed to generate token</value>
+    </data>
+    <data name="FCMTokenRequired" xml:space="preserve">
+        <value>FCM Token is required</value>
+    </data>
+
+    <!-- AI Validation Messages -->
+    <data name="TaskIdRequired" xml:space="preserve">
+        <value>Task ID is required</value>
+    </data>
+    <data name="InvalidImageStatus" xml:space="preserve">
+        <value>Invalid image status</value>
+    </data>
+    <data name="InvalidReportCategory" xml:space="preserve">
+        <value>Invalid report category</value>
+    </data>
+    <data name="InvalidThreshold" xml:space="preserve">
+        <value>Threshold must be between 0 and 1</value>
+    </data>
+
+    <!-- Report Fields Validation -->
+    <data name="CommentMaxLength" xml:space="preserve">
+        <value>Comment cannot exceed 500 characters</value>
+    </data>
+    <data name="CommentRequired" xml:space="preserve">
+        <value>Comment is required</value>
+    </data>
+    <data name="RoadRequired" xml:space="preserve">
+        <value>Road is required</value>
+    </data>
+    <data name="RoadMaxLength" xml:space="preserve">
+        <value>Road cannot exceed 200 characters</value>
+    </data>
+    <data name="CityMaxLength" xml:space="preserve">
+        <value>City cannot exceed 100 characters</value>
+    </data>
+    <data name="StateMaxLength" xml:space="preserve">
+        <value>State cannot exceed 100 characters</value>
+    </data>
+    <data name="CountryMaxLength" xml:space="preserve">
+        <value>Country cannot exceed 100 characters</value>
+    </data>
+    <data name="LatitudeRequired" xml:space="preserve">
+        <value>Latitude is required</value>
+    </data>
+    <data name="LongitudeRequired" xml:space="preserve">
+        <value>Longitude is required</value>
+    </data>
+    <data name="LatitudeRange" xml:space="preserve">
+        <value>Latitude must be between -90 and 90 degrees</value>
+    </data>
+    <data name="LongitudeRange" xml:space="preserve">
+        <value>Longitude must be between -180 and 180 degrees</value>
+    </data>
+    <data name="InvalidSeverity" xml:space="preserve">
+        <value>Invalid severity level</value>
+    </data>
+    <data name="IssueIdRequired" xml:space="preserve">
+        <value>Issue ID is required</value>
+    </data>
+    <data name="InvalidGuid" xml:space="preserve">
+        <value>Issue ID must be a valid GUID</value>
+    </data>
+
+    <!-- Query Parameter Validation -->
+    <data name="PageNumberRequired" xml:space="preserve">
+        <value>Page number is required</value>
+    </data>
+    <data name="InvalidPageNumber" xml:space="preserve">
+        <value>Page number must be greater than zero</value>
+    </data>
+    <data name="PageSizeRequired" xml:space="preserve">
+        <value>Page size is required</value>
+    </data>
+    <data name="InvalidPageSize" xml:space="preserve">
+        <value>Page size must be between 1 and 100</value>
+    </data>
+    <data name="LimitRequired" xml:space="preserve">
+        <value>Limit is required</value>
+    </data>
+    <data name="InvalidLimit" xml:space="preserve">
+        <value>Limit must be between 1 and 100</value>
+    </data>
+    <data name="MaxResultsRequired" xml:space="preserve">
+        <value>Max results is required</value>
+    </data>
+    <data name="InvalidMaxResults" xml:space="preserve">
+        <value>Max results must be between 1 and 500</value>
+    </data>
+    <data name="MaxResultsExceeded" xml:space="preserve">
+        <value>Max results must not exceed 500 for performance reasons.</value>
+    </data>
+
+    <!-- Geographic Validation -->
+    <data name="NorthEastLatRequired" xml:space="preserve">
+        <value>North East Latitude is required</value>
+    </data>
+    <data name="NorthEastLngRequired" xml:space="preserve">
+        <value>North East Longitude is required</value>
+    </data>
+    <data name="SouthWestLatRequired" xml:space="preserve">
+        <value>South West Latitude is required</value>
+    </data>
+    <data name="SouthWestLngRequired" xml:space="preserve">
+        <value>South West Longitude is required</value>
+    </data>
+    <data name="InvalidLatitudeRange" xml:space="preserve">
+        <value>Latitude must be between -90 and 90 degrees</value>
+    </data>
+    <data name="InvalidLongitudeRange" xml:space="preserve">
+        <value>Longitude must be between -180 and 180 degrees</value>
+    </data>
+    <data name="InvalidViewportBounds" xml:space="preserve">
+        <value>Invalid viewport bounds: NorthEast coordinates must be greater than SouthWest coordinates</value>
+    </data>
+    <data name="ViewportTooLarge" xml:space="preserve">
+        <value>Viewport cannot exceed 10 degrees in width or height</value>
+    </data>
+
+    <!-- Statistics Validation -->
+    <data name="InvalidStatisticsInterval" xml:space="preserve">
+        <value>Invalid statistics interval. Must be Monthly, Quarterly, or Yearly</value>
+    </data>
+
+    <!-- Token and Access Validation -->
+    <data name="TokenRequired" xml:space="preserve">
+        <value>Token is required</value>
+    </data>
+    <data name="AccessTokenRequired" xml:space="preserve">
+        <value>Access token is required</value>
     </data>
 
     <!-- Status and Category Names -->
@@ -257,6 +448,9 @@
     <data name="GenderNotSpecified" xml:space="preserve">
         <value>Not Specified</value>
     </data>
+    <data name="InvalidGender" xml:space="preserve">
+        <value>Invalid gender value</value>
+    </data>
 
     <!-- Statistics -->
     <data name="StatisticsRetrievalError" xml:space="preserve">
@@ -306,4 +500,27 @@
     <data name="Save" xml:space="preserve">
         <value>Save</value>
     </data>
+
+    <data name="InvalidAgeError" xml:space="preserve">
+        <value>Age must be between 0 and 120</value>
+    </data>
+
+    <data name="FutureDateError" xml:space="preserve">
+        <value>Birth date cannot be in the future</value>
+    </data>
+
+    <data name="NorthEastLatGreaterThanSouthWestLat" xml:space="preserve">
+        <value>North East Latitude must be greater than South West Latitude</value>
+    </data>
+    <data name="NorthEastLngGreaterThanSouthWestLng" xml:space="preserve">
+        <value>North East Longitude must be greater than South West Longitude</value>
+    </data>
+    <data name="ViewportHeightExceeded" xml:space="preserve">
+        <value>Viewport height cannot exceed 10 degrees latitude.</value>
+    </data>
+    <data name="ViewportWidthExceeded" xml:space="preserve">
+        <value>Viewport width cannot exceed 10 degrees longitude.</value>
+    </data>
+
+
 </root>

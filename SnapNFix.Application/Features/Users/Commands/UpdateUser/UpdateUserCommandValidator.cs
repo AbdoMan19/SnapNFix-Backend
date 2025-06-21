@@ -1,4 +1,5 @@
 using FluentValidation;
+using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Enums;
 
 namespace SnapNFix.Application.Features.Users.Commands.UpdateUser;
@@ -10,31 +11,31 @@ public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
         // Validate FirstName only if provided
         RuleFor(x => x.FirstName)
             .Length(2, 100)
-            .WithMessage("First name must be between 2 and 100 characters")
+            .WithMessage(Shared.FirstNameLength)
             .Matches(@"^[a-zA-Z\u0600-\u06FF]+$")
-            .WithMessage("First name can only contain letters (Arabic and English) without spaces")
+            .WithMessage(Shared.FirstNameInvalid)
             .When(x => !string.IsNullOrWhiteSpace(x.FirstName));
 
         // Validate LastName only if provided
         RuleFor(x => x.LastName)
             .Length(2, 100)
-            .WithMessage("Last name must be between 2 and 100 characters")
+            .WithMessage(Shared.LastNameLength)
             .Matches(@"^[a-zA-Z\u0600-\u06FF]+$")
-            .WithMessage("Last name can only contain letters (Arabic and English) without spaces")
+            .WithMessage(Shared.LastNameInvalid)
             .When(x => !string.IsNullOrWhiteSpace(x.LastName));
 
         // Validate Gender only if provided
         RuleFor(x => x.Gender)
             .IsInEnum()
-            .WithMessage("Invalid gender value")
+            .WithMessage(Shared.InvalidGender)
             .When(x => x.Gender.HasValue);
 
         // Validate BirthDate only if provided
         RuleFor(x => x.BirthDate)
             .Must(BeAValidAge)
-            .WithMessage("Age must be between 13 and 120 years")
+            .WithMessage(Shared.InvalidAgeError)
             .Must(NotBeFutureDate)
-            .WithMessage("Birth date cannot be in the future")
+            .WithMessage(Shared.FutureDateError)
             .When(x => x.BirthDate.HasValue);
 
         // Ensure at least one field is being updated

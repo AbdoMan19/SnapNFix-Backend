@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using SnapNFix.Application.Common.Interfaces;
+using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
 
@@ -10,12 +10,12 @@ public class RequestPhoneVerificationOtpCommandValidator : AbstractValidator<Req
     public RequestPhoneVerificationOtpCommandValidator(IUnitOfWork unitOfWork)
     {
         RuleFor(x => x.PhoneNumber)
-            .NotEmpty().WithMessage("Phone number is required")
-            .Matches(@"^(\+20|0)?1[0125][0-9]{8}$").WithMessage("{PropertyName} must be a valid Egyptian phone number")
+            .NotEmpty().WithMessage(Shared.PhoneRequired)
+            .Matches(@"^(\+20|0)?1[0125][0-9]{8}$").WithMessage(Shared.InvalidPhoneNumber)
             .Must((command, phoneNumber) =>
             {
                 return !unitOfWork.Repository<User>().ExistsByName(u => u.PhoneNumber == phoneNumber);
-            }).WithMessage("Phone number already exists");
+            }).WithMessage(Shared.PhoneAlreadyExists);
     }
 }
 

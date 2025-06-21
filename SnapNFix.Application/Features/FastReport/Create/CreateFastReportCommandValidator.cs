@@ -1,4 +1,5 @@
 using FluentValidation;
+using SnapNFix.Application.Resources;
 
 namespace SnapNFix.Application.Features.FastReport.Create;
 
@@ -6,12 +7,11 @@ public class CreateFastReportCommandValidator : AbstractValidator<CreateFastRepo
 {
     public CreateFastReportCommandValidator()
     {
-      
         RuleFor(x => x.IssueId)
-            .NotEmpty().WithMessage("Issue ID is required.");
+            .NotEmpty().WithMessage(Shared.IssueIdRequired);
 
         RuleFor(x => x.Comment)
-            .NotEmpty().WithMessage("Comment is required.")
-            .MaximumLength(500).WithMessage("Comment must not exceed 500 characters.");
+            .NotEmpty().WithMessage(Shared.CommentRequired)
+            .MaximumLength(500).WithMessage(Shared.CommentMaxLength);
     }
 }

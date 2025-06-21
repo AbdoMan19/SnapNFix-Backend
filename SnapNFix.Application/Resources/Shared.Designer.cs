@@ -7,10 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SnapNFix.Domain.Resources {
+namespace SnapNFix.Application.Resources {
     using System;
-    
-    
+
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -21,303 +21,991 @@ namespace SnapNFix.Domain.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Shared {
-        
+    public class Shared
+    {
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
+
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Shared() {
+        internal Shared()
+        {
         }
-        
+
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
-            get {
-                if (object.ReferenceEquals(resourceMan, null)) {
+        public static global::System.Resources.ResourceManager ResourceManager
+        {
+            get
+            {
+                if (object.ReferenceEquals(resourceMan, null))
+                {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SnapNFix.Application.Resources.Shared", typeof(Shared).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
-            get {
+        public static global::System.Globalization.CultureInfo Culture
+        {
+            get
+            {
                 return resourceCulture;
             }
-            set {
+            set
+            {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        public static string EmailOrPhoneNotFound {
-            get {
-                return ResourceManager.GetString("EmailOrPhoneNotFound", resourceCulture);
+
+        // Success Messages
+        public static string OperationSuccessful
+        {
+            get
+            {
+                return ResourceManager.GetString("OperationSuccessful", resourceCulture);
             }
         }
 
-        /// <summary>
-        ///   Looks up a localized string similar to The password is invalid.
-        /// </summary>
-        public static string InvalidPassword {
-            get {
-                return ResourceManager.GetString("InvalidPassword", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to The user account is locked out.
-        /// </summary>
-        public static string UserLockedOut {
-            get {
-                return ResourceManager.GetString("UserLockedOut", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Login successful.
-        /// </summary>
-        public static string LoginSuccess {
-            get {
+        public static string LoginSuccess
+        {
+            get
+            {
                 return ResourceManager.GetString("LoginSuccess", resourceCulture);
             }
         }
 
-        /// <summary>
-        ///   Looks up a localized string similar to An unexpected error occurred.
-        /// </summary>
-        public static string UnexpectedError {
-            get {
-                return ResourceManager.GetString("UnexpectedError", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Registration completed successfully.
-        /// </summary>
-        public static string RegistrationSuccess {
-            get {
+        public static string RegistrationSuccess
+        {
+            get
+            {
                 return ResourceManager.GetString("RegistrationSuccess", resourceCulture);
             }
         }
 
-        /// <summary>
-        ///   Looks up a localized string similar to Registration failed.
-        /// </summary>
-        public static string RegistrationFailed {
-            get {
-                return ResourceManager.GetString("RegistrationFailed", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Email is already registered.
-        /// </summary>
-        public static string EmailAlreadyRegistered {
-            get {
-                return ResourceManager.GetString("EmailAlreadyRegistered", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Phone number is already registered.
-        /// </summary>
-        public static string PhoneAlreadyRegistered {
-            get {
-                return ResourceManager.GetString("PhoneAlreadyRegistered", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Invalid verification code.
-        /// </summary>
-        public static string InvalidVerificationCode {
-            get {
-                return ResourceManager.GetString("InvalidVerificationCode", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to User not found.
-        /// </summary>
-        public static string UserNotFound {
-            get {
-                return ResourceManager.GetString("UserNotFound", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Passwords do not match.
-        /// </summary>
-        public static string PasswordsDoNotMatch {
-            get {
-                return ResourceManager.GetString("PasswordsDoNotMatch", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Password must be at least 8 characters.
-        /// </summary>
-        public static string PasswordTooShort {
-            get {
-                return ResourceManager.GetString("PasswordTooShort", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Password must contain at least one uppercase letter.
-        /// </summary>
-        public static string PasswordMissingUpper {
-            get {
-                return ResourceManager.GetString("PasswordMissingUpper", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Password must contain at least one lowercase letter.
-        /// </summary>
-        public static string PasswordMissingLower {
-            get {
-                return ResourceManager.GetString("PasswordMissingLower", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Password must contain at least one number.
-        /// </summary>
-        public static string PasswordMissingNumber {
-            get {
-                return ResourceManager.GetString("PasswordMissingNumber", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Password must contain at least one special character.
-        /// </summary>
-        public static string PasswordMissingSpecial {
-            get {
-                return ResourceManager.GetString("PasswordMissingSpecial", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Confirm password is required.
-        /// </summary>
-        public static string ConfirmPasswordRequired {
-            get {
-                return ResourceManager.GetString("ConfirmPasswordRequired", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to First name is required.
-        /// </summary>
-        public static string FirstNameRequired {
-            get {
-                return ResourceManager.GetString("FirstNameRequired", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Last name is required.
-        /// </summary>
-        public static string LastNameRequired {
-            get {
-                return ResourceManager.GetString("LastNameRequired", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Phone number is required.
-        /// </summary>
-        public static string PhoneNumberRequired {
-            get {
-                return ResourceManager.GetString("PhoneNumberRequired", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Email is required.
-        /// </summary>
-        public static string EmailRequired {
-            get {
-                return ResourceManager.GetString("EmailRequired", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Email is not valid.
-        /// </summary>
-        public static string InvalidEmail {
-            get {
-                return ResourceManager.GetString("InvalidEmail", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Phone number is not valid.
-        /// </summary>
-        public static string InvalidPhoneNumber {
-            get {
-                return ResourceManager.GetString("InvalidPhoneNumber", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Account is temporarily locked.
-        /// </summary>
-        public static string AccountLocked {
-            get {
-                return ResourceManager.GetString("AccountLocked", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Email address not confirmed.
-        /// </summary>
-        public static string EmailNotConfirmed {
-            get {
-                return ResourceManager.GetString("EmailNotConfirmed", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to OTP sent to phone number.
-        /// </summary>
-        public static string OtpSent {
-            get {
-                return ResourceManager.GetString("OtpSent", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Logout successful.
-        /// </summary>
-        public static string LogoutSuccess {
-            get {
+        public static string LogoutSuccess
+        {
+            get
+            {
                 return ResourceManager.GetString("LogoutSuccess", resourceCulture);
             }
         }
 
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to logout.
-        /// </summary>
-        public static string LogoutFailed {
-            get {
+        public static string OtpSent
+        {
+            get
+            {
+                return ResourceManager.GetString("OtpSent", resourceCulture);
+            }
+        }
+
+        public static string PhoneVerified
+        {
+            get
+            {
+                return ResourceManager.GetString("PhoneVerified", resourceCulture);
+            }
+        }
+
+        public static string PasswordReset
+        {
+            get
+            {
+                return ResourceManager.GetString("PasswordReset", resourceCulture);
+            }
+        }
+
+        public static string ProfileUpdated
+        {
+            get
+            {
+                return ResourceManager.GetString("ProfileUpdated", resourceCulture);
+            }
+        }
+
+        public static string ReportCreated
+        {
+            get
+            {
+                return ResourceManager.GetString("ReportCreated", resourceCulture);
+            }
+        }
+
+        public static string ReportUpdated
+        {
+            get
+            {
+                return ResourceManager.GetString("ReportUpdated", resourceCulture);
+            }
+        }
+
+        // Error Messages
+        public static string OperationFailed
+        {
+            get
+            {
+                return ResourceManager.GetString("OperationFailed", resourceCulture);
+            }
+        }
+
+        public static string UnexpectedError
+        {
+            get
+            {
+                return ResourceManager.GetString("UnexpectedError", resourceCulture);
+            }
+        }
+
+        public static string ValidationError
+        {
+            get
+            {
+                return ResourceManager.GetString("ValidationError", resourceCulture);
+            }
+        }
+
+        // Authentication Errors
+        public static string InvalidCredentials
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidCredentials", resourceCulture);
+            }
+        }
+
+        public static string UserNotFound
+        {
+            get
+            {
+                return ResourceManager.GetString("UserNotFound", resourceCulture);
+            }
+        }
+
+        public static string EmailOrPhoneNotFound
+        {
+            get
+            {
+                return ResourceManager.GetString("EmailOrPhoneNotFound", resourceCulture);
+            }
+        }
+
+        public static string AccountSuspended
+        {
+            get
+            {
+                return ResourceManager.GetString("AccountSuspended", resourceCulture);
+            }
+        }
+
+        public static string AccountLocked
+        {
+            get
+            {
+                return ResourceManager.GetString("AccountLocked", resourceCulture);
+            }
+        }
+
+        public static string EmailNotConfirmed
+        {
+            get
+            {
+                return ResourceManager.GetString("EmailNotConfirmed", resourceCulture);
+            }
+        }
+
+        public static string PhoneNotConfirmed
+        {
+            get
+            {
+                return ResourceManager.GetString("PhoneNotConfirmed", resourceCulture);
+            }
+        }
+
+        public static string InvalidRefreshToken
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidRefreshToken", resourceCulture);
+            }
+        }
+
+        public static string RefreshTokenRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("RefreshTokenRequired", resourceCulture);
+            }
+        }
+
+        public static string InvalidGoogleToken
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidGoogleToken", resourceCulture);
+            }
+        }
+
+        public static string AccessDenied
+        {
+            get
+            {
+                return ResourceManager.GetString("AccessDenied", resourceCulture);
+            }
+        }
+
+        public static string AdminRoleRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("AdminRoleRequired", resourceCulture);
+            }
+        }
+
+        // Validation Messages
+        public static string FieldRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("FieldRequired", resourceCulture);
+            }
+        }
+
+        public static string EmailRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("EmailRequired", resourceCulture);
+            }
+        }
+
+        public static string PhoneRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("PhoneRequired", resourceCulture);
+            }
+        }
+
+        public static string PasswordRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("PasswordRequired", resourceCulture);
+            }
+        }
+
+        public static string FirstNameRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("FirstNameRequired", resourceCulture);
+            }
+        }
+
+        public static string LastNameRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("LastNameRequired", resourceCulture);
+            }
+        }
+
+        public static string ConfirmPasswordRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("ConfirmPasswordRequired", resourceCulture);
+            }
+        }
+
+        public static string InvalidEmail
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidEmail", resourceCulture);
+            }
+        }
+
+        public static string InvalidEmailFormat
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidEmail", resourceCulture);
+            }
+        }
+
+        public static string InvalidEmailDescription
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidEmail", resourceCulture);
+            }
+        }
+
+        public static string DuplicateEmail
+        {
+            get
+            {
+                return ResourceManager.GetString("EmailAlreadyExists", resourceCulture);
+            }
+        }
+
+        public static string DuplicateEmailDescription
+        {
+            get
+            {
+                return ResourceManager.GetString("EmailAlreadyExists", resourceCulture);
+            }
+        }
+
+        public static string InvalidPhoneNumber
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidPhoneNumber", resourceCulture);
+            }
+        }
+
+        public static string InvalidOtp
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidOtp", resourceCulture);
+            }
+        }
+
+        public static string InvalidOtpLength
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidOtpLength", resourceCulture);
+            }
+        }
+
+
+
+        public static string OtpRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("OtpRequired", resourceCulture);
+            }
+        }
+
+        public static string PasswordTooShort
+        {
+            get
+            {
+                return ResourceManager.GetString("PasswordTooShort", resourceCulture);
+            }
+        }
+
+        public static string PasswordMissingUpper
+        {
+            get
+            {
+                return ResourceManager.GetString("PasswordMissingUpper", resourceCulture);
+            }
+        }
+
+        public static string PasswordMissingLower
+        {
+            get
+            {
+                return ResourceManager.GetString("PasswordMissingLower", resourceCulture);
+            }
+        }
+
+        public static string PasswordMissingNumber
+        {
+            get
+            {
+                return ResourceManager.GetString("PasswordMissingNumber", resourceCulture);
+            }
+        }
+
+        public static string PasswordMissingSpecial
+        {
+            get
+            {
+                return ResourceManager.GetString("PasswordMissingSpecial", resourceCulture);
+            }
+        }
+
+        public static string PasswordsDoNotMatch
+        {
+            get
+            {
+                return ResourceManager.GetString("PasswordsDoNotMatch", resourceCulture);
+            }
+        }
+
+        public static string EmailAlreadyExists
+        {
+            get
+            {
+                return ResourceManager.GetString("EmailAlreadyExists", resourceCulture);
+            }
+        }
+
+        public static string PhoneAlreadyExists
+        {
+            get
+            {
+                return ResourceManager.GetString("PhoneAlreadyExists", resourceCulture);
+            }
+        }
+
+        // Names and length validation
+        public static string FirstNameLength
+        {
+            get
+            {
+                return ResourceManager.GetString("FirstNameLength", resourceCulture);
+            }
+        }
+
+        public static string FirstNameInvalid
+        {
+            get
+            {
+                return ResourceManager.GetString("FirstNameInvalid", resourceCulture);
+            }
+        }
+
+        public static string LastNameLength
+        {
+            get
+            {
+                return ResourceManager.GetString("LastNameLength", resourceCulture);
+            }
+        }
+
+        public static string LastNameInvalid
+        {
+            get
+            {
+                return ResourceManager.GetString("LastNameInvalid", resourceCulture);
+            }
+        }
+
+        public static string InvalidGender
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidGender", resourceCulture);
+            }
+        }
+
+        // Device and Platform
+        public static string DeviceIdRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("DeviceIdRequired", resourceCulture);
+            }
+        }
+
+        public static string DeviceNameRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("DeviceNameRequired", resourceCulture);
+            }
+        }
+
+        public static string DeviceTypeRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("DeviceTypeRequired", resourceCulture);
+            }
+        }
+
+        public static string PlatformRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("PlatformRequired", resourceCulture);
+            }
+        }
+
+        public static string ContactNotFound
+        {
+            get
+            {
+                return ResourceManager.GetString("ContactNotFound", resourceCulture);
+            }
+        }
+
+        public static string TokenGenerationFailed
+        {
+            get
+            {
+                return ResourceManager.GetString("TokenGenerationFailed", resourceCulture);
+            }
+        }
+
+        // Location and Report Messages
+        public static string LocationOutsideEgypt
+        {
+            get
+            {
+                return ResourceManager.GetString("LocationOutsideEgypt", resourceCulture);
+            }
+        }
+
+        public static string LocationTooFarSouth
+        {
+            get
+            {
+                return ResourceManager.GetString("LocationTooFarSouth", resourceCulture);
+            }
+        }
+
+        public static string LocationTooFarNorth
+        {
+            get
+            {
+                return ResourceManager.GetString("LocationTooFarNorth", resourceCulture);
+            }
+        }
+
+        public static string LocationTooFarWest
+        {
+            get
+            {
+                return ResourceManager.GetString("LocationTooFarWest", resourceCulture);
+            }
+        }
+
+        public static string LocationTooFarEast
+        {
+            get
+            {
+                return ResourceManager.GetString("LocationTooFarEast", resourceCulture);
+            }
+        }
+
+        public static string ImageRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("ImageRequired", resourceCulture);
+            }
+        }
+
+        public static string InvalidImageFormat
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidImageFormat", resourceCulture);
+            }
+        }
+
+        public static string ImageTooLarge
+        {
+            get
+            {
+                return ResourceManager.GetString("ImageTooLarge", resourceCulture);
+            }
+        }
+
+        public static string InvalidImageFile
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidImageFile", resourceCulture);
+            }
+        }
+
+        public static string ReportNotFound
+        {
+            get
+            {
+                return ResourceManager.GetString("ReportNotFound", resourceCulture);
+            }
+        }
+
+        public static string IssueNotFound
+        {
+            get
+            {
+                return ResourceManager.GetString("IssueNotFound", resourceCulture);
+            }
+        }
+
+        // Additional validation messages not in original designer
+        public static string InvalidPassword
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidPassword", resourceCulture);
+            }
+        }
+
+        public static string UserLockedOut
+        {
+            get
+            {
+                return ResourceManager.GetString("UserLockedOut", resourceCulture);
+            }
+        }
+
+        public static string RegistrationFailed
+        {
+            get
+            {
+                return ResourceManager.GetString("RegistrationFailed", resourceCulture);
+            }
+        }
+
+        public static string EmailAlreadyRegistered
+        {
+            get
+            {
+                return ResourceManager.GetString("EmailAlreadyRegistered", resourceCulture);
+            }
+        }
+
+        public static string PhoneAlreadyRegistered
+        {
+            get
+            {
+                return ResourceManager.GetString("PhoneAlreadyRegistered", resourceCulture);
+            }
+        }
+
+        public static string InvalidVerificationCode
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidVerificationCode", resourceCulture);
+            }
+        }
+
+        public static string PhoneNumberRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("PhoneNumberRequired", resourceCulture);
+            }
+        }
+
+        public static string LogoutFailed
+        {
+            get
+            {
                 return ResourceManager.GetString("LogoutFailed", resourceCulture);
             }
         }
+
+        // Comments and fields length validation 
+        public static string CommentMaxLength
+        {
+            get
+            {
+                return ResourceManager.GetString("CommentMaxLength", resourceCulture);
+            }
+        }
+
+        public static string CommentRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("CommentRequired", resourceCulture);
+            }
+        }
+
+        public static string RoadRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("RoadRequired", resourceCulture);
+            }
+        }
+
+        public static string RoadMaxLength
+        {
+            get
+            {
+                return ResourceManager.GetString("RoadMaxLength", resourceCulture);
+            }
+        }
+
+        public static string CityMaxLength
+        {
+            get
+            {
+                return ResourceManager.GetString("CityMaxLength", resourceCulture);
+            }
+        }
+
+        public static string StateMaxLength
+        {
+            get
+            {
+                return ResourceManager.GetString("StateMaxLength", resourceCulture);
+            }
+        }
+
+        public static string CountryMaxLength
+        {
+            get
+            {
+                return ResourceManager.GetString("CountryMaxLength", resourceCulture);
+            }
+        }
+
+        public static string LatitudeRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("LatitudeRequired", resourceCulture);
+            }
+        }
+
+        public static string LongitudeRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("LongitudeRequired", resourceCulture);
+            }
+        }
+
+        public static string LatitudeRange
+        {
+            get
+            {
+                return ResourceManager.GetString("LatitudeRange", resourceCulture);
+            }
+        }
+
+        public static string LongitudeRange
+        {
+            get
+            {
+                return ResourceManager.GetString("LongitudeRange", resourceCulture);
+            }
+        }
+
+        public static string InvalidSeverity
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidSeverity", resourceCulture);
+            }
+        }
+
+        // Issue and Report IDs
+        public static string IssueIdRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("IssueIdRequired", resourceCulture);
+            }
+        }
+        public static string InvalidIssueId
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidIssueId", resourceCulture);
+            }
+        }
+
+        public static string InvalidPageNumber
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidPageNumber", resourceCulture);
+            }
+        }
+
+
+
+        public static string InvalidGuid
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidGuid", resourceCulture);
+            }
+        }
+
+        // FCM Token
+        public static string FCMTokenRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("FCMTokenRequired", resourceCulture);
+            }
+        }
+
+        public static string EmailOrPhoneNumberRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("EmailOrPhoneNumberRequired", resourceCulture);
+            }
+        }
+
+        public static string InvalidEmailOrPhoneNumber
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidEmailOrPhoneNumber", resourceCulture);
+            }
+        }
+
+        public static string TaskIdRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("TaskIdRequired", resourceCulture);
+            }
+        }
+
+        public static string InvalidImageStatus
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidImageStatus", resourceCulture);
+            }
+        }
+
+        public static string InvalidReportCategory
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidReportCategory", resourceCulture);
+            }
+        }
+
+        public static string InvalidThreshold
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidThreshold", resourceCulture);
+            }
+        }
+
+        public static string NorthEastLatRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("NorthEastLatRequired", resourceCulture);
+            }
+        }
+
+        public static string NorthEastLngRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("NorthEastLngRequired", resourceCulture);
+            }
+        }
+        public static string SouthWestLatRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("SouthWestLatRequired", resourceCulture);
+            }
+        }
+        public static string SouthWestLngRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("SouthWestLngRequired", resourceCulture);
+            }
+        }
+
+        public static string InvalidLatitudeRange
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidLatitudeRange", resourceCulture);
+            }
+        }
+
+        public static string InvalidLongitudeRange
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidLongitudeRange", resourceCulture);
+            }
+        }
+
+        public static string InvalidAgeError
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidAgeError", resourceCulture);
+            }
+        }
+
+        public static string FutureDateError
+        {
+            get
+            {
+                return ResourceManager.GetString("FutureDateError", resourceCulture);
+            }
+        }
+
+        public static string InvalidMaxResults
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidMaxResults", resourceCulture);
+            }
+        }
+
+        public static string MaxResultsExceeded
+        {
+            get
+            {
+                return ResourceManager.GetString("MaxResultsExceeded", resourceCulture);
+            }
+        }
+
+        public static string NorthEastLatGreaterThanSouthWestLat
+        {
+            get
+            {
+                return ResourceManager.GetString("NorthEastLatGreaterThanSouthWestLat", resourceCulture);
+            }
+        }
+
+        public static string NorthEastLngGreaterThanSouthWestLng
+        {
+            get
+            {
+                return ResourceManager.GetString("NorthEastLngGreaterThanSouthWestLng", resourceCulture);
+            }
+        }
+
+        public static string ViewportHeightExceeded
+        {
+            get
+            {
+                return ResourceManager.GetString("ViewportHeightExceeded", resourceCulture);
+            }
+        }
+
+        public static string ViewportWidthExceeded
+        {
+            get
+            {
+                return ResourceManager.GetString("ViewportWidthExceeded", resourceCulture);
+            }
+        }
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Domain.Interfaces;
+using SnapNFix.Application.Resources;
 
 namespace SnapNFix.Application.Features.Users.Commands.RegisterUser
 {
@@ -9,34 +10,36 @@ namespace SnapNFix.Application.Features.Users.Commands.RegisterUser
         public RegisterUserCommandValidator(IUnitOfWork unitOfWork)
         {
             RuleFor(x => x.FirstName)
-                .NotEmpty().WithMessage("{PropertyName} is required")
-                .MaximumLength(50).WithMessage("{PropertyName} must not exceed 50 characters");
+                .NotEmpty().WithMessage(Shared.FirstNameRequired)
+                .MaximumLength(50).WithMessage(Shared.FirstNameLength);
 
             RuleFor(x => x.LastName)
-                .NotEmpty().WithMessage("{PropertyName} is required")
-                .MaximumLength(50).WithMessage("{PropertyName} must not exceed 50 characters");
+                .NotEmpty().WithMessage(Shared.LastNameRequired)
+                .MaximumLength(50).WithMessage(Shared.LastNameLength);
 
             RuleFor(x => x.Password)
-                .NotEmpty().WithMessage("{PropertyName} is required")
-                .MinimumLength(8).WithMessage("{PropertyName} must be at least 8 characters")
-                .Matches("[A-Z]").WithMessage("{PropertyName} must contain at least one uppercase letter")
-                .Matches("[a-z]").WithMessage("{PropertyName} must contain at least one lowercase letter")
-                .Matches("[0-9]").WithMessage("{PropertyName} must contain at least one number")
-                .Matches("[^a-zA-Z0-9]").WithMessage("{PropertyName} must contain at least one special character");
+                .NotEmpty().WithMessage(Shared.PasswordRequired)
+                .MinimumLength(8).WithMessage(Shared.PasswordTooShort)
+                .Matches("[A-Z]").WithMessage(Shared.PasswordMissingUpper)
+                .Matches("[a-z]").WithMessage(Shared.PasswordMissingLower)
+                .Matches("[0-9]").WithMessage(Shared.PasswordMissingNumber)
+                .Matches("[^a-zA-Z0-9]").WithMessage(Shared.PasswordMissingSpecial);
 
             RuleFor(x => x.ConfirmPassword)
-                .NotEmpty().WithMessage("{PropertyName} is required")
-                .Equal(x => x.Password).WithMessage("Passwords do not match");
+                .NotEmpty().WithMessage(Shared.ConfirmPasswordRequired)
+                .Equal(x => x.Password).WithMessage(Shared.PasswordsDoNotMatch);
 
             RuleFor(x => x.DeviceId)
-                .NotEmpty();
+                .NotEmpty().WithMessage(Shared.DeviceIdRequired);
+            
             RuleFor(x => x.DeviceName)
-                .NotEmpty();
+                .NotEmpty().WithMessage(Shared.DeviceNameRequired);
+            
             RuleFor(x => x.DeviceType)
-                .NotEmpty();
+                .NotEmpty().WithMessage(Shared.DeviceTypeRequired);
+            
             RuleFor(x => x.Platform)
-                .NotEmpty();
-
+                .NotEmpty().WithMessage(Shared.PlatformRequired);
         }
     }
 }

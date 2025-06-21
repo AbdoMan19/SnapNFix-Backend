@@ -1,4 +1,5 @@
 using FluentValidation;
+using SnapNFix.Application.Resources;
 
 namespace SnapNFix.Application.Features.Admin.Commands.AdminLogin;
 
@@ -7,27 +8,27 @@ public class AdminLoginCommandValidator : AbstractValidator<AdminLoginCommand>
     public AdminLoginCommandValidator()
     {
         RuleFor(x => x.Email)
-            .NotEmpty().WithMessage("Email is required")
-            .EmailAddress().WithMessage("Invalid email format");
+            .NotEmpty().WithMessage(Shared.EmailRequired)
+            .EmailAddress().WithMessage(Shared.InvalidEmailFormat);
 
         RuleFor(x => x.Password)
-            .NotEmpty().WithMessage("Password is required")
-            .MinimumLength(8).WithMessage("Password must be at least 8 characters")
-            .Matches("[A-Z]").WithMessage("Password must contain at least one uppercase letter")
-            .Matches("[a-z]").WithMessage("Password must contain at least one lowercase letter")
-            .Matches("[0-9]").WithMessage("Password must contain at least one number")
-            .Matches("[^a-zA-Z0-9]").WithMessage("Password must contain at least one special character");
+            .NotEmpty().WithMessage(Shared.PasswordRequired)
+            .MinimumLength(8).WithMessage(Shared.PasswordTooShort)
+            .Matches("[A-Z]").WithMessage(Shared.PasswordMissingUpper)
+            .Matches("[a-z]").WithMessage(Shared.PasswordMissingLower)
+            .Matches("[0-9]").WithMessage(Shared.PasswordMissingNumber)
+            .Matches("[^a-zA-Z0-9]").WithMessage(Shared.PasswordMissingSpecial);
 
         RuleFor(x => x.DeviceId)
-            .NotEmpty().WithMessage("Device ID is required");
+            .NotEmpty().WithMessage(Shared.DeviceIdRequired);
 
         RuleFor(x => x.DeviceName)
-            .NotEmpty().WithMessage("Device name is required");
+            .NotEmpty().WithMessage(Shared.DeviceNameRequired);
 
         RuleFor(x => x.DeviceType)
-            .NotEmpty().WithMessage("Device type is required");
+            .NotEmpty().WithMessage(Shared.DeviceTypeRequired);
 
         RuleFor(x => x.Platform)
-            .NotEmpty().WithMessage("Platform is required");
+            .NotEmpty().WithMessage(Shared.PlatformRequired);
     }
 }
