@@ -7,20 +7,20 @@ using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Application.Features.Issue.Queries;
 
-public class GetUserIssuesQueryHandler : 
-    IRequestHandler<GetUserIssuesQuery, GenericResponseModel<PagedList<IssueDetailsDto>>>
+public class GetIssuesQueryHandler : 
+    IRequestHandler<GetIssuesQuery, GenericResponseModel<PagedList<IssueDetailsDto>>>
 {
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
 
-    public GetUserIssuesQueryHandler(IMapper mapper, IUnitOfWork unitOfWork)
+    public GetIssuesQueryHandler(IMapper mapper, IUnitOfWork unitOfWork)
     {
         _mapper = mapper;
         _unitOfWork = unitOfWork;
     }
 
     public async Task<GenericResponseModel<PagedList<IssueDetailsDto>>> Handle(
-        GetUserIssuesQuery request, CancellationToken cancellationToken)
+        GetIssuesQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<Domain.Entities.Issue>()
             .GetQuerableData();

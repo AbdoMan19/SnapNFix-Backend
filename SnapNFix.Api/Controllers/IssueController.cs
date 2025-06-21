@@ -35,7 +35,7 @@ public class IssueController : ControllerBase
       return Ok(result);
   }
 
-  [Authorize("Citizen, Admin, SuperAdmin")]
+  [Authorize(Roles = "Citizen,Admin,SuperAdmin")]
   [HttpGet("{id}")]
   public async Task<ActionResult<GenericResponseModel<IssueDetailsDto>>> GetIssueById(Guid id)
   {
@@ -47,7 +47,7 @@ public class IssueController : ControllerBase
     return Ok(result);
   }
 
-  [Authorize("Citizen, Admin, SuperAdmin")]
+  [Authorize(Roles = "Citizen,Admin,SuperAdmin")]
   [HttpGet("{id}/snapreports")]
   public async Task<ActionResult<GenericResponseModel<PagedList<ReportDetailsDto>>>> GetSnapReportsByIssueId(Guid id)
   {
@@ -59,7 +59,7 @@ public class IssueController : ControllerBase
     return Ok(result);
   }
 
-  [Authorize("Citizen, Admin, SuperAdmin")]
+  [Authorize(Roles = "Citizen,Admin,SuperAdmin")]
   [HttpGet("{id}/fastreports")]
   public async Task<ActionResult<GenericResponseModel<PagedList<FastReportDetailsDto>>>> GetFastReportsByIssueId(
       Guid id, 
@@ -77,10 +77,10 @@ public class IssueController : ControllerBase
     return Ok(result);
   }
 
-  [Authorize("Citizen")]
-  [HttpGet("get-user-issues")]
-  public async Task<ActionResult<GenericResponseModel<PagedList<IssueDetailsDto>>>> GetUserIssues(
-      [FromQuery] GetUserIssuesQuery query)
+  [Authorize(Roles = "Admin,SuperAdmin")]
+  [HttpGet("get-issues")]
+  public async Task<ActionResult<GenericResponseModel<PagedList<IssueDetailsDto>>>> GetIssues(
+      [FromQuery] GetIssuesQuery query)
   {
     var result = await _mediator.Send(query);
     
