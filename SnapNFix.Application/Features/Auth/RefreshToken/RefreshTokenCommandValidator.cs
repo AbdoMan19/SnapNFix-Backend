@@ -1,4 +1,5 @@
 using FluentValidation;
+using SnapNFix.Application.Resources;
 
 namespace SnapNFix.Application.Features.Auth.RefreshToken;
 
@@ -8,7 +9,7 @@ public class RefreshTokenCommandValidator : AbstractValidator<RefreshTokenComman
     {
         RuleFor(x => x.RefreshToken)
             .NotEmpty()
-            .WithMessage("Token is required.");
+            .WithMessage(Shared.RefreshTokenRequired);
     }
     
 }

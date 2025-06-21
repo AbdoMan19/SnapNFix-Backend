@@ -1,4 +1,5 @@
 using FluentValidation;
+using SnapNFix.Application.Resources;
 
 namespace SnapNFix.Application.Features.Issue.Queries;
 
@@ -8,8 +9,8 @@ public class GetIssueByIdQueryValidator : AbstractValidator<GetIssueByIdQuery>
     {
         RuleFor(x => x.Id)
             .NotEmpty()
-            .WithMessage("Issue ID is required.")
+            .WithMessage(Shared.IssueIdRequired)
             .NotEqual(Guid.Empty)
-            .WithMessage("Issue ID must be a valid GUID.");
+            .WithMessage(Shared.InvalidIssueId);
     }
 }

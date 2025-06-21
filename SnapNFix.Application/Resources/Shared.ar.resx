@@ -130,6 +130,12 @@
     <data name="PhoneNumberRequired" xml:space="preserve">
         <value>رقم الهاتف مطلوب</value>
     </data>
+    <data name="EmailOrPhoneNumberRequired" xml:space="preserve">
+        <value>البريد الإلكتروني أو رقم الهاتف مطلوب</value>
+    </data>
+    <data name="InvalidEmailOrPhoneNumber" xml:space="preserve">
+        <value>يرجى إدخال بريد إلكتروني صحيح أو رقم هاتف مصري صحيح</value>
+    </data>
     <data name="PasswordRequired" xml:space="preserve">
         <value>كلمة المرور مطلوبة</value>
     </data>
@@ -141,6 +147,9 @@
     </data>
     <data name="ConfirmPasswordRequired" xml:space="preserve">
         <value>تأكيد كلمة المرور مطلوب</value>
+    </data>
+    <data name="OtpRequired" xml:space="preserve">
+        <value>رمز التحقق مطلوب</value>
     </data>
     <data name="InvalidEmail" xml:space="preserve">
         <value>تنسيق البريد الإلكتروني غير صحيح</value>
@@ -251,6 +260,20 @@
         <value>رمز FCM مطلوب</value>
     </data>
 
+    <!-- AI Validation Messages -->
+    <data name="TaskIdRequired" xml:space="preserve">
+        <value>معرف المهمة مطلوب</value>
+    </data>
+    <data name="InvalidImageStatus" xml:space="preserve">
+        <value>حالة الصورة غير صحيحة</value>
+    </data>
+    <data name="InvalidReportCategory" xml:space="preserve">
+        <value>فئة البلاغ غير صحيحة</value>
+    </data>
+    <data name="InvalidThreshold" xml:space="preserve">
+        <value>العتبة يجب أن تكون بين 0 و 1</value>
+    </data>
+
     <!-- Report Fields Validation -->
     <data name="CommentMaxLength" xml:space="preserve">
         <value>التعليق لا يمكن أن يتجاوز 500 حرف</value>
@@ -293,6 +316,71 @@
     </data>
     <data name="InvalidGuid" xml:space="preserve">
         <value>معرف المشكلة يجب أن يكون معرف صحيح</value>
+    </data>
+
+    <!-- Query Parameter Validation -->
+    <data name="PageNumberRequired" xml:space="preserve">
+        <value>رقم الصفحة مطلوب</value>
+    </data>
+    <data name="InvalidPageNumber" xml:space="preserve">
+        <value>رقم الصفحة يجب أن يكون أكبر من صفر</value>
+    </data>
+    <data name="PageSizeRequired" xml:space="preserve">
+        <value>حجم الصفحة مطلوب</value>
+    </data>
+    <data name="InvalidPageSize" xml:space="preserve">
+        <value>حجم الصفحة يجب أن يكون بين 1 و 100</value>
+    </data>
+    <data name="LimitRequired" xml:space="preserve">
+        <value>الحد الأقصى مطلوب</value>
+    </data>
+    <data name="InvalidLimit" xml:space="preserve">
+        <value>الحد الأقصى يجب أن يكون بين 1 و 100</value>
+    </data>
+    <data name="MaxResultsRequired" xml:space="preserve">
+        <value>الحد الأقصى للنتائج مطلوب</value>
+    </data>
+    <data name="InvalidMaxResults" xml:space="preserve">
+        <value>الحد الأقصى للنتائج يجب أن يكون بين 1 و 500</value>
+    </data>
+
+    <!-- Geographic Validation -->
+    <data name="NorthEastLatRequired" xml:space="preserve">
+        <value>خط عرض الشمال الشرقي مطلوب</value>
+    </data>
+    <data name="NorthEastLngRequired" xml:space="preserve">
+        <value>خط طول الشمال الشرقي مطلوب</value>
+    </data>
+    <data name="SouthWestLatRequired" xml:space="preserve">
+        <value>خط عرض الجنوب الغربي مطلوب</value>
+    </data>
+    <data name="SouthWestLngRequired" xml:space="preserve">
+        <value>خط طول الجنوب الغربي مطلوب</value>
+    </data>
+    <data name="InvalidLatitudeRange" xml:space="preserve">
+        <value>خط العرض يجب أن يكون بين -90 و 90 درجة</value>
+    </data>
+    <data name="InvalidLongitudeRange" xml:space="preserve">
+        <value>خط الطول يجب أن يكون بين -180 و 180 درجة</value>
+    </data>
+    <data name="InvalidViewportBounds" xml:space="preserve">
+        <value>حدود العرض غير صحيحة: إحداثيات الشمال الشرقي يجب أن تكون أكبر من إحداثيات الجنوب الغربي</value>
+    </data>
+    <data name="ViewportTooLarge" xml:space="preserve">
+        <value>نافذة العرض لا يمكن أن تتجاوز 10 درجات في العرض أو الارتفاع</value>
+    </data>
+
+    <!-- Statistics Validation -->
+    <data name="InvalidStatisticsInterval" xml:space="preserve">
+        <value>فترة الإحصائيات غير صحيحة. يجب أن تكون شهرية أو ربع سنوية أو سنوية</value>
+    </data>
+
+    <!-- Token and Access Validation -->
+    <data name="TokenRequired" xml:space="preserve">
+        <value>الرمز المميز مطلوب</value>
+    </data>
+    <data name="AccessTokenRequired" xml:space="preserve">
+        <value>رمز الوصول مطلوب</value>
     </data>
 
     <!-- Status and Category Names -->

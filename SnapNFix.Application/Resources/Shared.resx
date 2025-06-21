@@ -130,6 +130,12 @@
     <data name="PhoneNumberRequired" xml:space="preserve">
         <value>Phone number is required</value>
     </data>
+    <data name="EmailOrPhoneNumberRequired" xml:space="preserve">
+        <value>Email or phone number is required</value>
+    </data>
+    <data name="InvalidEmailOrPhoneNumber" xml:space="preserve">
+        <value>Please enter a valid email address or Egyptian phone number</value>
+    </data>
     <data name="PasswordRequired" xml:space="preserve">
         <value>Password is required</value>
     </data>
@@ -141,6 +147,9 @@
     </data>
     <data name="ConfirmPasswordRequired" xml:space="preserve">
         <value>Confirm password is required</value>
+    </data>
+    <data name="OtpRequired" xml:space="preserve">
+        <value>OTP is required</value>
     </data>
     <data name="InvalidEmail" xml:space="preserve">
         <value>Invalid email format</value>
@@ -251,6 +260,20 @@
         <value>FCM Token is required</value>
     </data>
 
+    <!-- AI Validation Messages -->
+    <data name="TaskIdRequired" xml:space="preserve">
+        <value>Task ID is required</value>
+    </data>
+    <data name="InvalidImageStatus" xml:space="preserve">
+        <value>Invalid image status</value>
+    </data>
+    <data name="InvalidReportCategory" xml:space="preserve">
+        <value>Invalid report category</value>
+    </data>
+    <data name="InvalidThreshold" xml:space="preserve">
+        <value>Threshold must be between 0 and 1</value>
+    </data>
+
     <!-- Report Fields Validation -->
     <data name="CommentMaxLength" xml:space="preserve">
         <value>Comment cannot exceed 500 characters</value>
@@ -293,6 +316,71 @@
     </data>
     <data name="InvalidGuid" xml:space="preserve">
         <value>Issue ID must be a valid GUID</value>
+    </data>
+
+    <!-- Query Parameter Validation -->
+    <data name="PageNumberRequired" xml:space="preserve">
+        <value>Page number is required</value>
+    </data>
+    <data name="InvalidPageNumber" xml:space="preserve">
+        <value>Page number must be greater than zero</value>
+    </data>
+    <data name="PageSizeRequired" xml:space="preserve">
+        <value>Page size is required</value>
+    </data>
+    <data name="InvalidPageSize" xml:space="preserve">
+        <value>Page size must be between 1 and 100</value>
+    </data>
+    <data name="LimitRequired" xml:space="preserve">
+        <value>Limit is required</value>
+    </data>
+    <data name="InvalidLimit" xml:space="preserve">
+        <value>Limit must be between 1 and 100</value>
+    </data>
+    <data name="MaxResultsRequired" xml:space="preserve">
+        <value>Max results is required</value>
+    </data>
+    <data name="InvalidMaxResults" xml:space="preserve">
+        <value>Max results must be between 1 and 500</value>
+    </data>
+
+    <!-- Geographic Validation -->
+    <data name="NorthEastLatRequired" xml:space="preserve">
+        <value>North East Latitude is required</value>
+    </data>
+    <data name="NorthEastLngRequired" xml:space="preserve">
+        <value>North East Longitude is required</value>
+    </data>
+    <data name="SouthWestLatRequired" xml:space="preserve">
+        <value>South West Latitude is required</value>
+    </data>
+    <data name="SouthWestLngRequired" xml:space="preserve">
+        <value>South West Longitude is required</value>
+    </data>
+    <data name="InvalidLatitudeRange" xml:space="preserve">
+        <value>Latitude must be between -90 and 90 degrees</value>
+    </data>
+    <data name="InvalidLongitudeRange" xml:space="preserve">
+        <value>Longitude must be between -180 and 180 degrees</value>
+    </data>
+    <data name="InvalidViewportBounds" xml:space="preserve">
+        <value>Invalid viewport bounds: NorthEast coordinates must be greater than SouthWest coordinates</value>
+    </data>
+    <data name="ViewportTooLarge" xml:space="preserve">
+        <value>Viewport cannot exceed 10 degrees in width or height</value>
+    </data>
+
+    <!-- Statistics Validation -->
+    <data name="InvalidStatisticsInterval" xml:space="preserve">
+        <value>Invalid statistics interval. Must be Monthly, Quarterly, or Yearly</value>
+    </data>
+
+    <!-- Token and Access Validation -->
+    <data name="TokenRequired" xml:space="preserve">
+        <value>Token is required</value>
+    </data>
+    <data name="AccessTokenRequired" xml:space="preserve">
+        <value>Access token is required</value>
     </data>
 
     <!-- Status and Category Names -->
