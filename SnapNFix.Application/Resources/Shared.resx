@@ -522,5 +522,9 @@
         <value>Viewport width cannot exceed 10 degrees longitude.</value>
     </data>
 
+    <data name="FailedToGenerateResetToken" xml:space="preserve">
+        <value>Failed to generate password reset token</value>
+    </data>
+
 
 </root>

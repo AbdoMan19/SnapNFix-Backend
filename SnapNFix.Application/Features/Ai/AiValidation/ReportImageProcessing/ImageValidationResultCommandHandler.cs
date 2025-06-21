@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
 
@@ -46,7 +47,7 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
             if (report == null)
             {
                 _logger.LogWarning("Report not found for TaskId: {TaskId}", request.TaskId);
-                return GenericResponseModel<bool>.Failure("Report not found for the given TaskId");
+                return GenericResponseModel<bool>.Failure(Shared.ReportNotFound);
             }
 
             _logger.LogInformation("Found report {ReportId} for TaskId: {TaskId}. Current status: {CurrentStatus}",
@@ -56,7 +57,7 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
             {
                 _logger.LogWarning("Report {ReportId} with TaskId: {TaskId} is not in pending status. Current status: {CurrentStatus}",
                     report.Id, request.TaskId, report.ImageStatus);
-                return GenericResponseModel<bool>.Failure("Report is not in pending status and cannot be updated");
+                return GenericResponseModel<bool>.Failure(Shared.ValidationError);
             }
 
             var oldStatus = report.ImageStatus;
@@ -82,7 +83,8 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
                     {
                         _logger.LogInformation("Successfully attached report {ReportId} to issue {IssueId}",
                             report.Id, report.IssueId);
-                    }else
+                    }
+                    else
                     {
                         _logger.LogInformation("No nearby issue found for report {ReportId}, creating new issue", report.Id);
                         var newIssue = await _reportService.CreateIssueWithReportAsync(report, cancellationToken);
@@ -90,7 +92,6 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
                             report.Id, report.IssueId);
                         await _mediator.Publish(new IssueCreated(newIssue), cancellationToken);
                     }
-                    
                 }
                 catch (Exception ex)
                 {
@@ -108,8 +109,7 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
             _logger.LogInformation("Successfully processed AI validation result for TaskId: {TaskId}, Report: {ReportId}",
                 request.TaskId, report.Id);
             
-            await _mediator.Publish(new SnapReportStatusChanged(report , oldStatus , request.ImageStatus), cancellationToken);
- 
+            await _mediator.Publish(new SnapReportStatusChanged(report, oldStatus, request.ImageStatus), cancellationToken);
 
             return GenericResponseModel<bool>.Success(true);
         }
@@ -117,7 +117,7 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
         {
             await transaction.RollbackAsync(cancellationToken);
             _logger.LogError(ex, "Concurrency conflict while processing AI validation result for TaskId: {TaskId}", request.TaskId);
-            return GenericResponseModel<bool>.Failure("The report was modified by another process. Please try again.");
+            return GenericResponseModel<bool>.Failure(Shared.OperationFailed);
         }
         catch (DbUpdateException ex)
         {
@@ -141,13 +141,13 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
                 _logger.LogError(updateEx, "Failed to set report status to Declined after DbUpdateException for TaskId: {TaskId}", request.TaskId);
             }
 
-            return GenericResponseModel<bool>.Failure("Database error occurred while updating the report");
+            return GenericResponseModel<bool>.Failure(Shared.OperationFailed);
         }
         catch (Exception ex)
         {
             await transaction.RollbackAsync(cancellationToken);
             _logger.LogError(ex, "Unexpected error processing AI validation result for TaskId: {TaskId}", request.TaskId);
-            return GenericResponseModel<bool>.Failure("An unexpected error occurred while processing the validation result");
+            return GenericResponseModel<bool>.Failure(Shared.UnexpectedError);
         }
     }
 }

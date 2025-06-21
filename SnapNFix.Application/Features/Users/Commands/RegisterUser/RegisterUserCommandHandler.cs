@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Auth.Dtos;
+using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
 
@@ -48,7 +49,6 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
 
         _logger.LogInformation("Starting registration process for contact {Contact}", contact);
 
-        // Begin transaction to ensure data consistency
         await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
 
         try
@@ -67,7 +67,7 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
             {
                 var errors = result.Errors.Select(e => ErrorResponseModel.Create(e.Code, e.Description)).ToList();
                 _logger.LogWarning("User registration failed with {ErrorCount} errors", errors.Count);
-                return GenericResponseModel<LoginResponse>.Failure("Registration failed", errors);
+                return GenericResponseModel<LoginResponse>.Failure(Shared.RegistrationFailed, errors);
             }
 
             var citizenRoleName = "Citizen";
@@ -79,7 +79,6 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
 
             await _userManager.AddToRoleAsync(user, citizenRoleName);
 
-            // Use the new authentication service
             var authResponse = await _authenticationService.AuthenticateUserAsync(
                 user,
                 request.DeviceId,
@@ -104,7 +103,7 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
         {
             await transaction.RollbackAsync(cancellationToken);
             _logger.LogError(ex, "Registration failed with error");
-            return GenericResponseModel<LoginResponse>.Failure("An error occurred during registration");
+            return GenericResponseModel<LoginResponse>.Failure(Shared.UnexpectedError);
         }
     }
 }

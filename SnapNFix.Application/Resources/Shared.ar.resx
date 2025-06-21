@@ -522,4 +522,8 @@
     <data name="ViewportWidthExceeded" xml:space="preserve">
         <value>لا يمكن أن يتجاوز عرض منطقة العرض 10 درجات من دائرة الطول.</value>
     </data>
+
+    <data name="FailedToGenerateResetToken" xml:space="preserve">
+        <value>فشل في إنشاء رمز إعادة التعيين</value>
+    </data>
 </root>

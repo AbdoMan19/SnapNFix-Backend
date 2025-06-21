@@ -1007,5 +1007,13 @@ namespace SnapNFix.Application.Resources {
             }
         }
 
+        public static string FailedToGenerateResetToken
+        {
+            get
+            {
+                return ResourceManager.GetString("FailedToGenerateResetToken", resourceCulture);
+            }
+        }
+
     }
 }

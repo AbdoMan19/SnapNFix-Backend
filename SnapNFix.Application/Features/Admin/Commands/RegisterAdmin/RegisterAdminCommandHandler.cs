@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
-using SnapNFix.Application.Features.Admin.Commands.RegisterAdmin;
+using SnapNFix.Application.Resources;
+using SnapNFix.Application.Utilities;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
-using SnapNFix.Application.Utilities;
 
 namespace SnapNFix.Application.Features.Admin.Commands.RegisterAdmin;
 
@@ -50,7 +50,7 @@ public class RegisterAdminCommandHandler : IRequestHandler<RegisterAdminCommand,
                     Constants.FailureMessage,
                     new List<ErrorResponseModel>
                     {
-                        ErrorResponseModel.Create("Email", "Email address is already registered")
+                        ErrorResponseModel.Create("Email", Shared.EmailAlreadyExists)
                     });
             }
 
@@ -70,7 +70,7 @@ public class RegisterAdminCommandHandler : IRequestHandler<RegisterAdminCommand,
                 var errors = result.Errors.Select(e => ErrorResponseModel.Create(e.Code, e.Description)).ToList();
                 _logger.LogWarning("Admin user creation failed with {ErrorCount} errors", errors.Count);
                 return GenericResponseModel<AdminRegistrationResponse>.Failure(
-                    "Admin registration failed", errors);
+                    Shared.RegistrationFailed, errors);
             }
 
             const string adminRoleName = "Admin";
@@ -112,8 +112,7 @@ public class RegisterAdminCommandHandler : IRequestHandler<RegisterAdminCommand,
         {
             await transaction.RollbackAsync(cancellationToken);
             _logger.LogError(ex, "Admin registration failed with error for email {Email}", request.Email);
-            return GenericResponseModel<AdminRegistrationResponse>.Failure(
-                "An error occurred during admin registration");
+            return GenericResponseModel<AdminRegistrationResponse>.Failure(Shared.UnexpectedError);
         }
     }
 }
