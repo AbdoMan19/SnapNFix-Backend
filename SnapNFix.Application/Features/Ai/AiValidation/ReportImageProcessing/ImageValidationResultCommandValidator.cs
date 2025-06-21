@@ -1,4 +1,5 @@
 using FluentValidation;
+using SnapNFix.Application.Resources;
 
 namespace SnapNFix.Application.Features.Ai.AiValidation.ReportImageProcessing;
 
@@ -8,18 +9,18 @@ public class ImageValidationResultCommandValidator : AbstractValidator<ImageVali
     {
         RuleFor(x => x.TaskId)
             .NotEmpty()
-            .WithMessage("Task ID is required.");
+            .WithMessage(Shared.TaskIdRequired);
 
         RuleFor(x => x.ImageStatus)
             .IsInEnum()
-            .WithMessage("Invalid image status.");
+            .WithMessage(Shared.InvalidImageStatus);
 
         RuleFor(x => x.ReportCategory)
             .IsInEnum()
-            .WithMessage("Invalid report category.");
+            .WithMessage(Shared.InvalidReportCategory);
 
         RuleFor(x => x.Threshold)
             .InclusiveBetween(0, 1)
-            .WithMessage("Threshold must be between 0 and 1.");
+            .WithMessage(Shared.InvalidThreshold);
     }
 }

@@ -28,7 +28,7 @@ public class RegisterAdminCommandValidator : AbstractValidator<RegisterAdminComm
         RuleFor(x => x.Email)
             .NotEmpty().WithMessage(Shared.EmailRequired)
             .EmailAddress().WithMessage(Shared.InvalidEmailFormat)
-            .MustAsync(BeUniqueEmail).WithMessage(Shared.DuplicateEmail);
+            .MustAsync(BeUniqueEmail).WithMessage(Shared.EmailAlreadyExists);
 
         RuleFor(x => x.Password)
             .NotEmpty().WithMessage(Shared.PasswordRequired)

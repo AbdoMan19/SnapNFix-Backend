@@ -1,4 +1,5 @@
 using FluentValidation;
+using SnapNFix.Application.Resources;
 
 namespace SnapNFix.Application.Features.SnapReport.Commands.CreateSnapReport;
 
@@ -8,40 +9,44 @@ public class CreateSnapReportCommandValidator : AbstractValidator<CreateSnapRepo
     {
         RuleFor(x => x.Comment)
             .MaximumLength(500)
-            .WithMessage("Comment cannot exceed 500 characters.");
+            .WithMessage(Shared.CommentMaxLength);
 
         RuleFor(x => x.Image)
             .NotEmpty()
-            .WithMessage("Image required.");
+            .WithMessage(Shared.ImageRequired);
 
         RuleFor(x => x.Latitude)
             .NotEmpty()
-            .WithMessage("Latitude is required.")
+            .WithMessage(Shared.LatitudeRequired)
             .InclusiveBetween(-90, 90)
-            .WithMessage("Latitude must be between -90 and 90 degrees.");
+            .WithMessage(Shared.LatitudeRange);
 
         RuleFor(x => x.Longitude)
             .NotEmpty()
-            .WithMessage("Longitude is required.")
+            .WithMessage(Shared.LongitudeRequired)
             .InclusiveBetween(-180, 180)
-            .WithMessage("Longitude must be between -180 and 180 degrees.");
+            .WithMessage(Shared.LongitudeRange);
 
         RuleFor(x => x.Severity)
             .IsInEnum()
-            .WithMessage("Invalid severity level.");
+            .WithMessage(Shared.InvalidSeverity);
+
         RuleFor(x => x.Road)
             .NotEmpty()
-            .WithMessage("Road is required.")
+            .WithMessage(Shared.RoadRequired)
             .MaximumLength(200)
-            .WithMessage("Road cannot exceed 200 characters.");
+            .WithMessage(Shared.RoadMaxLength);
+
         RuleFor(x => x.City)
             .MaximumLength(100)
-            .WithMessage("City cannot exceed 100 characters.");
+            .WithMessage(Shared.CityMaxLength);
+
         RuleFor(x => x.State)
             .MaximumLength(100)
-            .WithMessage("State cannot exceed 100 characters.");
+            .WithMessage(Shared.StateMaxLength);
+
         RuleFor(x => x.Country)
             .MaximumLength(100)
-            .WithMessage("Country cannot exceed 100 characters.");
+            .WithMessage(Shared.CountryMaxLength);
     }
 }

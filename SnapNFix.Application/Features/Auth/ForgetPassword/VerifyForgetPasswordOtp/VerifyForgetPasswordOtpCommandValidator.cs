@@ -1,4 +1,5 @@
 using FluentValidation;
+using SnapNFix.Application.Resources;
 
 namespace SnapNFix.Application.Features.Auth.ForgetPassword.VerifyForgetPasswordOtp;
 
@@ -8,8 +9,8 @@ public class VerifyForgetPasswordOtpCommandValidator : AbstractValidator<VerifyF
     {
         RuleFor(f => f.Otp)
             .NotEmpty()
-            .WithMessage("OTP is required.")
+            .WithMessage(Shared.OtpRequired)
             .Matches(@"^\d{6}$")
-            .WithMessage("OTP must be a 6-digit number.");
+            .WithMessage(Shared.InvalidOtp);
     }
 }

@@ -95,6 +95,27 @@
     <data name="AdminRoleRequired" xml:space="preserve">
         <value>صلاحية المدير مطلوبة</value>
     </data>
+    <data name="InvalidPassword" xml:space="preserve">
+        <value>كلمة المرور غير صحيحة</value>
+    </data>
+    <data name="UserLockedOut" xml:space="preserve">
+        <value>حساب المستخدم مقفل</value>
+    </data>
+    <data name="RegistrationFailed" xml:space="preserve">
+        <value>فشل التسجيل</value>
+    </data>
+    <data name="EmailAlreadyRegistered" xml:space="preserve">
+        <value>البريد الإلكتروني مسجل بالفعل</value>
+    </data>
+    <data name="PhoneAlreadyRegistered" xml:space="preserve">
+        <value>رقم الهاتف مسجل بالفعل</value>
+    </data>
+    <data name="InvalidVerificationCode" xml:space="preserve">
+        <value>رمز التحقق غير صحيح</value>
+    </data>
+    <data name="LogoutFailed" xml:space="preserve">
+        <value>فشل تسجيل الخروج</value>
+    </data>
 
     <!-- Validation Messages -->
     <data name="FieldRequired" xml:space="preserve">
@@ -106,6 +127,9 @@
     <data name="PhoneRequired" xml:space="preserve">
         <value>رقم الهاتف مطلوب</value>
     </data>
+    <data name="PhoneNumberRequired" xml:space="preserve">
+        <value>رقم الهاتف مطلوب</value>
+    </data>
     <data name="PasswordRequired" xml:space="preserve">
         <value>كلمة المرور مطلوبة</value>
     </data>
@@ -115,7 +139,13 @@
     <data name="LastNameRequired" xml:space="preserve">
         <value>الاسم الأخير مطلوب</value>
     </data>
+    <data name="ConfirmPasswordRequired" xml:space="preserve">
+        <value>تأكيد كلمة المرور مطلوب</value>
+    </data>
     <data name="InvalidEmail" xml:space="preserve">
+        <value>تنسيق البريد الإلكتروني غير صحيح</value>
+    </data>
+    <data name="InvalidEmailFormat" xml:space="preserve">
         <value>تنسيق البريد الإلكتروني غير صحيح</value>
     </data>
     <data name="InvalidPhoneNumber" xml:space="preserve">
@@ -147,6 +177,20 @@
     </data>
     <data name="PhoneAlreadyExists" xml:space="preserve">
         <value>رقم الهاتف موجود بالفعل</value>
+    </data>
+
+    <!-- Name Validation -->
+    <data name="FirstNameLength" xml:space="preserve">
+        <value>الاسم الأول يجب أن يكون بين 2 و 50 حرف</value>
+    </data>
+    <data name="FirstNameInvalid" xml:space="preserve">
+        <value>الاسم الأول يمكن أن يحتوي على حروف فقط (عربية وإنجليزية)</value>
+    </data>
+    <data name="LastNameLength" xml:space="preserve">
+        <value>الاسم الأخير يجب أن يكون بين 2 و 50 حرف</value>
+    </data>
+    <data name="LastNameInvalid" xml:space="preserve">
+        <value>الاسم الأخير يمكن أن يحتوي على حروف فقط (عربية وإنجليزية)</value>
     </data>
 
     <!-- Location and Report Messages -->
@@ -191,6 +235,9 @@
     <data name="DeviceNameRequired" xml:space="preserve">
         <value>اسم الجهاز مطلوب</value>
     </data>
+    <data name="DeviceTypeRequired" xml:space="preserve">
+        <value>نوع الجهاز مطلوب</value>
+    </data>
     <data name="PlatformRequired" xml:space="preserve">
         <value>المنصة مطلوبة</value>
     </data>
@@ -199,6 +246,53 @@
     </data>
     <data name="TokenGenerationFailed" xml:space="preserve">
         <value>فشل في إنشاء الرمز المميز</value>
+    </data>
+    <data name="FCMTokenRequired" xml:space="preserve">
+        <value>رمز FCM مطلوب</value>
+    </data>
+
+    <!-- Report Fields Validation -->
+    <data name="CommentMaxLength" xml:space="preserve">
+        <value>التعليق لا يمكن أن يتجاوز 500 حرف</value>
+    </data>
+    <data name="CommentRequired" xml:space="preserve">
+        <value>التعليق مطلوب</value>
+    </data>
+    <data name="RoadRequired" xml:space="preserve">
+        <value>الطريق مطلوب</value>
+    </data>
+    <data name="RoadMaxLength" xml:space="preserve">
+        <value>الطريق لا يمكن أن يتجاوز 200 حرف</value>
+    </data>
+    <data name="CityMaxLength" xml:space="preserve">
+        <value>المدينة لا يمكن أن تتجاوز 100 حرف</value>
+    </data>
+    <data name="StateMaxLength" xml:space="preserve">
+        <value>المحافظة لا يمكن أن تتجاوز 100 حرف</value>
+    </data>
+    <data name="CountryMaxLength" xml:space="preserve">
+        <value>البلد لا يمكن أن يتجاوز 100 حرف</value>
+    </data>
+    <data name="LatitudeRequired" xml:space="preserve">
+        <value>خط العرض مطلوب</value>
+    </data>
+    <data name="LongitudeRequired" xml:space="preserve">
+        <value>خط الطول مطلوب</value>
+    </data>
+    <data name="LatitudeRange" xml:space="preserve">
+        <value>خط العرض يجب أن يكون بين -90 و 90 درجة</value>
+    </data>
+    <data name="LongitudeRange" xml:space="preserve">
+        <value>خط الطول يجب أن يكون بين -180 و 180 درجة</value>
+    </data>
+    <data name="InvalidSeverity" xml:space="preserve">
+        <value>مستوى الخطورة غير صحيح</value>
+    </data>
+    <data name="IssueIdRequired" xml:space="preserve">
+        <value>معرف المشكلة مطلوب</value>
+    </data>
+    <data name="InvalidGuid" xml:space="preserve">
+        <value>معرف المشكلة يجب أن يكون معرف صحيح</value>
     </data>
 
     <!-- Status and Category Names -->

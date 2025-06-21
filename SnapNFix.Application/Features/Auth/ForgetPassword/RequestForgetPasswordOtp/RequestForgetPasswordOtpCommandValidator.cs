@@ -1,4 +1,5 @@
 using FluentValidation;
+using SnapNFix.Application.Resources;
 
 namespace SnapNFix.Application.Features.Auth.ForgetPassword.RequestForgetPasswordOtp;
 
@@ -8,8 +9,8 @@ public class RequestForgetPasswordOtpCommandValidator : AbstractValidator<Reques
     {
         RuleFor(f => f.EmailOrPhoneNumber)
             .NotEmpty()
-            .WithMessage("Email or Phone Number is required.")
+            .WithMessage(Shared.EmailOrPhoneNumberRequired)
             .Matches(@"(^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)|(^(\+20|0)?1[0125][0-9]{8}$)")
-            .WithMessage("Input must be a valid email or Egyptian phone number.");
+            .WithMessage(Shared.InvalidEmailOrPhoneNumber);
     }
 }
