@@ -35,7 +35,7 @@ public class IssueController : ControllerBase
       return Ok(result);
   }
 
-  [Authorize("Citizen")]
+  [Authorize("Citizen, Admin, SuperAdmin")]
   [HttpGet("{id}")]
   public async Task<ActionResult<GenericResponseModel<IssueDetailsDto>>> GetIssueById(Guid id)
   {
@@ -47,7 +47,7 @@ public class IssueController : ControllerBase
     return Ok(result);
   }
 
-  [Authorize("Citizen")]
+  [Authorize("Citizen, Admin, SuperAdmin")]
   [HttpGet("{id}/snapreports")]
   public async Task<ActionResult<GenericResponseModel<PagedList<ReportDetailsDto>>>> GetSnapReportsByIssueId(Guid id)
   {
@@ -59,7 +59,7 @@ public class IssueController : ControllerBase
     return Ok(result);
   }
 
-  [Authorize("Citizen")]
+  [Authorize("Citizen, Admin, SuperAdmin")]
   [HttpGet("{id}/fastreports")]
   public async Task<ActionResult<GenericResponseModel<PagedList<FastReportDetailsDto>>>> GetFastReportsByIssueId(
       Guid id, 
