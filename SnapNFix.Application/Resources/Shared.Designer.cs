@@ -238,6 +238,14 @@ namespace SnapNFix.Application.Resources {
             }
         }
 
+        public static string RefreshTokenRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("RefreshTokenRequired", resourceCulture);
+            }
+        }
+
         public static string InvalidGoogleToken
         {
             get
@@ -375,6 +383,24 @@ namespace SnapNFix.Application.Resources {
             }
         }
 
+        public static string InvalidOtpLength
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidOtpLength", resourceCulture);
+            }
+        }
+
+
+
+        public static string OtpRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("OtpRequired", resourceCulture);
+            }
+        }
+
         public static string PasswordTooShort
         {
             get
@@ -469,6 +495,14 @@ namespace SnapNFix.Application.Resources {
             get
             {
                 return ResourceManager.GetString("LastNameInvalid", resourceCulture);
+            }
+        }
+
+        public static string InvalidGender
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidGender", resourceCulture);
             }
         }
 
@@ -780,6 +814,23 @@ namespace SnapNFix.Application.Resources {
                 return ResourceManager.GetString("IssueIdRequired", resourceCulture);
             }
         }
+        public static string InvalidIssueId
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidIssueId", resourceCulture);
+            }
+        }
+
+        public static string InvalidPageNumber
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidPageNumber", resourceCulture);
+            }
+        }
+
+
 
         public static string InvalidGuid
         {
@@ -797,7 +848,164 @@ namespace SnapNFix.Application.Resources {
                 return ResourceManager.GetString("FCMTokenRequired", resourceCulture);
             }
         }
-        
-        
+
+        public static string EmailOrPhoneNumberRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("EmailOrPhoneNumberRequired", resourceCulture);
+            }
+        }
+
+        public static string InvalidEmailOrPhoneNumber
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidEmailOrPhoneNumber", resourceCulture);
+            }
+        }
+
+        public static string TaskIdRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("TaskIdRequired", resourceCulture);
+            }
+        }
+
+        public static string InvalidImageStatus
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidImageStatus", resourceCulture);
+            }
+        }
+
+        public static string InvalidReportCategory
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidReportCategory", resourceCulture);
+            }
+        }
+
+        public static string InvalidThreshold
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidThreshold", resourceCulture);
+            }
+        }
+
+        public static string NorthEastLatRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("NorthEastLatRequired", resourceCulture);
+            }
+        }
+
+        public static string NorthEastLngRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("NorthEastLngRequired", resourceCulture);
+            }
+        }
+        public static string SouthWestLatRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("SouthWestLatRequired", resourceCulture);
+            }
+        }
+        public static string SouthWestLngRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("SouthWestLngRequired", resourceCulture);
+            }
+        }
+
+        public static string InvalidLatitudeRange
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidLatitudeRange", resourceCulture);
+            }
+        }
+
+        public static string InvalidLongitudeRange
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidLongitudeRange", resourceCulture);
+            }
+        }
+
+        public static string InvalidAgeError
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidAgeError", resourceCulture);
+            }
+        }
+
+        public static string FutureDateError
+        {
+            get
+            {
+                return ResourceManager.GetString("FutureDateError", resourceCulture);
+            }
+        }
+
+        public static string InvalidMaxResults
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidMaxResults", resourceCulture);
+            }
+        }
+
+        public static string MaxResultsExceeded
+        {
+            get
+            {
+                return ResourceManager.GetString("MaxResultsExceeded", resourceCulture);
+            }
+        }
+
+        public static string NorthEastLatGreaterThanSouthWestLat
+        {
+            get
+            {
+                return ResourceManager.GetString("NorthEastLatGreaterThanSouthWestLat", resourceCulture);
+            }
+        }
+
+        public static string NorthEastLngGreaterThanSouthWestLng
+        {
+            get
+            {
+                return ResourceManager.GetString("NorthEastLngGreaterThanSouthWestLng", resourceCulture);
+            }
+        }
+
+        public static string ViewportHeightExceeded
+        {
+            get
+            {
+                return ResourceManager.GetString("ViewportHeightExceeded", resourceCulture);
+            }
+        }
+
+        public static string ViewportWidthExceeded
+        {
+            get
+            {
+                return ResourceManager.GetString("ViewportWidthExceeded", resourceCulture);
+            }
+        }
+
     }
 }

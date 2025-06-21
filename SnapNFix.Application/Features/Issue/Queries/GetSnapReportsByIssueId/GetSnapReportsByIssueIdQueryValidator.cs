@@ -1,4 +1,5 @@
 using FluentValidation;
+using SnapNFix.Application.Resources;
 
 namespace SnapNFix.Application.Features.Issue.Queries.GetSnapReportsByIssueId;
 
@@ -8,12 +9,12 @@ public class GetSnapReportsByIssueIdQueryValidator : AbstractValidator<GetSnapRe
     {
         RuleFor(x => x.Id)
             .NotEmpty()
-            .WithMessage("Issue ID is required.")
+            .WithMessage(Shared.IssueIdRequired)
             .NotEqual(Guid.Empty)
-            .WithMessage("Issue ID must be a valid GUID.");
+            .WithMessage(Shared.InvalidIssueId);
 
         RuleFor(x => x.PageNumber)
             .GreaterThan(0)
-            .WithMessage("Page number must be greater than zero.");
+            .WithMessage(Shared.InvalidPageNumber);
     }
 }

@@ -86,6 +86,9 @@
     <data name="InvalidRefreshToken" xml:space="preserve">
         <value>Invalid or expired refresh token</value>
     </data>
+    <data name="RefreshTokenRequired" xml:space="preserve">
+        <value>Refresh token is required</value>
+    </data>
     <data name="InvalidGoogleToken" xml:space="preserve">
         <value>Invalid Google token</value>
     </data>
@@ -162,6 +165,9 @@
     </data>
     <data name="InvalidOtp" xml:space="preserve">
         <value>Invalid OTP code</value>
+    </data>
+    <data name="InvalidOtpLength" xml:space="preserve">
+        <value>Invalid OTP length</value>
     </data>
     <data name="PasswordTooShort" xml:space="preserve">
         <value>Password must be at least 8 characters</value>
@@ -343,6 +349,9 @@
     <data name="InvalidMaxResults" xml:space="preserve">
         <value>Max results must be between 1 and 500</value>
     </data>
+    <data name="MaxResultsExceeded" xml:space="preserve">
+        <value>Max results must not exceed 500 for performance reasons.</value>
+    </data>
 
     <!-- Geographic Validation -->
     <data name="NorthEastLatRequired" xml:space="preserve">
@@ -439,6 +448,9 @@
     <data name="GenderNotSpecified" xml:space="preserve">
         <value>Not Specified</value>
     </data>
+    <data name="InvalidGender" xml:space="preserve">
+        <value>Invalid gender value</value>
+    </data>
 
     <!-- Statistics -->
     <data name="StatisticsRetrievalError" xml:space="preserve">
@@ -488,4 +500,27 @@
     <data name="Save" xml:space="preserve">
         <value>Save</value>
     </data>
+
+    <data name="InvalidAgeError" xml:space="preserve">
+        <value>Age must be between 0 and 120</value>
+    </data>
+
+    <data name="FutureDateError" xml:space="preserve">
+        <value>Birth date cannot be in the future</value>
+    </data>
+
+    <data name="NorthEastLatGreaterThanSouthWestLat" xml:space="preserve">
+        <value>North East Latitude must be greater than South West Latitude</value>
+    </data>
+    <data name="NorthEastLngGreaterThanSouthWestLng" xml:space="preserve">
+        <value>North East Longitude must be greater than South West Longitude</value>
+    </data>
+    <data name="ViewportHeightExceeded" xml:space="preserve">
+        <value>Viewport height cannot exceed 10 degrees latitude.</value>
+    </data>
+    <data name="ViewportWidthExceeded" xml:space="preserve">
+        <value>Viewport width cannot exceed 10 degrees longitude.</value>
+    </data>
+
+
 </root>

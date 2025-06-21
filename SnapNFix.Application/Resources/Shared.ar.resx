@@ -86,6 +86,9 @@
     <data name="InvalidRefreshToken" xml:space="preserve">
         <value>رمز التحديث غير صالح أو منتهي الصلاحية</value>
     </data>
+    <data name="RefreshTokenRequired" xml:space="preserve">
+        <value>رمز التحديث مطلوب</value>
+    </data>
     <data name="InvalidGoogleToken" xml:space="preserve">
         <value>رمز جوجل غير صالح</value>
     </data>
@@ -162,6 +165,10 @@
     </data>
     <data name="InvalidOtp" xml:space="preserve">
         <value>رمز التحقق غير صحيح</value>
+    </data>
+
+    <data name="InvalidOtpLength" xml:space="preserve">
+        <value>رمز التحقق يجب أن يكون 6 أرقام</value>
     </data>
     <data name="PasswordTooShort" xml:space="preserve">
         <value>كلمة المرور يجب أن تكون 8 أحرف على الأقل</value>
@@ -343,6 +350,9 @@
     <data name="InvalidMaxResults" xml:space="preserve">
         <value>الحد الأقصى للنتائج يجب أن يكون بين 1 و 500</value>
     </data>
+    <data name="MaxResultsExceeded" xml:space="preserve">
+        <value>الحد الأقصى للنتائج لا يمكن أن يتجاوز 500</value>
+    </data>
 
     <!-- Geographic Validation -->
     <data name="NorthEastLatRequired" xml:space="preserve">
@@ -439,6 +449,9 @@
     <data name="GenderNotSpecified" xml:space="preserve">
         <value>غير محدد</value>
     </data>
+    <data name="InvalidGender" xml:space="preserve">
+        <value>الجنس غير صحيح</value>
+    </data>
 
     <!-- Statistics -->
     <data name="StatisticsRetrievalError" xml:space="preserve">
@@ -487,5 +500,26 @@
     </data>
     <data name="Save" xml:space="preserve">
         <value>حفظ</value>
+    </data>
+
+    <data name="InvalidAgeError" xml:space="preserve">
+        <value>العمر يجب أن يكون بين 0 و 120</value>
+    </data>
+
+    <data name="FutureDateError" xml:space="preserve">
+        <value>تاريخ الميلاد لا يمكن أن يكون في المستقبل</value>
+    </data>
+
+    <data name="NorthEastLatGreaterThanSouthWestLat" xml:space="preserve">
+        <value>يجب أن تكون دائرة العرض الشمالية الشرقية أكبر من دائرة العرض الجنوبية الغربية</value>
+    </data>
+    <data name="NorthEastLngGreaterThanSouthWestLng" xml:space="preserve">
+        <value>يجب أن تكون دائرة الطول الشمالية الشرقية أكبر من دائرة الطول الجنوبية الغربية</value>
+    </data>
+    <data name="ViewportHeightExceeded" xml:space="preserve">
+        <value>لا يمكن أن يتجاوز ارتفاع منطقة العرض 10 درجات من دائرة العرض.</value>
+    </data>
+    <data name="ViewportWidthExceeded" xml:space="preserve">
+        <value>لا يمكن أن يتجاوز عرض منطقة العرض 10 درجات من دائرة الطول.</value>
     </data>
 </root>

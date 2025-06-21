@@ -11,7 +11,7 @@ public class PhoneVerificationCommandValidator : AbstractValidator<PhoneVerifica
             .Cascade(CascadeMode.Stop)
             .NotEmpty().WithMessage(Shared.OtpRequired)
             .Length(6).WithMessage(Shared.InvalidOtpLength)
-            .Matches("^[0-9]+$").WithMessage(Shared.InvalidOtpFormat);
+            .Matches("^[0-9]+$").WithMessage(Shared.InvalidOtp);
 
     }
 }
