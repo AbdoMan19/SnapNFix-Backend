@@ -538,4 +538,8 @@
         <value>Invalid coordinates provided</value>
     </data>
 
+    <data name="ValidLocation" xml:space="preserve">
+        <value>Location is valid</value>
+    </data>
+
 </root>

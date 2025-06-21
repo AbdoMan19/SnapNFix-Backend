@@ -538,4 +538,8 @@
     <data name="InvalidCoordinates" xml:space="preserve">
         <value>الإحداثيات غير صحيحة</value>
     </data>
+
+    <data name="ValidLocation" xml:space="preserve">
+        <value>الموقع صالح</value>
+    </data>
 </root>

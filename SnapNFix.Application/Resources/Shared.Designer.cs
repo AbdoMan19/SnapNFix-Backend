@@ -1039,5 +1039,13 @@ namespace SnapNFix.Application.Resources {
             }
         }
 
+        public static string ValidLocation
+        {
+            get
+            {
+                return ResourceManager.GetString("ValidLocation", resourceCulture);
+            }
+        }
+
     }
 }
