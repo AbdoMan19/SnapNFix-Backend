@@ -1,15 +1,13 @@
-using System;
-using System.Threading.Tasks;
 
-using Domain.Interfaces;
 using Application.DTOs;
 using Firebase.Database;
 using Firebase.Database.Query;
 using Microsoft.Extensions.Configuration;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
+using SnapNFix.Domain.Interfaces;
 
-namespace Infrastructure.Services
+namespace SnapNFix.Infrastructure.Services.FirebaseActivityLogger
 {
     public class FirebaseActivityLogger : IActivityLogger
     {

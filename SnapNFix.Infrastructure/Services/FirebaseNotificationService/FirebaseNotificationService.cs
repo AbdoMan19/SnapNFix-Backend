@@ -1,4 +1,3 @@
-using Application.DTOs;
 using FirebaseAdmin;
 using FirebaseAdmin.Messaging;
 using Google.Apis.Auth.OAuth2;
@@ -27,11 +26,26 @@ namespace SnapNFix.Infrastructure.Services.FirebaseNotificationService
 
             if (FirebaseApp.DefaultInstance == null)
             {
-                var credentialFilePath = configuration["Firebase:CredentialFilePath"];
-                FirebaseApp.Create(new AppOptions
+                try
                 {
-                    Credential = GoogleCredential.FromFile(credentialFilePath)
-                });
+                    var credentialFilePath = configuration["Firebase:CredentialFilePath"];
+                    _logger.LogInformation("Initializing Firebase with credentials from {Path}", credentialFilePath);
+                    
+                    // Load the credential with FCM scope explicitly
+                    var credential = GoogleCredential.FromFile(credentialFilePath);
+                        
+                    FirebaseApp.Create(new AppOptions
+                    {
+                        Credential = credential,
+                    });
+                    
+                    _logger.LogInformation("Firebase initialized successfully");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to initialize Firebase");
+                    throw;
+                }
             }
 
             _messaging = FirebaseMessaging.DefaultInstance;
@@ -44,7 +58,7 @@ namespace SnapNFix.Infrastructure.Services.FirebaseNotificationService
             await SendNotificationToUserAsync(
                 userId,
                 "Snap Report Status Changed",
-                $"The status of your snap report {reportId} has changed from {previousStatus} to {newStatus}.",
+                $"The status of your snap report has changed to {newStatus}.",
                 new Dictionary<string, string>
                 {
                     { "reportId", reportId.ToString() },
@@ -54,6 +68,7 @@ namespace SnapNFix.Infrastructure.Services.FirebaseNotificationService
             );
 
         }
+
 
 
         public async Task<bool> SendNotificationToUserAsync(Guid userId, string title, string body,
@@ -73,10 +88,24 @@ namespace SnapNFix.Infrastructure.Services.FirebaseNotificationService
                         _logger.LogWarning("No active devices with FCM tokens found for user {UserId}", userId);
                         return false;
                     }
+                    
+                    
+                    _logger.LogInformation("Attempting to send notification to {Count} devices for user {UserId}", 
+                        fcmTokens.Count, userId);
+                        
+                    // Add token validation
+                    var validTokens = fcmTokens.Where(token => !string.IsNullOrEmpty(token)).ToList();
+                    if (validTokens.Count == 0)
+                    {
+                        _logger.LogWarning("No valid FCM tokens found for user {UserId}", userId);
+                        return false;
+                    }
+                    //log the tokens
+                    _logger.LogInformation("Valid FCM tokens for user {UserId}: {Tokens}", userId, string.Join(", ", validTokens));
 
                     var message = new MulticastMessage
                     {
-                        Tokens = fcmTokens,
+                        Tokens = validTokens,
                         Notification = new Notification
                         {
                             Title = title,
@@ -85,13 +114,22 @@ namespace SnapNFix.Infrastructure.Services.FirebaseNotificationService
                         Data = data ?? new Dictionary<string, string>()
                     };
 
-                    var response = await _messaging.SendMulticastAsync(message);
-                    
-                    _logger.LogInformation(
-                        "Notification sent to {SuccessCount}/{TotalCount} devices for user {UserId}", 
-                        response.SuccessCount, response.FailureCount + response.SuccessCount, userId);
-                    
-                    return response.SuccessCount > 0;
+                    try
+                    {
+                        var response = await _messaging.SendEachForMulticastAsync(message);
+                        
+                        _logger.LogInformation(
+                            "Notification sent to {SuccessCount}/{TotalCount} devices for user {UserId}", 
+                            response.SuccessCount, response.FailureCount + response.SuccessCount, userId);
+                        
+                        return response.SuccessCount > 0;
+                    }
+                    catch (FirebaseMessagingException fme)
+                    {
+                        _logger.LogError(fme, "Firebase messaging error. ErrorCode: {ErrorCode}, Message: {Message}", 
+                            fme.ErrorCode, fme.Message);
+                        return false;
+                    }
                 }
             }
             catch (Exception ex)

@@ -2,7 +2,7 @@ using MediatR;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
 
-namespace Application.Events
+namespace SnapNFix.Application.Events
 {
     public class SnapReportStatusChanged : INotification
     {

@@ -31,19 +31,18 @@ public class GetNearbyIssuesQueryHandler :
 
         var issuesInViewport = await _unitOfWork.Repository<Domain.Entities.Issue>()
             .GetQuerableData()
-            .Where(i => i.Location.Y >= request.SouthWestLat && 
-                       i.Location.Y <= request.NorthEastLat &&
-                       i.Location.X >= request.SouthWestLng && 
-                       i.Location.X <= request.NorthEastLng)
-            .OrderBy(i => i.CreatedAt) 
+            .Where(i => i.Location.Y >= request.SouthWestLat &&
+                        i.Location.Y <= request.NorthEastLat &&
+                        i.Location.X >= request.SouthWestLng &&
+                        i.Location.X <= request.NorthEastLng)
+            .OrderBy(i => i.CreatedAt)
             .Take(request.MaxResults)
             .Select(i => new NearbyIssueDto
             {
                 Id = i.Id,
                 Latitude = i.Location.Y,
                 Longitude = i.Location.X
-            })
-            .ToListAsync(cancellationToken);
+            }).ToListAsync();
 
         return GenericResponseModel<List<NearbyIssueDto>>.Success(issuesInViewport);
     }

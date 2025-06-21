@@ -1,12 +1,10 @@
-using System.Threading;
-using System.Threading.Tasks;
-using Application.Events;
-using Domain.Interfaces;
+
 using MediatR;
 using Microsoft.Extensions.Logging;
+using SnapNFix.Application.Events;
 using SnapNFix.Domain.Interfaces;
 
-namespace Application.EventHandlers
+namespace SnapNFix.Application.EventHandlers
 {
     public class IssueStatusChangedHandler : INotificationHandler<IssueStatusChanged>
     {

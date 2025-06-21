@@ -23,6 +23,8 @@ public class SnapNFixContext
         modelBuilder.Entity<User>().ToTable("Users");
         modelBuilder.Entity<IdentityRole<Guid>>().ToTable("Roles");
         
+        modelBuilder.Entity<FastReport>().ToTable("FastReports");
+        
         modelBuilder.HasPostgresExtension("postgis");
         modelBuilder.HasPostgresExtension("uuid-ossp");
         modelBuilder.HasPostgresExtension("pg_trgm");

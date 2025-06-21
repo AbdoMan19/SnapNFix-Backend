@@ -1,10 +1,8 @@
-using System.Threading;
-using System.Threading.Tasks;
-using Application.Events;
-using Domain.Interfaces;
 using MediatR;
+using SnapNFix.Application.Events;
+using SnapNFix.Domain.Interfaces;
 
-namespace Application.EventHandlers
+namespace SnapNFix.Application.EventHandlers
 {
     public class IssueCreatedHandler : INotificationHandler<IssueCreated>
     {

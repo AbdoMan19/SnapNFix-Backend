@@ -2,7 +2,7 @@ using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces.ServiceLifetime;
 
-namespace Domain.Interfaces
+namespace SnapNFix.Domain.Interfaces
 {
     public interface IActivityLogger : ISingleton
     {

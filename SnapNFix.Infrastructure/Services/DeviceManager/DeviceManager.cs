@@ -132,7 +132,7 @@ public class DeviceManager : IDeviceManager
     {
         var tokens = await _unitOfWork.Repository<UserDevice>()
             .FindBy(d => d.UserId == userId )
-            .Where(d => !string.IsNullOrEmpty(d.FCMToken) && d.RefreshToken != null && !d.RefreshToken.IsExpired)
+            .Where(d => !string.IsNullOrEmpty(d.FCMToken) && d.RefreshToken != null && d.RefreshToken.Expires > DateTime.UtcNow)
             .Select(d =>  d.FCMToken )
             .ToListAsync();
 

@@ -37,7 +37,7 @@ public class LoginWithPhoneOrEmailCommandValidator : AbstractValidator<LoginWith
         RuleFor(x => x.FCMToken)
             .NotEmpty()
             .WithMessage("FCM Token is required.");
-
+        
     }
     
 }

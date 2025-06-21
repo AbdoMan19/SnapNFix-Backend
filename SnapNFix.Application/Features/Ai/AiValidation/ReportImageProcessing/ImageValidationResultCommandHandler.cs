@@ -1,8 +1,8 @@
-using Application.Events;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Application.Events;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
 
@@ -70,7 +70,6 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
 
             _logger.LogInformation("Updated report {ReportId}: Status {OldStatus} -> {NewStatus}, Category {OldCategory} -> {NewCategory}, Threshold: {Threshold}",
                 report.Id, oldStatus, request.ImageStatus, oldCategory, request.ReportCategory, request.Threshold);
-
             if (report.ImageStatus == ImageStatus.Approved)
             {
                 _logger.LogInformation("Report {ReportId} approved, attempting to attach to issue", report.Id);

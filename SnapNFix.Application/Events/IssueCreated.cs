@@ -1,7 +1,7 @@
 using MediatR;
 using SnapNFix.Domain.Entities;
 
-namespace Application.Events
+namespace SnapNFix.Application.Events
 {
     public class IssueCreated : INotification
     {
