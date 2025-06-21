@@ -17,9 +17,7 @@ public class AdminLoginCommandHandler : IRequestHandler<AdminLoginCommand, Gener
     private readonly ILogger<AdminLoginCommandHandler> _logger;
     private readonly IAuthenticationService _authenticationService;
     private readonly IUnitOfWork _unitOfWork;
-
     private readonly UserManager<User> _userManager;
-
     private readonly IUserValidationService _userValidationService;
 
     public AdminLoginCommandHandler(
@@ -56,20 +54,27 @@ public class AdminLoginCommandHandler : IRequestHandler<AdminLoginCommand, Gener
                 return error;
             }
 
-            var passwordValid = await _userManager.CheckPasswordAsync(user, request.Password);
-            if (!passwordValid)
+            var identityUser = await _userManager.FindByIdAsync(user.Id.ToString());
+            if (identityUser == null)
             {
-                _logger.LogWarning("Admin login failed: Invalid password for email {Email}", request.Email);
-                await _userManager.AccessFailedAsync(user);
+                _logger.LogWarning("Admin login failed: User not found in Identity system for email {Email}", request.Email);
                 return GenericResponseModel<LoginResponse>.Failure(Constants.FailureMessage, invalidCredentialsError);
             }
 
-            var userRoles = await _userManager.GetRolesAsync(user);
+            var passwordValid = await _userManager.CheckPasswordAsync(identityUser, request.Password);
+            if (!passwordValid)
+            {
+                _logger.LogWarning("Admin login failed: Invalid password for email {Email}", request.Email);
+                await _userManager.AccessFailedAsync(identityUser); 
+                return GenericResponseModel<LoginResponse>.Failure(Constants.FailureMessage, invalidCredentialsError);
+            }
+
+            var userRoles = await _userManager.GetRolesAsync(identityUser);
             var hasAdminRole = userRoles.Contains("Admin") || userRoles.Contains("SuperAdmin");
             
             if (!hasAdminRole)
             {
-                _logger.LogWarning("Admin login failed: User {UserId} does not have admin or super admin role", user.Id);
+                _logger.LogWarning("Admin login failed: User {UserId} does not have admin or super admin role", identityUser.Id);
                 return GenericResponseModel<LoginResponse>.Failure(
                     Constants.FailureMessage,
                     new List<ErrorResponseModel>
@@ -78,9 +83,9 @@ public class AdminLoginCommandHandler : IRequestHandler<AdminLoginCommand, Gener
                     });
             }
 
-            if (!user.EmailConfirmed)
+            if (!identityUser.EmailConfirmed)
             {
-                _logger.LogWarning("Admin login failed: Email not confirmed for user {UserId}", user.Id);
+                _logger.LogWarning("Admin login failed: Email not confirmed for user {UserId}", identityUser.Id);
                 return GenericResponseModel<LoginResponse>.Failure(
                     Constants.FailureMessage,
                     new List<ErrorResponseModel>
@@ -89,14 +94,14 @@ public class AdminLoginCommandHandler : IRequestHandler<AdminLoginCommand, Gener
                     });
             }
 
-            await _userManager.ResetAccessFailedCountAsync(user);
+            await _userManager.ResetAccessFailedCountAsync(identityUser);
 
             await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
             
             try
             {
                 var authResponse = await _authenticationService.AuthenticateUserAsync(
-                    user,
+                    identityUser,
                     request.DeviceId,
                     request.DeviceName,
                     request.Platform,
@@ -107,12 +112,12 @@ public class AdminLoginCommandHandler : IRequestHandler<AdminLoginCommand, Gener
                 await transaction.CommitAsync(cancellationToken);
                 
                 _logger.LogInformation("Admin {UserId} logged in successfully from device {DeviceId} with roles: {Roles}", 
-                    user.Id, request.DeviceId, string.Join(", ", userRoles));
+                    identityUser.Id, request.DeviceId, string.Join(", ", userRoles));
 
                 var loginResponse = new LoginResponse
                 {
                     Tokens = authResponse,
-                    User = user.Adapt<LoginResponse.UserInfo>()
+                    User = identityUser.Adapt<LoginResponse.UserInfo>()
                 };
 
                 return GenericResponseModel<LoginResponse>.Success(loginResponse);
@@ -120,7 +125,7 @@ public class AdminLoginCommandHandler : IRequestHandler<AdminLoginCommand, Gener
             catch (Exception ex)
             {
                 await transaction.RollbackAsync(cancellationToken);
-                _logger.LogError(ex, "Database operation failed during admin login for user {UserId}", user.Id);
+                _logger.LogError(ex, "Database operation failed during admin login for user {UserId}", identityUser.Id);
                 return GenericResponseModel<LoginResponse>.Failure("An error occurred during login");
             }
         }
