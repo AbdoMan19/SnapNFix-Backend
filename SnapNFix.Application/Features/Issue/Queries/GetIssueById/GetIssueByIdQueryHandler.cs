@@ -5,6 +5,7 @@ using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Issue.DTOs;
 using SnapNFix.Domain.Interfaces;
 using SnapNFix.Domain.Enums;
+using SnapNFix.Application.Resources;
 
 namespace SnapNFix.Application.Features.Issue.Queries;
 
@@ -30,7 +31,7 @@ public class GetIssueByIdQueryHandler :
 
         if (issue == null)
         {
-            return GenericResponseModel<IssueDetailsDto>.Failure("Issue not found");
+            return GenericResponseModel<IssueDetailsDto>.Failure(Shared.IssueNotFound);
         }
 
         var associatedImages = issue.AssociatedSnapReports

@@ -4,8 +4,10 @@ using Microsoft.Extensions.Logging;
 using SnapNFix.Domain.Interfaces;
 
 using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Application.Resources;
 
 namespace SnapNFix.Application.Features.FastReport.Create;
+
 
 public class CreateFastReportCommandHandler : IRequestHandler<CreateFastReportCommand, GenericResponseModel<bool>>
 {
@@ -49,8 +51,7 @@ public class CreateFastReportCommandHandler : IRequestHandler<CreateFastReportCo
             // Handle domain-specific exceptions
             await transaction.RollbackAsync(cancellationToken);
             _logger.LogError(ex, "An error occurred while creating the fast report for IssueId: {IssueId}", request.IssueId);
-            
-            return GenericResponseModel<bool>.Failure("An error occurred while creating the fast report.",
+            return GenericResponseModel<bool>.Failure(Shared.FailedToCreateFastReport,
                 new List<ErrorResponseModel>
                 {
                     ErrorResponseModel.Create("Exception", ex.Message)

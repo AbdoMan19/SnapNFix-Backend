@@ -526,5 +526,16 @@
         <value>Failed to generate password reset token</value>
     </data>
 
+    <data name="FailedToResetPassword" xml:space="preserve">
+        <value>Failed to reset password</value>
+    </data>
+
+    <data name="FailedToCreateFastReport" xml:space="preserve">
+        <value>Failed to create fast report</value>
+    </data>
+    
+    <data name="InvalidCoordinates" xml:space="preserve">
+        <value>Invalid coordinates provided</value>
+    </data>
 
 </root>

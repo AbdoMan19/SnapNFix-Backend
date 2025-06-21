@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Issue.DTOs;
+using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Application.Features.Issue.Queries;
@@ -26,7 +27,7 @@ public class GetNearbyIssuesQueryHandler :
             request.NorthEastLng <= request.SouthWestLng)
         {
             return GenericResponseModel<List<NearbyIssueDto>>.Failure(
-                "Invalid viewport bounds: NorthEast coordinates must be greater than SouthWest coordinates");
+                Shared.InvalidCoordinates);
         }
 
         var issuesInViewport = await _unitOfWork.Repository<Domain.Entities.Issue>()

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Application.Resources;
 using SnapNFix.Application.Utilities;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
@@ -36,7 +37,7 @@ bool>>
             _logger.LogWarning("Contact number not found in the request");
             return GenericResponseModel<bool>.Failure(Constants.FailureMessage, new List<ErrorResponseModel>
             {
-                ErrorResponseModel.Create(nameof(request.NewPassword), "Contact number not found")
+                ErrorResponseModel.Create(nameof(request.NewPassword), Shared.ContactNotFound)
             });
         }
         var user = await _userManager.FindByNameAsync(contactClaim);
@@ -45,7 +46,7 @@ bool>>
             _logger.LogWarning("User not found for password reset attempt");
             return GenericResponseModel<bool>.Failure(Constants.FailureMessage, new List<ErrorResponseModel>
             {
-                ErrorResponseModel.Create(nameof(request.NewPassword), "User not found")
+                ErrorResponseModel.Create(nameof(request.NewPassword), Shared.UserNotFound)
             });
         }
 
@@ -58,7 +59,7 @@ bool>>
             _logger.LogWarning("Reset password attempt failed: {Errors}", string.Join(", ", result.Errors.Select(e => e.Description)));
             return GenericResponseModel<bool>.Failure(Constants.FailureMessage, new List<ErrorResponseModel>
             {
-                ErrorResponseModel.Create(nameof(request.NewPassword), "Failed to reset password")
+                ErrorResponseModel.Create(nameof(request.NewPassword), Shared.FailedToResetPassword)
             });
         }
         

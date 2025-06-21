@@ -526,4 +526,16 @@
     <data name="FailedToGenerateResetToken" xml:space="preserve">
         <value>فشل في إنشاء رمز إعادة التعيين</value>
     </data>
+
+    <data name="FailedToResetPassword" xml:space="preserve">
+        <value>فشل في إعادة تعيين كلمة المرور</value>
+    </data>
+
+    <data name="FailedToCreateFastReport" xml:space="preserve">
+        <value>فشل في إنشاء التقرير السريع</value>
+    </data>
+
+    <data name="InvalidCoordinates" xml:space="preserve">
+        <value>الإحداثيات غير صحيحة</value>
+    </data>
 </root>
