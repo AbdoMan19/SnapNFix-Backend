@@ -1,7 +1,9 @@
+using System.Globalization;
 using System.Reflection;
 using System.Threading.RateLimiting;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
@@ -59,9 +61,21 @@ public static class ServiceCollectionExtensions
         });
 
 
-
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddHttpContextAccessor();
+
+        services.AddLocalization(opts => opts.ResourcesPath = "Resources");
+        services.Configure<RequestLocalizationOptions>(opts =>
+        {
+            List<CultureInfo> supportedCultures = new()
+            {
+                new CultureInfo("en"),
+                new CultureInfo("ar")
+            };
+            opts.DefaultRequestCulture = new RequestCulture("en");
+            opts.SupportedCultures = supportedCultures;
+            opts.SupportedUICultures = supportedCultures;
+        });
 
         services.AddEndpointsApiExplorer();
 
