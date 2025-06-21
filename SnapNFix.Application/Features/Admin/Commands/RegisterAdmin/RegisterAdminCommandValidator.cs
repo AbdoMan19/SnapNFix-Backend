@@ -1,5 +1,6 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
+using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Entities;
 
 namespace SnapNFix.Application.Features.Admin.Commands.RegisterAdmin;
@@ -13,45 +14,45 @@ public class RegisterAdminCommandValidator : AbstractValidator<RegisterAdminComm
         _userManager = userManager;
 
         RuleFor(x => x.FirstName)
-            .NotEmpty().WithMessage("First name is required")
-            .Length(2, 50).WithMessage("First name must be between 2 and 50 characters")
+            .NotEmpty().WithMessage(Shared.FirstNameRequired)
+            .Length(2, 50).WithMessage(Shared.FirstNameLength)
             .Matches(@"^[a-zA-Z\u0600-\u06FF\s]+$")
-            .WithMessage("First name can only contain letters and spaces");
+            .WithMessage(Shared.FirstNameInvalid);
 
         RuleFor(x => x.LastName)
-            .NotEmpty().WithMessage("Last name is required")
-            .Length(2, 50).WithMessage("Last name must be between 2 and 50 characters")
+            .NotEmpty().WithMessage(Shared.LastNameRequired)
+            .Length(2, 50).WithMessage(Shared.LastNameLength)
             .Matches(@"^[a-zA-Z\u0600-\u06FF\s]+$")
-            .WithMessage("Last name can only contain letters and spaces");
+            .WithMessage(Shared.LastNameInvalid);
 
         RuleFor(x => x.Email)
-            .NotEmpty().WithMessage("Email is required")
-            .EmailAddress().WithMessage("Invalid email format")
-            .MustAsync(BeUniqueEmail).WithMessage("Email address is already registered");
+            .NotEmpty().WithMessage(Shared.EmailRequired)
+            .EmailAddress().WithMessage(Shared.InvalidEmailFormat)
+            .MustAsync(BeUniqueEmail).WithMessage(Shared.DuplicateEmail);
 
         RuleFor(x => x.Password)
-            .NotEmpty().WithMessage("Password is required")
-            .MinimumLength(8).WithMessage("Password must be at least 8 characters")
-            .Matches("[A-Z]").WithMessage("Password must contain at least one uppercase letter")
-            .Matches("[a-z]").WithMessage("Password must contain at least one lowercase letter")
-            .Matches("[0-9]").WithMessage("Password must contain at least one number")
-            .Matches("[^a-zA-Z0-9]").WithMessage("Password must contain at least one special character");
+            .NotEmpty().WithMessage(Shared.PasswordRequired)
+            .MinimumLength(8).WithMessage(Shared.PasswordTooShort)
+            .Matches("[A-Z]").WithMessage(Shared.PasswordMissingUpper)
+            .Matches("[a-z]").WithMessage(Shared.PasswordMissingLower)
+            .Matches("[0-9]").WithMessage(Shared.PasswordMissingNumber)
+            .Matches("[^a-zA-Z0-9]").WithMessage(Shared.PasswordMissingSpecial);
 
         RuleFor(x => x.ConfirmPassword)
-            .NotEmpty().WithMessage("Confirm password is required")
-            .Equal(x => x.Password).WithMessage("Passwords do not match");
+            .NotEmpty().WithMessage(Shared.ConfirmPasswordRequired)
+            .Equal(x => x.Password).WithMessage(Shared.PasswordsDoNotMatch);
 
         RuleFor(x => x.DeviceId)
-            .NotEmpty().WithMessage("Device ID is required");
+            .NotEmpty().WithMessage(Shared.DeviceIdRequired);
 
         RuleFor(x => x.DeviceName)
-            .NotEmpty().WithMessage("Device name is required");
+            .NotEmpty().WithMessage(Shared.DeviceNameRequired);
 
         RuleFor(x => x.DeviceType)
-            .NotEmpty().WithMessage("Device type is required");
+            .NotEmpty().WithMessage(Shared.DeviceTypeRequired);
 
         RuleFor(x => x.Platform)
-            .NotEmpty().WithMessage("Platform is required");
+            .NotEmpty().WithMessage(Shared.PlatformRequired);
     }
 
     private async Task<bool> BeUniqueEmail(string email, CancellationToken cancellationToken)

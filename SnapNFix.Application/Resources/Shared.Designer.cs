@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SnapNFix.Domain.Resources {
+namespace SnapNFix.Application.Resources {
     using System;
     
     

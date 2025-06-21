@@ -1,8 +1,7 @@
 using FluentValidation;
 using MediatR;
 using SnapNFix.Application.Common.ResponseModel;
-using System;
-using System.Linq;
+using SnapNFix.Application.Resources;
 
 namespace SnapNFix.Application.Common.Behaviors;
 
@@ -57,6 +56,6 @@ public sealed class ValidationBehavior<TRequest, TResponse>
 
     private GenericResponseModel<T> CreateFailureResponse<T>(IList<ErrorResponseModel> errors)
     {
-        return new GenericResponseModel<T>("Validation Failed", errors);
+        return new GenericResponseModel<T>(Shared.ValidationError, errors);
     }
 }
