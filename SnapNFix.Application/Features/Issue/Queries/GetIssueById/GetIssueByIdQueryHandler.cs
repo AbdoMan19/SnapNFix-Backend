@@ -5,6 +5,7 @@ using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Issue.DTOs;
 using SnapNFix.Domain.Interfaces;
 using SnapNFix.Domain.Enums;
+using SnapNFix.Application.Resources;
 
 namespace SnapNFix.Application.Features.Issue.Queries;
 
@@ -13,16 +14,26 @@ public class GetIssueByIdQueryHandler :
 {
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ICacheService _cacheService;
 
-    public GetIssueByIdQueryHandler(IMapper mapper, IUnitOfWork unitOfWork)
+    public GetIssueByIdQueryHandler(IMapper mapper, IUnitOfWork unitOfWork, ICacheService cacheService)
     {
         _mapper = mapper;
         _unitOfWork = unitOfWork;
+        _cacheService = cacheService;
     }
 
     public async Task<GenericResponseModel<IssueDetailsDto>> Handle(
         GetIssueByIdQuery request, CancellationToken cancellationToken)
     {
+        var cacheKey = CacheKeys.IssueDetails(request.Id);
+        
+        var cached = await _cacheService.GetAsync<IssueDetailsDto>(cacheKey);
+        if (cached != null)
+        {
+            return GenericResponseModel<IssueDetailsDto>.Success(cached);
+        }
+
         var issue = await _unitOfWork.Repository<Domain.Entities.Issue>()
             .FindBy(i => i.Id == request.Id)
             .Include(i => i.AssociatedSnapReports)
@@ -30,7 +41,7 @@ public class GetIssueByIdQueryHandler :
 
         if (issue == null)
         {
-            return GenericResponseModel<IssueDetailsDto>.Failure("Issue not found");
+            return GenericResponseModel<IssueDetailsDto>.Failure(Shared.IssueNotFound);
         }
 
         var associatedImages = issue.AssociatedSnapReports
@@ -56,8 +67,9 @@ public class GetIssueByIdQueryHandler :
             State = issue.State,
             Country = issue.Country
         };
+
+        await _cacheService.SetAsync(cacheKey, issueDto, TimeSpan.FromMinutes(30));
         
         return GenericResponseModel<IssueDetailsDto>.Success(issueDto);
     }
-
 }

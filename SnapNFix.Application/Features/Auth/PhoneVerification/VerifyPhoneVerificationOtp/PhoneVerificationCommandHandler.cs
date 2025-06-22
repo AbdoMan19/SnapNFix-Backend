@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Application.Resources;
 using SnapNFix.Application.Utilities;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
@@ -48,7 +49,7 @@ public class PhoneVerificationCommandHandler : IRequestHandler<PhoneVerification
         {
             _logger.LogWarning("Phone verification failed: Invalid OTP for {PhoneNumber}", contactClaim);
             return GenericResponseModel<string>.Failure(Constants.FailureMessage , new List<ErrorResponseModel>{ErrorResponseModel.Create(
-                nameof(request.Otp) , "Invalid OTP" )});
+                nameof(request.Otp) , Shared.InvalidOtp )});
         }
         
         _logger.LogInformation("Phone verification successful for {PhoneNumber}", contactClaim);

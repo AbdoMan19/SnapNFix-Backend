@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
 
@@ -36,7 +37,7 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand , Gene
             if (user == null)
             {
                 _logger.LogWarning("User with ID {UserId} not found", userId);
-                return GenericResponseModel<bool>.Failure("User not found");
+                return GenericResponseModel<bool>.Failure(Shared.UserNotFound);
             }
 
             await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
@@ -90,13 +91,13 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand , Gene
             {
                 await transaction.RollbackAsync(cancellationToken);
                 _logger.LogError(ex, "Error updating user with ID {UserId}", userId);
-                return GenericResponseModel<bool>.Failure("An error occurred while updating the user");
+                return GenericResponseModel<bool>.Failure(Shared.OperationFailed);
             }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unexpected error in updating user");
-            return GenericResponseModel<bool>.Failure("An unexpected error occurred");
+            return GenericResponseModel<bool>.Failure(Shared.OperationFailed);
         }
     }
 

@@ -7,6 +7,7 @@ using SnapNFix.Application.Utilities;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Application.Common.Interfaces;
+using SnapNFix.Application.Resources;
 
 namespace SnapNFix.Application.Features.Auth.ForgetPassword.VerifyForgetPasswordOtp;
 
@@ -41,7 +42,7 @@ public class VerifyForgetPasswordOtpCommandHandler : IRequestHandler<VerifyForge
             _logger.LogWarning("Contact number not found in the request");
             return GenericResponseModel<string>.Failure(Constants.FailureMessage, new List<ErrorResponseModel>
             {
-                ErrorResponseModel.Create(nameof(request.Otp), "Contact number not found")
+                ErrorResponseModel.Create(nameof(request.Otp), Shared.ContactNotFound)
             });
         }
 
@@ -52,7 +53,7 @@ public class VerifyForgetPasswordOtpCommandHandler : IRequestHandler<VerifyForge
             _logger.LogWarning("OTP verification failed for user {UserId}", contactClaim);
             return GenericResponseModel<string>.Failure(Constants.FailureMessage, new List<ErrorResponseModel>
             {
-                ErrorResponseModel.Create(nameof(request.Otp), "Invalid OTP")
+                ErrorResponseModel.Create(nameof(request.Otp), Shared.InvalidOtp)
             });
         }
 
@@ -63,7 +64,7 @@ public class VerifyForgetPasswordOtpCommandHandler : IRequestHandler<VerifyForge
             _logger.LogWarning("Failed to generate reset password token for user {UserId}", contactClaim);
             return GenericResponseModel<string>.Failure(Constants.FailureMessage, new List<ErrorResponseModel>
             {
-                ErrorResponseModel.Create(nameof(request.Otp), "Failed to generate reset password token")
+                ErrorResponseModel.Create(nameof(request.Otp), Shared.FailedToGenerateResetToken)
             });
         }
         

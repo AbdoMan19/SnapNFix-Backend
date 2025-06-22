@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Application.Resources;
 using SnapNFix.Application.Utilities;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
@@ -36,7 +37,7 @@ public class UserValidationService : IUserValidationService
                 Constants.FailureMessage,
                 new List<ErrorResponseModel>
                 {
-                    ErrorResponseModel.Create("EmailOrPhone", "User not found")
+                    ErrorResponseModel.Create("EmailOrPhone", Shared.UserNotFound)
                 }));
         }
 
@@ -47,7 +48,7 @@ public class UserValidationService : IUserValidationService
                 Constants.FailureMessage,
                 new List<ErrorResponseModel>
                 {
-                    ErrorResponseModel.Create("EmailOrPhone", "Account is suspended")
+                    ErrorResponseModel.Create("EmailOrPhone", Shared.AccountSuspended)
                 }));
         }
 

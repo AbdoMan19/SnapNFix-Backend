@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.SnapReport.DTOs;
+using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
 
@@ -31,7 +32,7 @@ public class GetUserReportsStatisticsQueryHandler : IRequestHandler<GetUserRepor
         if (userId == Guid.Empty)
         {
             _logger.LogWarning("Failed to get current user ID");
-            return GenericResponseModel<UserReportsStatisticsDto>.Failure("User not found");
+            return GenericResponseModel<UserReportsStatisticsDto>.Failure(Shared.UserNotFound);
         }
         
         try
@@ -64,7 +65,7 @@ public class GetUserReportsStatisticsQueryHandler : IRequestHandler<GetUserRepor
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving report counts for user {UserId}", userId);
-            return GenericResponseModel<UserReportsStatisticsDto>.Failure("An error occurred while retrieving report statistics");
+            return GenericResponseModel<UserReportsStatisticsDto>.Failure(Shared.OperationFailed);
         }
     }
 }

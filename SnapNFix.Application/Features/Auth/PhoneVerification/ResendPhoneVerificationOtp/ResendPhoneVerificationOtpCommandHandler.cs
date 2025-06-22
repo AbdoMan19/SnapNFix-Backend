@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Application.Common.Interfaces;
 
@@ -32,7 +33,7 @@ public class ResendPhoneVerificationOtpCommandHandler : IRequestHandler<ResendPh
         if (string.IsNullOrEmpty(contactClaim))
         {
             _logger.LogWarning("Contact number not found in the request token");
-            return GenericResponseModel<bool>.Failure("Contact number not found");
+            return GenericResponseModel<bool>.Failure(Shared.ContactNotFound);
         }
 
         await _otpService.InvalidateOtpAsync(contactClaim, OtpPurpose.PhoneVerification);

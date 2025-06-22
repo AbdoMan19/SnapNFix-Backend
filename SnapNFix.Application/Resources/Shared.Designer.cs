@@ -1007,5 +1007,45 @@ namespace SnapNFix.Application.Resources {
             }
         }
 
+        public static string FailedToGenerateResetToken
+        {
+            get
+            {
+                return ResourceManager.GetString("FailedToGenerateResetToken", resourceCulture);
+            }
+        }
+
+        public static string FailedToResetPassword
+        {
+            get
+            {
+                return ResourceManager.GetString("FailedToResetPassword", resourceCulture);
+            }
+        }
+
+        public static string FailedToCreateFastReport
+        {
+            get
+            {
+                return ResourceManager.GetString("FailedToCreateFastReport", resourceCulture);
+            }
+        }
+
+        public static string InvalidCoordinates
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidCoordinates", resourceCulture);
+            }
+        }
+
+        public static string ValidLocation
+        {
+            get
+            {
+                return ResourceManager.GetString("ValidLocation", resourceCulture);
+            }
+        }
+
     }
 }

@@ -321,7 +321,12 @@
     <data name="IssueIdRequired" xml:space="preserve">
         <value>معرف المشكلة مطلوب</value>
     </data>
+
     <data name="InvalidGuid" xml:space="preserve">
+        <value>معرف المشكلة يجب أن يكون معرف صحيح</value>
+    </data>
+
+    <data name="InvalidIssueId" xml:space="preserve">
         <value>معرف المشكلة يجب أن يكون معرف صحيح</value>
     </data>
 
@@ -521,5 +526,25 @@
     </data>
     <data name="ViewportWidthExceeded" xml:space="preserve">
         <value>لا يمكن أن يتجاوز عرض منطقة العرض 10 درجات من دائرة الطول.</value>
+    </data>
+
+    <data name="FailedToGenerateResetToken" xml:space="preserve">
+        <value>فشل في إنشاء رمز إعادة التعيين</value>
+    </data>
+
+    <data name="FailedToResetPassword" xml:space="preserve">
+        <value>فشل في إعادة تعيين كلمة المرور</value>
+    </data>
+
+    <data name="FailedToCreateFastReport" xml:space="preserve">
+        <value>فشل في إنشاء التقرير السريع</value>
+    </data>
+
+    <data name="InvalidCoordinates" xml:space="preserve">
+        <value>الإحداثيات غير صحيحة</value>
+    </data>
+
+    <data name="ValidLocation" xml:space="preserve">
+        <value>الموقع صالح</value>
     </data>
 </root>

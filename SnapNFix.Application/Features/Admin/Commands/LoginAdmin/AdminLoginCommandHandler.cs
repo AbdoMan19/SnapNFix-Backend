@@ -6,6 +6,7 @@ using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Common.Services.UserValidationServices;
 using SnapNFix.Application.Features.Auth.Dtos;
+using SnapNFix.Application.Resources;
 using SnapNFix.Application.Utilities;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
@@ -44,7 +45,7 @@ public class AdminLoginCommandHandler : IRequestHandler<AdminLoginCommand, Gener
         {
             var invalidCredentialsError = new List<ErrorResponseModel>
             {
-                ErrorResponseModel.Create("Authentication", "Invalid credentials or insufficient permissions")
+                ErrorResponseModel.Create("Authentication", Shared.InvalidCredentials)
             };
 
             var (user, error) = await _userValidationService.ValidateUserAsync<LoginResponse>(request.Email);
@@ -79,7 +80,7 @@ public class AdminLoginCommandHandler : IRequestHandler<AdminLoginCommand, Gener
                     Constants.FailureMessage,
                     new List<ErrorResponseModel>
                     {
-                        ErrorResponseModel.Create("Authorization", "Access denied: Admin role required")
+                        ErrorResponseModel.Create("Authorization", Shared.AdminRoleRequired)
                     });
             }
 
@@ -90,7 +91,7 @@ public class AdminLoginCommandHandler : IRequestHandler<AdminLoginCommand, Gener
                     Constants.FailureMessage,
                     new List<ErrorResponseModel>
                     {
-                        ErrorResponseModel.Create("Authentication", "Email address not confirmed")
+                        ErrorResponseModel.Create("Authentication", Shared.EmailNotConfirmed)
                     });
             }
 
@@ -126,13 +127,13 @@ public class AdminLoginCommandHandler : IRequestHandler<AdminLoginCommand, Gener
             {
                 await transaction.RollbackAsync(cancellationToken);
                 _logger.LogError(ex, "Database operation failed during admin login for user {UserId}", identityUser.Id);
-                return GenericResponseModel<LoginResponse>.Failure("An error occurred during login");
+                return GenericResponseModel<LoginResponse>.Failure(Shared.UnexpectedError);
             }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Admin login failed for email {Email}", request.Email);
-            return GenericResponseModel<LoginResponse>.Failure("An error occurred during login");
+            return GenericResponseModel<LoginResponse>.Failure(Shared.UnexpectedError);
         }
     }
 }

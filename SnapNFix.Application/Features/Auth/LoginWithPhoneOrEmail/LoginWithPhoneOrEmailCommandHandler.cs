@@ -7,6 +7,7 @@ using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Common.Services.UserValidationServices;
 using SnapNFix.Application.Features.Auth.Dtos;
+using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
 
@@ -20,7 +21,6 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
     private readonly ILogger<LoginWithPhoneOrEmailCommandHandler> _logger;
     private readonly IUserValidationService _userValidationService;
     private readonly IAuthenticationService _authenticationService;
-    //device manager
     private readonly IDeviceManager _deviceManager;
 
     public LoginWithPhoneOrEmailCommandHandler(
@@ -47,7 +47,7 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
         {
             var invalidCredentialsError = new List<ErrorResponseModel>
             {
-                ErrorResponseModel.Create("Authentication", "Invalid credentials")
+                ErrorResponseModel.Create("Authentication", Shared.InvalidCredentials)
             };
 
             var (user, error) = await _userValidationService.ValidateUserAsync<LoginResponse>(request.EmailOrPhoneNumber);
@@ -69,10 +69,11 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
                 _logger.LogWarning("Login attempt with unconfirmed {Type} for user {UserId}", 
                     isEmail ? "email" : "phone", identityUser.Id);
                 
+                var confirmationMessage = isEmail ? Shared.EmailNotConfirmed : Shared.PhoneNotConfirmed;
                 return GenericResponseModel<LoginResponse>.Failure(
                     Constants.FailureMessage,
                     new List<ErrorResponseModel>{ 
-                        ErrorResponseModel.Create("Authentication", $"{(isEmail ? "Email" : "Phone number")} not confirmed") 
+                        ErrorResponseModel.Create("Authentication", confirmationMessage) 
                     });
             }
 
@@ -82,7 +83,6 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
             
             try
             {
-                // Use the new authentication service
                 var authResponse = await _authenticationService.AuthenticateUserAsync(
                     identityUser,
                     request.DeviceId,
@@ -107,13 +107,13 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
             {
                 await transaction.RollbackAsync(cancellationToken);
                 _logger.LogError(ex, "Database operation failed during login for user with ID {UserId}", identityUser?.Id);
-                return GenericResponseModel<LoginResponse>.Failure("An error occurred during login");
+                return GenericResponseModel<LoginResponse>.Failure(Shared.UnexpectedError);
             }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Login failed for {EmailOrPhone}", request.EmailOrPhoneNumber);
-            return GenericResponseModel<LoginResponse>.Failure("An error occurred during login");
+            return GenericResponseModel<LoginResponse>.Failure(Shared.UnexpectedError);
         }
     }
 }

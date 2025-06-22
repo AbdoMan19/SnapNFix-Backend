@@ -2,8 +2,8 @@
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Interfaces;
-
 
 namespace SnapNFix.Application.Features.Auth.Logout;
 
@@ -13,7 +13,6 @@ public class LogoutCommandHandler : IRequestHandler<LogoutCommand, GenericRespon
     private readonly ILogger<LogoutCommandHandler> _logger;
     private readonly IDeviceManager _deviceManager;
     private readonly IUserService _userService;
-
 
     public LogoutCommandHandler(
         IUnitOfWork unitOfWork,
@@ -33,7 +32,6 @@ public class LogoutCommandHandler : IRequestHandler<LogoutCommand, GenericRespon
         {
             var currentDeviceId = _deviceManager.GetCurrentDeviceId();
             var currentUserId = await _userService.GetCurrentUserIdAsync();
-        
 
             await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
             
@@ -44,10 +42,10 @@ public class LogoutCommandHandler : IRequestHandler<LogoutCommand, GenericRespon
                 if (!success)
                 {
                     _logger.LogInformation("Logging out device {DeviceId} by expiring refresh token", currentDeviceId);
-                    return GenericResponseModel<bool>.Failure("No active refresh token found for this device");
+                    return GenericResponseModel<bool>.Failure(Shared.LogoutFailed);
                 }
-                await _unitOfWork.SaveChanges();
                 
+                await _unitOfWork.SaveChanges();
                 await transaction.CommitAsync(cancellationToken);
                 
                 return GenericResponseModel<bool>.Success(true);
@@ -62,7 +60,7 @@ public class LogoutCommandHandler : IRequestHandler<LogoutCommand, GenericRespon
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unhandled exception during logout");
-            return GenericResponseModel<bool>.Failure("An error occurred during logout");
+            return GenericResponseModel<bool>.Failure(Shared.LogoutFailed);
         }
     }
 }

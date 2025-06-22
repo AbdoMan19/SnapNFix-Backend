@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Issue.DTOs;
+using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Application.Features.Issue.Queries;
@@ -12,11 +13,13 @@ public class GetNearbyIssuesQueryHandler :
 {
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ICacheService _cacheService;
 
-    public GetNearbyIssuesQueryHandler(IMapper mapper, IUnitOfWork unitOfWork)
+    public GetNearbyIssuesQueryHandler(IMapper mapper, IUnitOfWork unitOfWork, ICacheService cacheService)
     {
         _mapper = mapper;
         _unitOfWork = unitOfWork;
+        _cacheService = cacheService;
     }
 
     public async Task<GenericResponseModel<List<NearbyIssueDto>>> Handle(
@@ -26,7 +29,15 @@ public class GetNearbyIssuesQueryHandler :
             request.NorthEastLng <= request.SouthWestLng)
         {
             return GenericResponseModel<List<NearbyIssueDto>>.Failure(
-                "Invalid viewport bounds: NorthEast coordinates must be greater than SouthWest coordinates");
+                Shared.InvalidCoordinates);
+        }
+
+        var cacheKey = CacheKeys.NearbyIssues(request.NorthEastLat, request.NorthEastLng, request.SouthWestLat, request.SouthWestLng);
+        
+        var cached = await _cacheService.GetAsync<List<NearbyIssueDto>>(cacheKey);
+        if (cached != null)
+        {
+            return GenericResponseModel<List<NearbyIssueDto>>.Success(cached);
         }
 
         var issuesInViewport = await _unitOfWork.Repository<Domain.Entities.Issue>()
@@ -44,6 +55,8 @@ public class GetNearbyIssuesQueryHandler :
                 Longitude = i.Location.X
             })
             .ToListAsync(cancellationToken);
+
+        await _cacheService.SetAsync(cacheKey, issuesInViewport, TimeSpan.FromMinutes(5));
 
         return GenericResponseModel<List<NearbyIssueDto>>.Success(issuesInViewport);
     }
