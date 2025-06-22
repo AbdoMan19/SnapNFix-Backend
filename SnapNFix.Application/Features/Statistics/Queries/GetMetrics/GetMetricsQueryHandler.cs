@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
@@ -96,7 +97,7 @@ public class GetMetricsQueryHandler : IRequestHandler<GetMetricsQuery, GenericRe
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving metrics");
-            return GenericResponseModel<MetricsOverviewDto>.Failure("An error occurred while retrieving metrics");
+            return GenericResponseModel<MetricsOverviewDto>.Failure(Shared.OperationFailed);
         }
     }
 }

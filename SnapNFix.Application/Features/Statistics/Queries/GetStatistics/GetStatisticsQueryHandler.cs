@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Statistics.Queries.GetMetrics;
 using SnapNFix.Application.Features.Statistics.Queries.GetMonthlyTarget;
+using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Application.Features.Statistics.Queries.GetStatistics;
@@ -47,7 +48,7 @@ public class GetStatisticsQueryHandler : IRequestHandler<GetStatisticsQuery, Gen
             if (metricsResult.ErrorList.Count > 0 || monthlyTargetResult.ErrorList.Count > 0)
             {
                 _logger.LogError("Error retrieving statistics components");
-                return GenericResponseModel<StatisticsDto>.Failure("An error occurred while retrieving statistics");
+                return GenericResponseModel<StatisticsDto>.Failure(Shared.OperationFailed);
             }
 
             var statistics = new StatisticsDto
@@ -64,7 +65,7 @@ public class GetStatisticsQueryHandler : IRequestHandler<GetStatisticsQuery, Gen
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving statistics");
-            return GenericResponseModel<StatisticsDto>.Failure("An error occurred while retrieving statistics");
+            return GenericResponseModel<StatisticsDto>.Failure(Shared.OperationFailed);
         }
     }
 }

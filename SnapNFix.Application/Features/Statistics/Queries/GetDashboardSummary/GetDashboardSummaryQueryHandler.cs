@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
@@ -54,7 +55,7 @@ public class GetDashboardSummaryQueryHandler : IRequestHandler<GetDashboardSumma
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving dashboard summary");
-            return GenericResponseModel<StatisticsDto>.Failure("An error occurred while retrieving dashboard summary");
+            return GenericResponseModel<StatisticsDto>.Failure(Shared.OperationFailed);
         }
     }
 

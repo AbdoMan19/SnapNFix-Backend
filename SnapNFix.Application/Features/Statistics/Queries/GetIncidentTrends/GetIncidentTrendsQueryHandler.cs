@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
@@ -53,7 +54,7 @@ public class GetIncidentTrendsQueryHandler : IRequestHandler<GetIncidentTrendsQu
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving incident trends for interval {Interval}", request.Interval);
-            return GenericResponseModel<List<IncidentTrendDto>>.Failure("An error occurred while retrieving incident trends");
+            return GenericResponseModel<List<IncidentTrendDto>>.Failure(Shared.OperationFailed);
         }
     }
 
@@ -64,7 +65,7 @@ public class GetIncidentTrendsQueryHandler : IRequestHandler<GetIncidentTrendsQu
 
         // Convert to UTC to avoid timezone issues
         var startDateUtc = DateTime.SpecifyKind(startDate, DateTimeKind.Utc);
-        var endDateUtc = DateTime.SpecifyKind(endDate.AddDays(1), DateTimeKind.Utc); // Add 1 day to include the end date
+        var endDateUtc = DateTime.SpecifyKind(endDate.AddDays(1), DateTimeKind.Utc);
 
         var monthlyData = await _unitOfWork.Repository<SnapNFix.Domain.Entities.Issue>()
             .FindBy(i => i.CreatedAt >= startDateUtc && i.CreatedAt < endDateUtc)

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
@@ -68,7 +69,7 @@ public class GetCategoryDistributionQueryHandler : IRequestHandler<GetCategoryDi
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving category distribution");
-            return GenericResponseModel<List<CategoryDistributionDto>>.Failure("An error occurred while retrieving category distribution");
+            return GenericResponseModel<List<CategoryDistributionDto>>.Failure(Shared.OperationFailed);
         }
     }
 }
