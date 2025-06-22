@@ -1,4 +1,4 @@
-using SnapNFix.Domain.Interfaces.ServiceLifetime;
+using SnapNFix.Application.Common.Interfaces.ServiceLifetime;
 
 public interface ICacheService : IScoped
 {
