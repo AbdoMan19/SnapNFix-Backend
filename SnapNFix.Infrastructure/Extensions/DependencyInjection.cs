@@ -54,7 +54,6 @@ public static class DependencyInjection
         services.Configure<RedisOptions>(
             configuration.GetSection("Redis"));
 
-        services.AddScoped<ICacheInvalidationService, CacheInvalidationService>();
         
         /*services.AddStackExchangeRedisCache(options =>
         {
