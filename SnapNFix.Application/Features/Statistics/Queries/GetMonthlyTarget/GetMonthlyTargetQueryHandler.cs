@@ -2,27 +2,26 @@
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
+using SnapNFix.Application.Common.Interfaces;
 
 namespace SnapNFix.Application.Features.Statistics.Queries.GetMonthlyTarget;
 
 public class GetMonthlyTargetQueryHandler : IRequestHandler<GetMonthlyTargetQuery, GenericResponseModel<MonthlyTargetDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IMemoryCache _cache;
+    private readonly ICacheService _cacheService;
     private readonly ILogger<GetMonthlyTargetQueryHandler> _logger;
-    private const int FastCacheMinutes = 2;
 
     public GetMonthlyTargetQueryHandler(
         IUnitOfWork unitOfWork,
-        IMemoryCache cache,
+        ICacheService cacheService,
         ILogger<GetMonthlyTargetQueryHandler> logger)
     {
         _unitOfWork = unitOfWork;
-        _cache = cache;
+        _cacheService = cacheService;
         _logger = logger;
     }
 
@@ -32,11 +31,11 @@ public class GetMonthlyTargetQueryHandler : IRequestHandler<GetMonthlyTargetQuer
     {
         try
         {
-            const string cacheKey = "monthly_target";
 
-            if (_cache.TryGetValue(cacheKey, out MonthlyTargetDto cachedTarget))
+            var cached = await _cacheService.GetAsync<MonthlyTargetDto>(CacheKeys.MonthlyTarget);
+            if (cached != null)
             {
-                return GenericResponseModel<MonthlyTargetDto>.Success(cachedTarget);
+                return GenericResponseModel<MonthlyTargetDto>.Success(cached);
             }
 
             const double targetResolutionRate = 95.0;
@@ -69,7 +68,7 @@ public class GetMonthlyTargetQueryHandler : IRequestHandler<GetMonthlyTargetQuer
                     Improvement = 0
                 };
 
-                _cache.Set(cacheKey, defaultTarget, TimeSpan.FromMinutes(FastCacheMinutes));
+                await _cacheService.SetAsync(CacheKeys.MonthlyTarget, defaultTarget, TimeSpan.FromMinutes(2));
                 return GenericResponseModel<MonthlyTargetDto>.Success(defaultTarget);
             }
 
@@ -93,7 +92,7 @@ public class GetMonthlyTargetQueryHandler : IRequestHandler<GetMonthlyTargetQuer
                 Improvement = Math.Round(currentResolutionRate - targetResolutionRate, 2)
             };
 
-            _cache.Set(cacheKey, target, TimeSpan.FromMinutes(FastCacheMinutes));
+            await _cacheService.SetAsync(CacheKeys.MonthlyTarget, target, TimeSpan.FromMinutes(2));
             return GenericResponseModel<MonthlyTargetDto>.Success(target);
         }
         catch (Exception ex)

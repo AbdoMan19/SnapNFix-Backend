@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
@@ -12,17 +11,16 @@ namespace SnapNFix.Application.Features.Statistics.Queries.GetMetrics;
 public class GetMetricsQueryHandler : IRequestHandler<GetMetricsQuery, GenericResponseModel<MetricsOverviewDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IMemoryCache _cache;
+    private readonly ICacheService _cacheService;
     private readonly ILogger<GetMetricsQueryHandler> _logger;
-    private const int FastCacheMinutes = 2;
 
     public GetMetricsQueryHandler(
         IUnitOfWork unitOfWork,
-        IMemoryCache cache,
+        ICacheService cacheService,
         ILogger<GetMetricsQueryHandler> logger)
     {
         _unitOfWork = unitOfWork;
-        _cache = cache;
+        _cacheService = cacheService;
         _logger = logger;
     }
 
@@ -32,11 +30,11 @@ public class GetMetricsQueryHandler : IRequestHandler<GetMetricsQuery, GenericRe
     {
         try
         {
-            const string cacheKey = "metrics_overview";
 
-            if (_cache.TryGetValue(cacheKey, out MetricsOverviewDto cachedMetrics))
+            var cached = await _cacheService.GetAsync<MetricsOverviewDto>(CacheKeys.MetricsOverview);
+            if (cached != null)
             {
-                return GenericResponseModel<MetricsOverviewDto>.Success(cachedMetrics);
+                return GenericResponseModel<MetricsOverviewDto>.Success(cached);
             }
 
             var issueRepo = _unitOfWork.Repository<SnapNFix.Domain.Entities.Issue>();
@@ -90,7 +88,7 @@ public class GetMetricsQueryHandler : IRequestHandler<GetMetricsQuery, GenericRe
                 PendingIncidentsChange = pendingIncidentsChange
             };
 
-            _cache.Set(cacheKey, metrics, TimeSpan.FromMinutes(FastCacheMinutes));
+            await _cacheService.SetAsync(CacheKeys.MetricsOverview, metrics, TimeSpan.FromMinutes(2));
             return GenericResponseModel<MetricsOverviewDto>.Success(metrics);
         }
         catch (Exception ex)

@@ -1,28 +1,27 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
+using SnapNFix.Application.Common.Interfaces;
 
 namespace SnapNFix.Application.Features.Statistics.Queries.GetCategoryDistribution;
 
 public class GetCategoryDistributionQueryHandler : IRequestHandler<GetCategoryDistributionQuery, GenericResponseModel<List<CategoryDistributionDto>>>
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IMemoryCache _cache;
+    private readonly ICacheService _cacheService;
     private readonly ILogger<GetCategoryDistributionQueryHandler> _logger;
-    private const int SlowCacheMinutes = 15;
 
     public GetCategoryDistributionQueryHandler(
         IUnitOfWork unitOfWork,
-        IMemoryCache cache,
+        ICacheService cacheService,
         ILogger<GetCategoryDistributionQueryHandler> logger)
     {
         _unitOfWork = unitOfWork;
-        _cache = cache;
+        _cacheService = cacheService;
         _logger = logger;
     }
 
@@ -32,11 +31,11 @@ public class GetCategoryDistributionQueryHandler : IRequestHandler<GetCategoryDi
     {
         try
         {
-            const string cacheKey = "category_distribution";
 
-            if (_cache.TryGetValue(cacheKey, out List<CategoryDistributionDto> cachedCategories))
+            var cached = await _cacheService.GetAsync<List<CategoryDistributionDto>>(CacheKeys.CategoryDistribution);
+            if (cached != null)
             {
-                return GenericResponseModel<List<CategoryDistributionDto>>.Success(cachedCategories);
+                return GenericResponseModel<List<CategoryDistributionDto>>.Success(cached);
             }
 
             var categoryStats = await _unitOfWork.Repository<SnapNFix.Domain.Entities.Issue>()
@@ -62,7 +61,7 @@ public class GetCategoryDistributionQueryHandler : IRequestHandler<GetCategoryDi
                 Percentage = totalIssues > 0 ? Math.Round((double)c.Total / totalIssues * 100, 2) : 0
             }).OrderByDescending(c => c.Total).ToList();
 
-            _cache.Set(cacheKey, result, TimeSpan.FromMinutes(SlowCacheMinutes));
+            await _cacheService.SetAsync(CacheKeys.CategoryDistribution, result, TimeSpan.FromMinutes(15));
             return GenericResponseModel<List<CategoryDistributionDto>>.Success(result);
         }
         catch (Exception ex)

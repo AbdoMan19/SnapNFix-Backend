@@ -1,27 +1,26 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
-using Microsoft.Extensions.Caching.Memory;
 using SnapNFix.Application.Features.Statistics.Queries.GetMetrics;
 using SnapNFix.Application.Features.Statistics.Queries.GetMonthlyTarget;
 using SnapNFix.Application.Resources;
+using SnapNFix.Application.Common.Interfaces;
 
 namespace SnapNFix.Application.Features.Statistics.Queries.GetStatistics;
 
 public class GetStatisticsQueryHandler : IRequestHandler<GetStatisticsQuery, GenericResponseModel<StatisticsDto>>
 {
     private readonly IMediator _mediator;
-    private readonly IMemoryCache _cache;
+    private readonly ICacheService _cacheService;
     private readonly ILogger<GetStatisticsQueryHandler> _logger;
-    private const int SlowCacheMinutes = 15;
 
     public GetStatisticsQueryHandler(
         IMediator mediator,
-        IMemoryCache cache,
+        ICacheService cacheService,
         ILogger<GetStatisticsQueryHandler> logger)
     {
         _mediator = mediator;
-        _cache = cache;
+        _cacheService = cacheService;
         _logger = logger;
     }
 
@@ -31,16 +30,15 @@ public class GetStatisticsQueryHandler : IRequestHandler<GetStatisticsQuery, Gen
     {
         try
         {
-            const string cacheKey = "full_statistics";
 
-            if (_cache.TryGetValue(cacheKey, out StatisticsDto cachedStats))
+            var cached = await _cacheService.GetAsync<StatisticsDto>(CacheKeys.FullStatistics);
+            if (cached != null)
             {
-                return GenericResponseModel<StatisticsDto>.Success(cachedStats);
+                return GenericResponseModel<StatisticsDto>.Success(cached);
             }
 
             _logger.LogInformation("Generating full statistics");
 
-            // Use existing handlers to get the data
             var metricsResult = await _mediator.Send(new GetMetricsQuery(), cancellationToken);
             var monthlyTargetResult = await _mediator.Send(new GetMonthlyTargetQuery(), cancellationToken);
 
@@ -56,7 +54,7 @@ public class GetStatisticsQueryHandler : IRequestHandler<GetStatisticsQuery, Gen
                 MonthlyTarget = monthlyTargetResult.Data
             };
 
-            _cache.Set(cacheKey, statistics, TimeSpan.FromMinutes(SlowCacheMinutes));
+            await _cacheService.SetAsync(CacheKeys.FullStatistics, statistics, TimeSpan.FromMinutes(15));
 
             _logger.LogInformation("Full statistics generated and cached");
             return GenericResponseModel<StatisticsDto>.Success(statistics);

@@ -1,28 +1,27 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
-using Microsoft.Extensions.Caching.Memory;
 using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Interfaces;
 using SnapNFix.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
+using SnapNFix.Application.Common.Interfaces;
 
 namespace SnapNFix.Application.Features.Statistics.Queries.GetIncidentTrends;
 
 public class GetIncidentTrendsQueryHandler : IRequestHandler<GetIncidentTrendsQuery, GenericResponseModel<List<IncidentTrendDto>>>
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IMemoryCache _cache;
+    private readonly ICacheService _cacheService;
     private readonly ILogger<GetIncidentTrendsQueryHandler> _logger;
-    private const int SlowCacheMinutes = 15;
 
     public GetIncidentTrendsQueryHandler(
         IUnitOfWork unitOfWork,
-        IMemoryCache cache,
+        ICacheService cacheService,
         ILogger<GetIncidentTrendsQueryHandler> logger)
     {
         _unitOfWork = unitOfWork;
-        _cache = cache;
+        _cacheService = cacheService;
         _logger = logger;
     }
 
@@ -32,11 +31,12 @@ public class GetIncidentTrendsQueryHandler : IRequestHandler<GetIncidentTrendsQu
     {
         try
         {
-            var cacheKey = $"incident_trends_{request.Interval}";
+            var cacheKey = CacheKeys.IncidentTrends(request.Interval);
 
-            if (_cache.TryGetValue(cacheKey, out List<IncidentTrendDto> cachedTrends))
+            var cached = await _cacheService.GetAsync<List<IncidentTrendDto>>(cacheKey);
+            if (cached != null)
             {
-                return GenericResponseModel<List<IncidentTrendDto>>.Success(cachedTrends);
+                return GenericResponseModel<List<IncidentTrendDto>>.Success(cached);
             }
 
             var trends = request.Interval switch
@@ -47,7 +47,7 @@ public class GetIncidentTrendsQueryHandler : IRequestHandler<GetIncidentTrendsQu
                 _ => await GetMonthlyTrendsAsync(cancellationToken)
             };
 
-            _cache.Set(cacheKey, trends, TimeSpan.FromMinutes(SlowCacheMinutes));
+            await _cacheService.SetAsync(cacheKey, trends, TimeSpan.FromMinutes(15));
             return GenericResponseModel<List<IncidentTrendDto>>.Success(trends);
         }
         catch (Exception ex)

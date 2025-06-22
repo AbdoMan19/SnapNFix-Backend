@@ -1,28 +1,26 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Interfaces;
+using SnapNFix.Application.Common.Interfaces;
 
 namespace SnapNFix.Application.Features.Statistics.Queries.GetGeographicDistribution;
 
 public class GetGeographicDistributionQueryHandler : IRequestHandler<GetGeographicDistributionQuery, GenericResponseModel<List<GeographicDistributionDto>>>
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IMemoryCache _cache;
+    private readonly ICacheService _cacheService;
     private readonly ILogger<GetGeographicDistributionQueryHandler> _logger;
-    private const int GeoCacheMinutes = 60;
 
     public GetGeographicDistributionQueryHandler(
         IUnitOfWork unitOfWork,
-        IMemoryCache cache,
+        ICacheService cacheService,
         ILogger<GetGeographicDistributionQueryHandler> logger)
     {
         _unitOfWork = unitOfWork;
-        _cache = cache;
+        _cacheService = cacheService;
         _logger = logger;
     }
 
@@ -32,11 +30,12 @@ public class GetGeographicDistributionQueryHandler : IRequestHandler<GetGeograph
     {
         try
         {
-            var cacheKey = $"geographic_distribution_{request.Limit}";
+            var cacheKey = CacheKeys.GeographicDistribution(request.Limit);
 
-            if (_cache.TryGetValue(cacheKey, out List<GeographicDistributionDto> cachedGeoData))
+            var cached = await _cacheService.GetAsync<List<GeographicDistributionDto>>(cacheKey);
+            if (cached != null)
             {
-                return GenericResponseModel<List<GeographicDistributionDto>>.Success(cachedGeoData);
+                return GenericResponseModel<List<GeographicDistributionDto>>.Success(cached);
             }
 
             var cityData = await _unitOfWork.Repository<SnapNFix.Domain.Entities.Issue>()
@@ -58,7 +57,7 @@ public class GetGeographicDistributionQueryHandler : IRequestHandler<GetGeograph
                 IncidentCount = g.IncidentCount
             }).ToList();
 
-            _cache.Set(cacheKey, result, TimeSpan.FromMinutes(GeoCacheMinutes));
+            await _cacheService.SetAsync(cacheKey, result, TimeSpan.FromMinutes(60));
             return GenericResponseModel<List<GeographicDistributionDto>>.Success(result);
         }
         catch (Exception ex)

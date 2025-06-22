@@ -18,15 +18,18 @@ public static class CacheKeys
     public static string IssueReports(Guid issueId, int page) => $"issue:reports:{issueId}:page:{page}";
     public static string IssueFastReports(Guid issueId, int page) => $"issue:fast-reports:{issueId}:page:{page}";
     
-    // Statistics 
+    // Statistics Keys
     public const string DashboardSummary = "dashboard_summary";
     public const string MetricsOverview = "metrics_overview";
     public const string MonthlyTarget = "monthly_target";
     public const string FullStatistics = "full_statistics";
+    public const string CategoryDistribution = "category_distribution";
+    public static string GeographicDistribution(int limit) => $"geographic_distribution_{limit}";
+    public static string IncidentTrends(StatisticsInterval interval) => $"incident_trends_{interval}";
     
     // Patterns for bulk removal
     public const string UserPattern = "user:";
     public const string IssuePattern = "issue:";
     public const string ReportPattern = "report:";
-    public const string StatisticsPattern = "_summary|_overview|_target|_statistics";
+    public const string StatisticsPattern = "_summary|_overview|_target|_statistics|_distribution|_trends";
 }
