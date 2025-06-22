@@ -15,17 +15,20 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
     private readonly ILogger<ImageValidationResultCommandHandler> _logger;
     private readonly IReportService _reportService;
     private readonly IMediator _mediator;
+    private readonly ICacheInvalidationService _cacheInvalidationService;
 
     public ImageValidationResultCommandHandler(
         IUnitOfWork unitOfWork,
         IReportService reportService,
         ILogger<ImageValidationResultCommandHandler> logger, 
-        IMediator mediator)
+        IMediator mediator,
+        ICacheInvalidationService cacheInvalidationService)
     {
         _unitOfWork = unitOfWork;
         _logger = logger;
         _reportService = reportService;
         _mediator = mediator;
+        _cacheInvalidationService = cacheInvalidationService;
     }
 
     public async Task<GenericResponseModel<bool>> Handle(
@@ -105,6 +108,9 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
 
             await _unitOfWork.SaveChanges();
             await transaction.CommitAsync(cancellationToken);
+
+            await _cacheInvalidationService.InvalidateReportCacheAsync(report.Id, report.IssueId);
+            await _cacheInvalidationService.InvalidateUserCacheAsync(report.UserId);
 
             _logger.LogInformation("Successfully processed AI validation result for TaskId: {TaskId}, Report: {ReportId}",
                 request.TaskId, report.Id);

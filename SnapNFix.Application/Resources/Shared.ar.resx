@@ -321,7 +321,12 @@
     <data name="IssueIdRequired" xml:space="preserve">
         <value>معرف المشكلة مطلوب</value>
     </data>
+
     <data name="InvalidGuid" xml:space="preserve">
+        <value>معرف المشكلة يجب أن يكون معرف صحيح</value>
+    </data>
+
+    <data name="InvalidIssueId" xml:space="preserve">
         <value>معرف المشكلة يجب أن يكون معرف صحيح</value>
     </data>
 

@@ -320,6 +320,9 @@
     <data name="IssueIdRequired" xml:space="preserve">
         <value>Issue ID is required</value>
     </data>
+    <data name="InvalidIssueId" xml:space="preserve">
+        <value>Issue ID must be a valid GUID</value>
+    </data>
     <data name="InvalidGuid" xml:space="preserve">
         <value>Issue ID must be a valid GUID</value>
     </data>

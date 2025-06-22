@@ -1,10 +1,8 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Resources;
-using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
 
@@ -13,17 +11,16 @@ namespace SnapNFix.Application.Features.Statistics.Queries.GetDashboardSummary;
 public class GetDashboardSummaryQueryHandler : IRequestHandler<GetDashboardSummaryQuery, GenericResponseModel<StatisticsDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IMemoryCache _cache;
+    private readonly ICacheService _cacheService;
     private readonly ILogger<GetDashboardSummaryQueryHandler> _logger;
-    private const int FastCacheMinutes = 2;
 
     public GetDashboardSummaryQueryHandler(
         IUnitOfWork unitOfWork,
-        IMemoryCache cache,
+        ICacheService cacheService,
         ILogger<GetDashboardSummaryQueryHandler> logger)
     {
         _unitOfWork = unitOfWork;
-        _cache = cache;
+        _cacheService = cacheService;
         _logger = logger;
     }
 
@@ -33,11 +30,10 @@ public class GetDashboardSummaryQueryHandler : IRequestHandler<GetDashboardSumma
     {
         try
         {
-            const string cacheKey = "dashboard_summary";
-
-            if (_cache.TryGetValue(cacheKey, out StatisticsDto cachedSummary))
+            var cached = await _cacheService.GetAsync<StatisticsDto>(CacheKeys.DashboardSummary);
+            if (cached != null)
             {
-                return GenericResponseModel<StatisticsDto>.Success(cachedSummary);
+                return GenericResponseModel<StatisticsDto>.Success(cached);
             }
 
             _logger.LogInformation("Generating fast dashboard summary");
@@ -48,7 +44,7 @@ public class GetDashboardSummaryQueryHandler : IRequestHandler<GetDashboardSumma
                 MonthlyTarget = await GetMonthlyTargetAsync(cancellationToken)
             };
 
-            _cache.Set(cacheKey, summary, TimeSpan.FromMinutes(FastCacheMinutes));
+            await _cacheService.SetAsync(CacheKeys.DashboardSummary, summary, TimeSpan.FromMinutes(2));
 
             return GenericResponseModel<StatisticsDto>.Success(summary);
         }
@@ -61,11 +57,10 @@ public class GetDashboardSummaryQueryHandler : IRequestHandler<GetDashboardSumma
 
     private async Task<MetricsOverviewDto> GetMetricsAsync(CancellationToken cancellationToken)
     {
-        const string cacheKey = "metrics_overview";
-
-        if (_cache.TryGetValue(cacheKey, out MetricsOverviewDto cachedMetrics))
+        var cached = await _cacheService.GetAsync<MetricsOverviewDto>(CacheKeys.MetricsOverview);
+        if (cached != null)
         {
-            return cachedMetrics;
+            return cached;
         }
 
         var issueRepo = _unitOfWork.Repository<SnapNFix.Domain.Entities.Issue>();
@@ -74,7 +69,6 @@ public class GetDashboardSummaryQueryHandler : IRequestHandler<GetDashboardSumma
         var startOfMonth = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
         var startOfLastMonth = startOfMonth.AddMonths(-1);
 
-        // Execute queries sequentially to avoid DbContext concurrency issues
         var totalIncidents = await issueRepo.GetQuerableData()
             .CountAsync(cancellationToken);
 
@@ -119,17 +113,16 @@ public class GetDashboardSummaryQueryHandler : IRequestHandler<GetDashboardSumma
             PendingIncidentsChange = pendingIncidentsChange
         };
 
-        _cache.Set(cacheKey, metrics, TimeSpan.FromMinutes(FastCacheMinutes));
+        await _cacheService.SetAsync(CacheKeys.MetricsOverview, metrics, TimeSpan.FromMinutes(2));
         return metrics;
     }
 
     private async Task<MonthlyTargetDto> GetMonthlyTargetAsync(CancellationToken cancellationToken)
     {
-        const string cacheKey = "monthly_target";
-
-        if (_cache.TryGetValue(cacheKey, out MonthlyTargetDto cachedTarget))
+        var cached = await _cacheService.GetAsync<MonthlyTargetDto>(CacheKeys.MonthlyTarget);
+        if (cached != null)
         {
-            return cachedTarget;
+            return cached;
         }
 
         const double targetResolutionRate = 95.0;
@@ -162,7 +155,7 @@ public class GetDashboardSummaryQueryHandler : IRequestHandler<GetDashboardSumma
                 Improvement = 0
             };
 
-            _cache.Set(cacheKey, defaultTarget, TimeSpan.FromMinutes(FastCacheMinutes));
+            await _cacheService.SetAsync(CacheKeys.MonthlyTarget, defaultTarget, TimeSpan.FromMinutes(2));
             return defaultTarget;
         }
 
@@ -186,7 +179,7 @@ public class GetDashboardSummaryQueryHandler : IRequestHandler<GetDashboardSumma
             Improvement = Math.Round(currentResolutionRate - targetResolutionRate, 2)
         };
 
-        _cache.Set(cacheKey, target, TimeSpan.FromMinutes(FastCacheMinutes));
+        await _cacheService.SetAsync(CacheKeys.MonthlyTarget, target, TimeSpan.FromMinutes(2));
         return target;
     }
 }

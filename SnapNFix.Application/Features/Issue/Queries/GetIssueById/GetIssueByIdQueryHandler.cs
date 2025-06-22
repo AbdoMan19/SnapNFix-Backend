@@ -14,16 +14,26 @@ public class GetIssueByIdQueryHandler :
 {
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ICacheService _cacheService;
 
-    public GetIssueByIdQueryHandler(IMapper mapper, IUnitOfWork unitOfWork)
+    public GetIssueByIdQueryHandler(IMapper mapper, IUnitOfWork unitOfWork, ICacheService cacheService)
     {
         _mapper = mapper;
         _unitOfWork = unitOfWork;
+        _cacheService = cacheService;
     }
 
     public async Task<GenericResponseModel<IssueDetailsDto>> Handle(
         GetIssueByIdQuery request, CancellationToken cancellationToken)
     {
+        var cacheKey = CacheKeys.IssueDetails(request.Id);
+        
+        var cached = await _cacheService.GetAsync<IssueDetailsDto>(cacheKey);
+        if (cached != null)
+        {
+            return GenericResponseModel<IssueDetailsDto>.Success(cached);
+        }
+
         var issue = await _unitOfWork.Repository<Domain.Entities.Issue>()
             .FindBy(i => i.Id == request.Id)
             .Include(i => i.AssociatedSnapReports)
@@ -57,8 +67,9 @@ public class GetIssueByIdQueryHandler :
             State = issue.State,
             Country = issue.Country
         };
+
+        await _cacheService.SetAsync(cacheKey, issueDto, TimeSpan.FromMinutes(30));
         
         return GenericResponseModel<IssueDetailsDto>.Success(issueDto);
     }
-
 }
