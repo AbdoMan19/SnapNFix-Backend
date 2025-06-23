@@ -61,7 +61,7 @@ public class GetCategoryDistributionQueryHandler : IRequestHandler<GetCategoryDi
                 Percentage = totalIssues > 0 ? Math.Round((double)c.Total / totalIssues * 100, 2) : 0
             }).OrderByDescending(c => c.Total).ToList();
 
-            await _cacheService.SetAsync(CacheKeys.CategoryDistribution, result, TimeSpan.FromMinutes(15));
+            await _cacheService.SetAsync(CacheKeys.CategoryDistribution, result, TimeSpan.FromMinutes(5));
             return GenericResponseModel<List<CategoryDistributionDto>>.Success(result);
         }
         catch (Exception ex)

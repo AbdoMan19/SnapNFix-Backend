@@ -54,7 +54,7 @@ public class GetStatisticsQueryHandler : IRequestHandler<GetStatisticsQuery, Gen
                 MonthlyTarget = monthlyTargetResult.Data
             };
 
-            await _cacheService.SetAsync(CacheKeys.FullStatistics, statistics, TimeSpan.FromMinutes(15));
+            await _cacheService.SetAsync(CacheKeys.FullStatistics, statistics, TimeSpan.FromMinutes(5));
 
             _logger.LogInformation("Full statistics generated and cached");
             return GenericResponseModel<StatisticsDto>.Success(statistics);

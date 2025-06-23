@@ -88,7 +88,7 @@ public class GetMetricsQueryHandler : IRequestHandler<GetMetricsQuery, GenericRe
                 PendingIncidentsChange = pendingIncidentsChange
             };
 
-            await _cacheService.SetAsync(CacheKeys.MetricsOverview, metrics, TimeSpan.FromMinutes(2));
+            await _cacheService.SetAsync(CacheKeys.MetricsOverview, metrics, TimeSpan.FromMinutes(5));
             return GenericResponseModel<MetricsOverviewDto>.Success(metrics);
         }
         catch (Exception ex)

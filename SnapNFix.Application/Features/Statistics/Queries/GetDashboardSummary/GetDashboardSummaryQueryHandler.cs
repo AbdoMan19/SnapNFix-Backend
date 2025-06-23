@@ -44,7 +44,7 @@ public class GetDashboardSummaryQueryHandler : IRequestHandler<GetDashboardSumma
                 MonthlyTarget = await GetMonthlyTargetAsync(cancellationToken)
             };
 
-            await _cacheService.SetAsync(CacheKeys.DashboardSummary, summary, TimeSpan.FromMinutes(2));
+            await _cacheService.SetAsync(CacheKeys.DashboardSummary, summary, TimeSpan.FromMinutes(5));
 
             return GenericResponseModel<StatisticsDto>.Success(summary);
         }
@@ -113,7 +113,7 @@ public class GetDashboardSummaryQueryHandler : IRequestHandler<GetDashboardSumma
             PendingIncidentsChange = pendingIncidentsChange
         };
 
-        await _cacheService.SetAsync(CacheKeys.MetricsOverview, metrics, TimeSpan.FromMinutes(2));
+        await _cacheService.SetAsync(CacheKeys.MetricsOverview, metrics, TimeSpan.FromMinutes(5));
         return metrics;
     }
 
@@ -155,7 +155,7 @@ public class GetDashboardSummaryQueryHandler : IRequestHandler<GetDashboardSumma
                 Improvement = 0
             };
 
-            await _cacheService.SetAsync(CacheKeys.MonthlyTarget, defaultTarget, TimeSpan.FromMinutes(2));
+            await _cacheService.SetAsync(CacheKeys.MonthlyTarget, defaultTarget, TimeSpan.FromMinutes(5));
             return defaultTarget;
         }
 
@@ -179,7 +179,7 @@ public class GetDashboardSummaryQueryHandler : IRequestHandler<GetDashboardSumma
             Improvement = Math.Round(currentResolutionRate - targetResolutionRate, 2)
         };
 
-        await _cacheService.SetAsync(CacheKeys.MonthlyTarget, target, TimeSpan.FromMinutes(2));
+        await _cacheService.SetAsync(CacheKeys.MonthlyTarget, target, TimeSpan.FromMinutes(5));
         return target;
     }
 }

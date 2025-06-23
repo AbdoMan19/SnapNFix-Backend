@@ -50,16 +50,7 @@ public class GetFastReportsByIssueIdQueryHandler :
             10,
             cancellationToken);
 
-        var mappedItems = reports.Items.Select(fr => new FastReportDetailsDto
-        {
-            Id = fr.Id,
-            UserId = fr.UserId,
-            IssueId = fr.IssueId,
-            Comment = fr.Comment,
-            CreatedAt = fr.CreatedAt,
-            UserFirstName = fr.User.FirstName,
-            UserLastName = fr.User.LastName
-        }).ToList();
+        var mappedItems = _mapper.Map<List<FastReportDetailsDto>>(reports.Items);
 
         var reportDtos = new PagedList<FastReportDetailsDto>(
             mappedItems,

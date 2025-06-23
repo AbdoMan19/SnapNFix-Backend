@@ -68,7 +68,7 @@ public class GetMonthlyTargetQueryHandler : IRequestHandler<GetMonthlyTargetQuer
                     Improvement = 0
                 };
 
-                await _cacheService.SetAsync(CacheKeys.MonthlyTarget, defaultTarget, TimeSpan.FromMinutes(2));
+                await _cacheService.SetAsync(CacheKeys.MonthlyTarget, defaultTarget, TimeSpan.FromMinutes(5));
                 return GenericResponseModel<MonthlyTargetDto>.Success(defaultTarget);
             }
 
@@ -92,7 +92,7 @@ public class GetMonthlyTargetQueryHandler : IRequestHandler<GetMonthlyTargetQuer
                 Improvement = Math.Round(currentResolutionRate - targetResolutionRate, 2)
             };
 
-            await _cacheService.SetAsync(CacheKeys.MonthlyTarget, target, TimeSpan.FromMinutes(2));
+            await _cacheService.SetAsync(CacheKeys.MonthlyTarget, target, TimeSpan.FromMinutes(5));
             return GenericResponseModel<MonthlyTargetDto>.Success(target);
         }
         catch (Exception ex)
