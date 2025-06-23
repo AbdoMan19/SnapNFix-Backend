@@ -86,7 +86,7 @@ namespace SnapNFix.Infrastructure.Services.FirebaseNotificationService
                         Data = data ?? new Dictionary<string, string>()
                     };
 
-                    var response = await _messaging.SendMulticastAsync(message);
+                    var response = await _messaging.SendEachForMulticastAsync(message);
                     
                     _logger.LogInformation(
                         "Notification sent to {SuccessCount}/{TotalCount} devices for user {UserId}", 

@@ -24,5 +24,4 @@ public class AdminRegistrationResponse
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
-    public AuthResponse Tokens { get; set; } = new();
 }

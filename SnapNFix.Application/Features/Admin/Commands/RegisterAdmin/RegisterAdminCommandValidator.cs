@@ -2,16 +2,17 @@ using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Entities;
+using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Application.Features.Admin.Commands.RegisterAdmin;
 
 public class RegisterAdminCommandValidator : AbstractValidator<RegisterAdminCommand>
 {
-    private readonly UserManager<User> _userManager;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public RegisterAdminCommandValidator(UserManager<User> userManager)
+    public RegisterAdminCommandValidator(IUnitOfWork unitOfWork)
     {
-        _userManager = userManager;
+        _unitOfWork = unitOfWork;
 
         RuleFor(x => x.FirstName)
             .NotEmpty().WithMessage(Shared.FirstNameRequired)
@@ -57,7 +58,7 @@ public class RegisterAdminCommandValidator : AbstractValidator<RegisterAdminComm
 
     private async Task<bool> BeUniqueEmail(string email, CancellationToken cancellationToken)
     {
-        var existingUser = await _userManager.FindByEmailAsync(email);
-        return existingUser == null;
+        var existingUser = _unitOfWork.Repository<User>().ExistsByName(u => u.Email == email);
+        return existingUser == false;
     }
 }
