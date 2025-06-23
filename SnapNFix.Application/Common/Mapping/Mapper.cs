@@ -5,6 +5,7 @@ using SnapNFix.Application.Features.SnapReport.DTOs;
 using SnapNFix.Application.Features.Auth.Dtos; // Add this
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
+using SnapNFix.Application.Features.FastReport.DTOs;
 
 namespace SnapNFix.Application.Common.Mapping;
 
@@ -22,14 +23,10 @@ public class Mapper : IRegister
 
 
 
-        TypeAdapterConfig<Domain.Entities.SnapReport, ReportDetailsDto>
+        TypeAdapterConfig<Domain.Entities.FastReport, FastReportDetailsDto>
             .NewConfig()
-            .Map(dest => dest.Latitude, src => src.Location != null ? src.Location.Y : 0)
-            .Map(dest => dest.Longitude, src => src.Location != null ? src.Location.X : 0)
             .Map(dest => dest.FirstName, src => src.User != null ? src.User.FirstName : string.Empty)
-            .Map(dest => dest.LastName, src => src.User != null ? src.User.LastName : string.Empty)
-            .Map(dest => dest.Status, src => src.ImageStatus)
-            .Map(dest => dest.Category, src => src.ReportCategory);
+            .Map(dest => dest.LastName, src => src.User != null ? src.User.LastName : string.Empty);
 
         TypeAdapterConfig<Domain.Entities.SnapReport, ReportDetailsDto>
             .NewConfig()
