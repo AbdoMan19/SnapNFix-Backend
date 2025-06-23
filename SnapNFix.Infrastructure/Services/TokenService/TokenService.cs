@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Application.Common.Interfaces;
+using SnapNFix.Application.Interfaces;
 using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Infrastructure.Services.TokenService;

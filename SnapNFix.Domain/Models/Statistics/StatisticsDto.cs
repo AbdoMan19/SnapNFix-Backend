@@ -36,7 +36,7 @@ public class IncidentTrendDto
 
 public class GeographicDistributionDto
 {
-    public string City { get; set; } = string.Empty;
+    public string State { get; set; } = string.Empty;
     public int IncidentCount { get; set; }
 }
 

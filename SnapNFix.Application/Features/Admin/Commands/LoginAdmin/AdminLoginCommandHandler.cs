@@ -2,10 +2,10 @@
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Common.Services.UserValidationServices;
 using SnapNFix.Application.Features.Auth.Dtos;
+using SnapNFix.Application.Interfaces;
 using SnapNFix.Application.Resources;
 using SnapNFix.Application.Utilities;
 using SnapNFix.Domain.Entities;

@@ -4,13 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NetTopologySuite.Geometries;
 using NetTopologySuite;
-using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Common.Services.LocationValidation;
 using SnapNFix.Application.Features.SnapReport.DTOs;
+using SnapNFix.Application.Interfaces;
 using SnapNFix.Application.Resources;
-using SnapNFix.Application.Utilities;
-using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
 

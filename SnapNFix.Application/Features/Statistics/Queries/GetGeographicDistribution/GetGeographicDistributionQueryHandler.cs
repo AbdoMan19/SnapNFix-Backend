@@ -41,10 +41,10 @@ public class GetGeographicDistributionQueryHandler : IRequestHandler<GetGeograph
             var cityData = await _unitOfWork.Repository<SnapNFix.Domain.Entities.Issue>()
                 .GetQuerableData()
                 .Where(i => !string.IsNullOrEmpty(i.City))
-                .GroupBy(i => new { i.City })
+                .GroupBy(i => new { i.State })
                 .Select(g => new
                 {
-                    City = g.Key.City,
+                    State = g.Key.State,
                     IncidentCount = g.Count(),
                 })
                 .OrderByDescending(g => g.IncidentCount)
@@ -53,7 +53,7 @@ public class GetGeographicDistributionQueryHandler : IRequestHandler<GetGeograph
 
             var result = cityData.Select(g => new GeographicDistributionDto
             {
-                City = g.City,
+                State = g.State[0].ToString(),
                 IncidentCount = g.IncidentCount
             }).ToList();
 

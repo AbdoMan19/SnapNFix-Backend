@@ -2,8 +2,9 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SnapNFix.Application.Common.Interfaces;
+using SnapNFix.Application.Common.Extensions;
 using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Application.Interfaces;
 using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
@@ -17,19 +18,22 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
     private readonly IReportService _reportService;
     private readonly IMediator _mediator;
     private readonly ICacheInvalidationService _cacheInvalidationService;
+    private readonly IBackgroundTaskQueue _backgroundTaskQueue;
 
     public ImageValidationResultCommandHandler(
         IUnitOfWork unitOfWork,
         IReportService reportService,
         ILogger<ImageValidationResultCommandHandler> logger, 
         IMediator mediator,
-        ICacheInvalidationService cacheInvalidationService)
+        ICacheInvalidationService cacheInvalidationService,
+        IBackgroundTaskQueue backgroundTaskQueue)
     {
         _unitOfWork = unitOfWork;
         _logger = logger;
         _reportService = reportService;
         _mediator = mediator;
         _cacheInvalidationService = cacheInvalidationService;
+        _backgroundTaskQueue = backgroundTaskQueue;
     }
 
     public async Task<GenericResponseModel<bool>> Handle(
@@ -94,7 +98,10 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
                         var newIssue = await _reportService.CreateIssueWithReportAsync(report, cancellationToken);
                         _logger.LogInformation("Created new issue for report {ReportId} with IssueId {IssueId}",
                             report.Id, report.IssueId);
-                        await _mediator.Publish(new IssueCreated(newIssue), cancellationToken);
+                        _backgroundTaskQueue.EnqueueScoped<IMediator>(async mediator => 
+                        {
+                            await mediator.Publish(new SnapReportStatusChanged(report, oldStatus, request.ImageStatus), CancellationToken.None);
+                        });
                     }
                 }
                 catch (Exception ex)
@@ -110,14 +117,16 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
             await _unitOfWork.SaveChanges();
             await transaction.CommitAsync(cancellationToken);
 
-            await _cacheInvalidationService.InvalidateReportCacheAsync(report.Id, report.IssueId);
-            await _cacheInvalidationService.InvalidateUserCacheAsync(report.UserId);
+            //await _cacheInvalidationService.InvalidateReportCacheAsync(report.Id, report.IssueId);
+            //await _cacheInvalidationService.InvalidateUserCacheAsync(report.UserId);
 
             _logger.LogInformation("Successfully processed AI validation result for TaskId: {TaskId}, Report: {ReportId}",
                 request.TaskId, report.Id);
             
-            await _mediator.Publish(new SnapReportStatusChanged(report, oldStatus, request.ImageStatus), cancellationToken);
-
+            _backgroundTaskQueue.EnqueueScoped<IMediator>(async mediator => 
+            {
+                await mediator.Publish(new SnapReportStatusChanged(report, oldStatus, request.ImageStatus), CancellationToken.None);
+            });
             return GenericResponseModel<bool>.Success(true);
         }
         catch (DbUpdateConcurrencyException ex)

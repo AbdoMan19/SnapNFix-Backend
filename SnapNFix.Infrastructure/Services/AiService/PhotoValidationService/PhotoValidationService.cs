@@ -2,8 +2,8 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using SnapNFix.Application.Interfaces;
 using SnapNFix.Domain.Entities;
-using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Domain.Interfaces;
 using SnapNFix.Infrastructure.Options;
 
@@ -15,20 +15,20 @@ public class PhotoValidationService : IPhotoValidationService
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IUnitOfWork _unitOfWork;
     private readonly PhotoValidationOptions _photoValidationOptions;
-    private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly IBackgroundTaskQueue _backgroundTaskQueue;
 
     public PhotoValidationService(
         ILogger<PhotoValidationService> logger, 
         IHttpClientFactory httpClientFactory,
         IUnitOfWork unitOfWork,
         IOptions<PhotoValidationOptions> photoValidationOptions,
-        IServiceScopeFactory serviceScopeFactory)
+        IBackgroundTaskQueue backgroundTaskQueue)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
         _unitOfWork = unitOfWork;
         _photoValidationOptions = photoValidationOptions.Value;
-        _serviceScopeFactory = serviceScopeFactory;
+        _backgroundTaskQueue = backgroundTaskQueue;
     }
 
     public async Task<string> SendImageForValidationAsync(string imageUrl, CancellationToken cancellationToken)
@@ -100,82 +100,135 @@ public class PhotoValidationService : IPhotoValidationService
 
     public async Task ProcessPhotoValidationInBackgroundAsync(SnapReport snapReport)
     {
-        // Fire and forget background task
-        _ = Task.Run(async () =>
+        var reportId = snapReport.Id;
+        var imageUrl = snapReport.ImagePath;
+        
+        _logger.LogInformation("Queueing background photo validation for report {ReportId}", reportId);
+        
+        // Queue the validation in the background task queue with retry logic
+        _backgroundTaskQueue.Enqueue(async (serviceProvider, cancellationToken) =>
         {
-            using var scope = _serviceScopeFactory.CreateScope();
-            var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-            var logger = scope.ServiceProvider.GetRequiredService<ILogger<PhotoValidationService>>();
-
-            try
+            var logger = serviceProvider.GetRequiredService<ILogger<PhotoValidationService>>();
+            var unitOfWork = serviceProvider.GetRequiredService<IUnitOfWork>();
+            var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+            var options = serviceProvider.GetRequiredService<IOptions<PhotoValidationOptions>>();
+            
+            logger.LogInformation("Starting background photo validation for report {ReportId}", reportId);
+            
+            const int maxRetries = 3;
+            int retryCount = 0;
+            string? taskId = null;
+            
+            while (retryCount < maxRetries && taskId == null)
             {
-                logger.LogInformation("Starting background photo validation for report {ReportId}", snapReport.Id);
-
-                var taskId = await SendImageForValidationAsync(
-                    snapReport.ImagePath, // This should be the full URL from Azure Blob Storage
-                    CancellationToken.None);
-
-                logger.LogInformation("Image of report {ReportId} sent for validation. TaskId: {TaskId}",
-                    snapReport.Id, taskId);
-
-                await using var transaction = await unitOfWork.BeginTransactionAsync();
                 try
                 {
-                    var reportToUpdate = await unitOfWork.Repository<SnapReport>()
-                        .FirstOrDefault(r => r.Id == snapReport.Id);
+                    // Create a validation service instance within the scope
+                    var validationService = new PhotoValidationService(
+                        logger,
+                        httpClientFactory,
+                        unitOfWork,
+                        options,
+                        serviceProvider.GetRequiredService<IBackgroundTaskQueue>());
                     
-                    if (reportToUpdate != null)
-                    {
-                        reportToUpdate.TaskId = taskId;
-                        await unitOfWork.Repository<SnapReport>().Update(reportToUpdate);
-                        await unitOfWork.SaveChanges();
-                        await transaction.CommitAsync();
+                    taskId = await validationService.SendImageForValidationAsync(
+                        imageUrl, 
+                        cancellationToken);
                         
-                        logger.LogInformation("Successfully updated report {ReportId} with TaskId: {TaskId}", 
-                            snapReport.Id, taskId);
-                    }
-                    else
+                    break;
+                }
+                catch (Exception ex) when (ex is HttpRequestException || ex is TimeoutException)
+                {
+                    retryCount++;
+                    if (retryCount >= maxRetries)
                     {
-                        logger.LogWarning("Report {ReportId} not found when trying to update TaskId", snapReport.Id);
-                        await transaction.RollbackAsync();
+                        logger.LogError(ex, "Failed to send image for validation after {RetryCount} attempts for report {ReportId}", 
+                            retryCount, reportId);
+                        // Mark as failed after all retries
+                        await MarkReportAsDeclined(unitOfWork, reportId, logger);
+                        return;
                     }
+                    
+                    var delay = TimeSpan.FromSeconds(Math.Pow(2, retryCount)); // Exponential backoff
+                    logger.LogWarning(ex, "Error sending image for validation, retry {RetryCount}/{MaxRetries} in {Delay}s for report {ReportId}", 
+                        retryCount, maxRetries, delay.TotalSeconds, reportId);
+                    await Task.Delay(delay, cancellationToken);
                 }
                 catch (Exception ex)
                 {
-                    await transaction.RollbackAsync();
-                    logger.LogError(ex, "Error updating report {ReportId} with TaskId: {TaskId}", 
-                        snapReport.Id, taskId);
+                    logger.LogError(ex, "Unexpected error processing photo validation for report {ReportId}", reportId);
+                    await MarkReportAsDeclined(unitOfWork, reportId, logger);
+                    return;
+                }
+            }
+            
+            if (taskId == null)
+            {
+                logger.LogError("Failed to get task ID for report {ReportId}", reportId);
+                await MarkReportAsDeclined(unitOfWork, reportId, logger);
+                return;
+            }
+            
+            // Update report with task ID
+            await using var transaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
+            try
+            {
+                var reportToUpdate = await unitOfWork.Repository<SnapReport>()
+                    .FirstOrDefault(r => r.Id == reportId);
+                
+                if (reportToUpdate != null)
+                {
+                    reportToUpdate.TaskId = taskId;
+                    await unitOfWork.Repository<SnapReport>().Update(reportToUpdate);
+                    await unitOfWork.SaveChanges();
+                    await transaction.CommitAsync(cancellationToken);
+                    
+                    logger.LogInformation("Successfully updated report {ReportId} with TaskId: {TaskId}", 
+                        reportId, taskId);
+                }
+                else
+                {
+                    logger.LogWarning("Report {ReportId} not found when trying to update TaskId", reportId);
+                    await transaction.RollbackAsync(cancellationToken);
                 }
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error processing photo validation for report {ReportId}", snapReport.Id);
-                
-                // Mark the report as failed if validation service is unavailable
-                try
-                {
-                    using var fallbackScope = _serviceScopeFactory.CreateScope();
-                    var fallbackUnitOfWork = fallbackScope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-                    
-                    var reportToUpdate = await fallbackUnitOfWork.Repository<SnapReport>()
-                        .FirstOrDefault(r => r.Id == snapReport.Id);
-                    
-                    if (reportToUpdate != null)
-                    {
-                        reportToUpdate.ImageStatus = Domain.Enums.ImageStatus.Declined;
-                        await fallbackUnitOfWork.Repository<SnapReport>().Update(reportToUpdate);
-                        await fallbackUnitOfWork.SaveChanges();
-                        
-                        logger.LogInformation("Marked report {ReportId} as declined due to validation error", snapReport.Id);
-                    }
-                }
-                catch (Exception fallbackEx)
-                {
-                    logger.LogError(fallbackEx, "Failed to mark report {ReportId} as declined after validation error", 
-                        snapReport.Id);
-                }
+                await transaction.RollbackAsync(cancellationToken);
+                logger.LogError(ex, "Error updating report {ReportId} with TaskId: {TaskId}", 
+                    reportId, taskId);
             }
         });
+    }
+    
+    private static async Task MarkReportAsDeclined(IUnitOfWork unitOfWork, Guid reportId, ILogger logger)
+    {
+        try
+        {
+            await using var transaction = await unitOfWork.BeginTransactionAsync();
+            
+            var reportToUpdate = await unitOfWork.Repository<SnapReport>()
+                .FirstOrDefault(r => r.Id == reportId);
+            
+            if (reportToUpdate != null)
+            {
+                reportToUpdate.ImageStatus = Domain.Enums.ImageStatus.Declined;
+                await unitOfWork.Repository<SnapReport>().Update(reportToUpdate);
+                await unitOfWork.SaveChanges();
+                await transaction.CommitAsync();
+                
+                logger.LogInformation("Marked report {ReportId} as declined due to validation error", reportId);
+            }
+            else
+            {
+                logger.LogWarning("Report {ReportId} not found when trying to mark as declined", reportId);
+                await transaction.RollbackAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to mark report {ReportId} as declined after validation error", reportId);
+        }
     }
     
     private class ValidationResponse

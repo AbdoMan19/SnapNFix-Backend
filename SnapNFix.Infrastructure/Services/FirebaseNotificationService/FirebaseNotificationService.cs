@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Application.Common.Interfaces;
+using SnapNFix.Application.Interfaces;
 
 namespace SnapNFix.Infrastructure.Services.FirebaseNotificationService
 {

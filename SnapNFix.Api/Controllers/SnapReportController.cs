@@ -7,6 +7,7 @@ using SnapNFix.Application.Features.SnapReport.DTOs;
 using SnapNFix.Application.Features.SnapReport.Queries;
 using SnapNFix.Application.Features.SnapReport.Queries.GetUserReportsStatistics;
 using SnapNFix.Application.Common.Interfaces;
+using SnapNFix.Application.Interfaces;
 using SnapNFix.Infrastructure.Services.UserService;
 
 

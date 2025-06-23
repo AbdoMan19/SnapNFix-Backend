@@ -1,16 +1,11 @@
 ﻿using System.Reflection;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using Scrutor;
 using SnapNFix.Application.Common.Interfaces.ServiceLifetime;
-using SnapNFix.Domain.Entities;
 using SnapNFix.Infrastructure.Context;
 using SnapNFix.Infrastructure.Options;
-using SnapNFix.Infrastructure.Services;
-using StackExchange.Redis;
+using SnapNFix.Infrastructure.Services.BackgroundTasksService;
 
 namespace SnapNFix.Infrastructure.Extensions;
 
@@ -38,10 +33,6 @@ public static class DependencyInjection
         
         // Add additional infrastructure services
         services.AddMemoryCache();
-        /*services.AddStackExchangeRedisCache(options =>
-        {
-            options.Configuration = configuration.GetConnectionString("Redis");
-        });*/
         
         services.AddHttpClient();
         
@@ -54,7 +45,7 @@ public static class DependencyInjection
         services.Configure<RedisOptions>(
             configuration.GetSection("Redis"));
 
-        
+        services.AddHostedService<BackgroundTaskExecutor>();
         /*services.AddStackExchangeRedisCache(options =>
         {
              options.Configuration = configuration.GetConnectionString("Redis");

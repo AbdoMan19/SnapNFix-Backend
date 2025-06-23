@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Common.Services.UserValidationServices;
+using SnapNFix.Application.Interfaces;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
 using SnapNFix.Application.Resources;

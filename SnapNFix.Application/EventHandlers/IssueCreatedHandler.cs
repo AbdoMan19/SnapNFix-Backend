@@ -1,8 +1,7 @@
-using System.Threading;
-using System.Threading.Tasks;
+
 using Application.Events;
-using Domain.Interfaces;
 using MediatR;
+using SnapNFix.Application.Interfaces;
 
 namespace Application.EventHandlers
 {

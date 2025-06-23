@@ -4,6 +4,7 @@ using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Features.Auth.Dtos;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Application.Common.Interfaces;
+using SnapNFix.Application.Interfaces;
 using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Infrastructure.Services;

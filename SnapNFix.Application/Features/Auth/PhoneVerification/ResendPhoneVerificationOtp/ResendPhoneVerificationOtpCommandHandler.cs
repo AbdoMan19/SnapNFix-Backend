@@ -6,6 +6,7 @@ using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Application.Common.Interfaces;
+using SnapNFix.Application.Interfaces;
 
 namespace SnapNFix.Application.Features.Auth.PhoneVerification.ResendPhoneVerificationOtp;
 
