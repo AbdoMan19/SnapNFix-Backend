@@ -1,4 +1,5 @@
 
+using Application.DTOs;
 using Application.Events;
 using MediatR;
 using SnapNFix.Application.Interfaces;
@@ -16,7 +17,17 @@ namespace Application.EventHandlers
         
         public async Task Handle(IssueCreated notification, CancellationToken cancellationToken)
         {
-            await _activityLogger.LogIssueCreatedAsync(notification.Issue);
+            await _activityLogger.LogActivityAsync(new ActivityLogDto
+            {
+                Type = "IssueCreated",
+                IssueId = notification.Issue.Id,
+                Description = $"New issue created: {notification.Issue.Id}",
+                AdditionalData = new 
+                {
+                    IssueCategory = notification.Issue.Category,
+                    Severity = notification.Issue.Severity
+                }
+            });
         }
     }
 }

@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Interfaces;
+using SnapNFix.Domain.Models.Notification;
 
 namespace SnapNFix.Application.EventHandlers
 {
@@ -24,11 +25,20 @@ namespace SnapNFix.Application.EventHandlers
             try
             {
                 // Send notification to user
-                await _notificationService.SendSnapReportStatusChangedNotificationAsync(
-                    notification.SnapReportId,
-                    notification.UserId,
-                    notification.PreviousStatus,
-                    notification.NewStatus);
+                await _notificationService.SendNotificationToUserAsync(
+                    new NotificationModel()
+                    {
+                        UserId = notification.UserId,
+                        Title = "Snap Report Status Changed",
+                        Body =
+                            $"The status of your snap report {notification.SnapReportId} has changed from {notification.PreviousStatus} to {notification.NewStatus}.",
+                        Data = new Dictionary<string, string>
+                        {
+                            { "reportId", notification.SnapReportId.ToString() },
+                            { "previousStatus", notification.PreviousStatus.ToString() },
+                            { "newStatus", notification.NewStatus.ToString() }
+                        }
+                    });
             }
             catch (Exception ex)
             {

@@ -62,14 +62,18 @@ public static class ServiceCollectionExtensions
         services.AddLocalization(opts => opts.ResourcesPath = "Resources");
         services.Configure<RequestLocalizationOptions>(opts =>
         {
-            List<CultureInfo> supportedCultures = new()
+            var supportedCultures = new[]
+            {
+                new CultureInfo("en")
+            };
+            var supportedUICultures = new[]
             {
                 new CultureInfo("en"),
                 new CultureInfo("ar")
             };
             opts.DefaultRequestCulture = new RequestCulture("en");
             opts.SupportedCultures = supportedCultures;
-            opts.SupportedUICultures = supportedCultures;
+            opts.SupportedUICultures = supportedUICultures;
         });
 
         services.AddEndpointsApiExplorer();
