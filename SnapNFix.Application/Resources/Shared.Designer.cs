@@ -1047,5 +1047,37 @@ namespace SnapNFix.Application.Resources {
             }
         }
 
+        public static string InvalidIssueStatus
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidIssueStatus", resourceCulture);
+            }
+        }
+
+        public static string NoChangesDetected
+        {
+            get
+            {
+                return ResourceManager.GetString("NoChangesDetected", resourceCulture);
+            }
+        }
+
+        public static string ConcurrencyConflict
+        {
+            get
+            {
+                return ResourceManager.GetString("ConcurrencyConflict", resourceCulture);
+            }
+        }
+
+        public static string IssueUpdateFailed
+        {
+            get
+            {
+                return ResourceManager.GetString("IssueUpdateFailed", resourceCulture);
+            }
+        }
+
     }
 }

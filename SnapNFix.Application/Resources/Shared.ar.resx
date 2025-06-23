@@ -547,4 +547,22 @@
     <data name="ValidLocation" xml:space="preserve">
         <value>الموقع صالح</value>
     </data>
+
+    
+
+    <data name="InvalidIssueStatus" xml:space="preserve">
+        <value>حالة المشكلة غير صحيحة</value>
+    </data>
+
+    <data name="NoChangesDetected" xml:space="preserve">
+        <value>لم يتم اكتشاف أي تغييرات</value>
+    </data>
+
+    <data name="ConcurrencyConflict" xml:space="preserve">
+        <value>تم تعديل المشكلة بواسطة مستخدم آخر. يرجى التحديث والمحاولة مرة أخرى</value>
+    </data>
+
+    <data name="IssueUpdateFailed" xml:space="preserve">
+        <value>فشل في تحديث المشكلة</value>
+    </data>
 </root>

@@ -6,11 +6,12 @@ using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Issue.DTOs;
 using SnapNFix.Application.Features.Issue.Queries;
 using SnapNFix.Application.Features.SnapReport.DTOs;
-using SnapNFix.Application.Features.FastReport.DTOs; // Add this line
+using SnapNFix.Application.Features.FastReport.DTOs; 
 using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Features.Issue.Queries.GetSnapReportsByIssueId;
 using SnapNFix.Application.Interfaces;
 using SnapNFix.Infrastructure.Services.UserService;
+using SnapNFix.Application.Features.Issue.Commands.UpdateIssue;
 
 namespace SnapNFix.Api.Controllers;
 
@@ -90,4 +91,22 @@ public class IssueController : ControllerBase
     
     return Ok(result);
   }
+  [Authorize(Roles = "Admin,SuperAdmin")]
+  [HttpPut("{id}")]
+    public async Task<ActionResult<GenericResponseModel<bool>>> UpdateIssue(
+        Guid id, 
+        [FromBody] UpdateIssueCommand command)
+    {
+      if (command == null)
+        return BadRequest("Invalid request payload or invalid enum value.");
+        
+        command.Id = id;
+        
+        var result = await _mediator.Send(command);
+        
+        if (result.ErrorList.Count != 0) 
+            return BadRequest(result);
+        
+        return Ok(result);
+    }
 }
