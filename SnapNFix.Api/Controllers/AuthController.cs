@@ -46,7 +46,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("logout")]
-    [Authorize("Citizen")]
+    [Authorize(Roles = "Citizen,Admin,SuperAdmin")]
     public async Task<IActionResult> Logout()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

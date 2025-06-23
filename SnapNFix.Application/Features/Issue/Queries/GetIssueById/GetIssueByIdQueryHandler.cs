@@ -41,7 +41,12 @@ public class GetIssueByIdQueryHandler :
 
         if (issue == null)
         {
-            return GenericResponseModel<IssueDetailsDto>.Failure(Shared.IssueNotFound);
+            return GenericResponseModel<IssueDetailsDto>.Failure(
+                Shared.IssueNotFound,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(request.Id), Shared.IssueNotFound)
+                });
         }
 
         var associatedImages = issue.AssociatedSnapReports

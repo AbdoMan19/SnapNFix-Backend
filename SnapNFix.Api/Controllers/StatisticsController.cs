@@ -78,10 +78,9 @@ public class StatisticsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<GenericResponseModel<List<GeographicDistributionDto>>>> GetGeographicDistribution(
-        [FromQuery] int limit = 10, 
+        [FromQuery] GetGeographicDistributionQuery query, 
         CancellationToken cancellationToken = default)
     {
-        var query = new GetGeographicDistributionQuery { Limit = limit };
         var result = await _mediator.Send(query, cancellationToken);
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }

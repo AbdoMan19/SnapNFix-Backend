@@ -8,6 +8,7 @@ using SnapNFix.Domain.Interfaces;
 using SnapNFix.Application.Features.Issue.Queries;
 using Microsoft.EntityFrameworkCore;
 using SnapNFix.Application.Interfaces;
+using SnapNFix.Application.Resources;
 
 namespace SnapNFix.Application.Features.Issue.Queries.GetSnapReportsByIssueId;
 public class GetSnapReportsByIssueIdQueryHandler : 
@@ -29,6 +30,18 @@ public class GetSnapReportsByIssueIdQueryHandler :
   public async Task<GenericResponseModel<PagedList<ReportDetailsDto>>> Handle(
       GetSnapReportsByIssueIdQuery request, CancellationToken cancellationToken)
   {
+        var issueExists = _unitOfWork.Repository<Domain.Entities.Issue>()
+            .ExistsById(request.Id);
+
+        if (!issueExists)
+        {
+            return GenericResponseModel<PagedList<ReportDetailsDto>>.Failure(
+                Shared.IssueNotFound,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(request.Id), Shared.IssueNotFound)
+                });
+        }
         var query = _unitOfWork.Repository<Domain.Entities.SnapReport>()
             .GetQuerableData()
             .Where(r => r.IssueId == request.Id)
