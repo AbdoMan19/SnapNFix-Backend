@@ -1,4 +1,5 @@
-﻿using Application.Events;
+﻿using Application.DTOs;
+using Application.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Interfaces;
@@ -25,11 +26,19 @@ namespace Application.EventHandlers
             try
             {
                 // Log the activity
-                await _activityLogger.LogIssueStatusChangedAsync(
-                    notification.IssueId, 
-                    notification.PreviousStatus,
-                    notification.NewStatus);
-                
+                await _activityLogger.LogActivityAsync(
+                    new ActivityLogDto
+                    {
+                        Type = "IssueStatusChanged",
+                        IssueId = notification.IssueId,
+                        Description = $"Issue status changed from {notification.PreviousStatus} to {notification.NewStatus}",
+                        AdditionalData = new
+                        {
+                            PreviousStatus = notification.PreviousStatus,
+                            NewStatus = notification.NewStatus
+                        }
+                    });
+
                 // Send notification to the user
             }
             catch (Exception ex)

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Interfaces;
+using SnapNFix.Domain.Models.Notification;
 
 namespace SnapNFix.Infrastructure.Services.FirebaseNotificationService
 {
@@ -38,27 +39,8 @@ namespace SnapNFix.Infrastructure.Services.FirebaseNotificationService
             _messaging = FirebaseMessaging.DefaultInstance;
         }
 
-
-        public async Task SendSnapReportStatusChangedNotificationAsync(Guid reportId , Guid userId , ImageStatus previousStatus,
-            ImageStatus newStatus)
-        {
-            await SendNotificationToUserAsync(
-                userId,
-                "Snap Report Status Changed",
-                $"The status of your snap report {reportId} has changed from {previousStatus} to {newStatus}.",
-                new Dictionary<string, string>
-                {
-                    { "reportId", reportId.ToString() },
-                    { "previousStatus", previousStatus.ToString() },
-                    { "newStatus", newStatus.ToString() }
-                }
-            );
-
-        }
-
-
-        public async Task<bool> SendNotificationToUserAsync(Guid userId, string title, string body,
-            Dictionary<string, string> data = null)
+        
+        public async Task<bool> SendNotificationToUserAsync(NotificationModel notificationModel)
         {
             try
             {
@@ -67,11 +49,11 @@ namespace SnapNFix.Infrastructure.Services.FirebaseNotificationService
                 {
                     var deviceManager = scope.ServiceProvider.GetRequiredService<IDeviceManager>();
                     
-                    var fcmTokens = await deviceManager.GetActiveDevicesFCMAsync(userId);
+                    var fcmTokens = await deviceManager.GetActiveDevicesFCMAsync(notificationModel.UserId);
                     
                     if (fcmTokens.Count == 0)
                     {
-                        _logger.LogWarning("No active devices with FCM tokens found for user {UserId}", userId);
+                        _logger.LogWarning("No active devices with FCM tokens found for user {UserId}", notificationModel.UserId);
                         return false;
                     }
 
@@ -80,52 +62,51 @@ namespace SnapNFix.Infrastructure.Services.FirebaseNotificationService
                         Tokens = fcmTokens,
                         Notification = new Notification
                         {
-                            Title = title,
-                            Body = body
+                            Title = notificationModel.Title,
+                            Body = notificationModel.Body
                         },
-                        Data = data ?? new Dictionary<string, string>()
+                        Data = notificationModel.Data
                     };
 
                     var response = await _messaging.SendEachForMulticastAsync(message);
                     
                     _logger.LogInformation(
                         "Notification sent to {SuccessCount}/{TotalCount} devices for user {UserId}", 
-                        response.SuccessCount, response.FailureCount + response.SuccessCount, userId);
+                        response.SuccessCount, response.FailureCount + response.SuccessCount, notificationModel.UserId);
                     
                     return response.SuccessCount > 0;
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error sending notification to user {UserId}", userId);
+                _logger.LogError(ex, "Error sending notification to user {UserId}", notificationModel.UserId);
                 return false;
             }
         }
 
-        public async Task<bool> SendNotificationToTopicAsync(string topic, string title, string body,
-            Dictionary<string, string> data = null)
+        public async Task<bool> SendNotificationToTopicAsync(TopicNotificationModel topicNotificationModel)
         {
             try
             {
                 var message = new Message
                 {
-                    Topic = topic,
+                    Topic = topicNotificationModel.Topic,
                     Notification = new Notification
                     {
-                        Title = title,
-                        Body = body
+                        Title = topicNotificationModel.Title,
+                        Body = topicNotificationModel.Body
                     },
-                    Data = data ?? new Dictionary<string, string>()
+                    Data = topicNotificationModel.Data
                 };
 
                 var response = await _messaging.SendAsync(message);
-                _logger.LogInformation("Notification sent to topic {Topic}, message ID: {MessageId}", topic, response);
+                _logger.LogInformation("Notification sent to topic {Topic}, message ID: {MessageId}", topicNotificationModel.Topic, response);
                 
                 return !string.IsNullOrEmpty(response);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error sending notification to topic {Topic}", topic);
+                _logger.LogError(ex, "Error sending notification to topic {Topic}", topicNotificationModel.Topic);
                 return false;
             }
         }
