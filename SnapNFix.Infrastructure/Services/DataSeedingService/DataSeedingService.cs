@@ -8,6 +8,7 @@ using SnapNFix.Domain.Enums;
 using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Infrastructure.Context;
 using System.Text;
+using SnapNFix.Application.Interfaces;
 
 namespace SnapNFix.Infrastructure.Services.DataSeeding;
 

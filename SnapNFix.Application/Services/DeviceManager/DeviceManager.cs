@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Application.Common.Interfaces;
+using SnapNFix.Application.Interfaces;
 using SnapNFix.Domain.Interfaces;
 
 public class DeviceManager : IDeviceManager

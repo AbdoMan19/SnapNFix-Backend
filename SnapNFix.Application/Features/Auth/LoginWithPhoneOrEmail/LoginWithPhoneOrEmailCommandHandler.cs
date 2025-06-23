@@ -7,6 +7,7 @@ using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Common.Services.UserValidationServices;
 using SnapNFix.Application.Features.Auth.Dtos;
+using SnapNFix.Application.Interfaces;
 using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;

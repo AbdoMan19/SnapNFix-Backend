@@ -10,6 +10,7 @@ using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
 using System.Security.Claims;
+using SnapNFix.Application.Interfaces;
 
 namespace SnapNFix.Application.Features.Auth.PhoneVerification.VerifyPhoneVerificationOtp;
 

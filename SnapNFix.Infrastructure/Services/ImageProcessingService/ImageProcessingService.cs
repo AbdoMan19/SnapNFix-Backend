@@ -7,6 +7,7 @@ using SixLabors.ImageSharp;
 using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Infrastructure.Options;
 using Azure.Storage.Blobs;
+using SnapNFix.Application.Interfaces;
 
 namespace SnapNFix.Infrastructure.Services.ImageProcessingService;
 

@@ -1,12 +1,9 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Application.Events;
-using Domain.Interfaces;
+﻿using Application.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using SnapNFix.Application.Common.Interfaces;
+using SnapNFix.Application.Interfaces;
 
-namespace Application.EventHandlers
+namespace SnapNFix.Application.EventHandlers
 {
     public class SnapReportStatusChangedHandler : INotificationHandler<SnapReportStatusChanged>
     {

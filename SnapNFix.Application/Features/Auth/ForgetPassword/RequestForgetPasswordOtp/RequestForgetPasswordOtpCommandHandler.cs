@@ -9,6 +9,7 @@ using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Application.Common.Interfaces;
+using SnapNFix.Application.Interfaces;
 using Constants = SnapNFix.Application.Utilities.Constants;
 
 namespace SnapNFix.Application.Features.Auth.ForgetPassword.RequestForgetPasswordOtp;

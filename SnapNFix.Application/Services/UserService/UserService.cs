@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SnapNFix.Domain.Entities;
-using SnapNFix.Application.Common.Interfaces;
 using System.Security.Claims;
+using SnapNFix.Application.Interfaces;
 using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Infrastructure.Services.UserService;

@@ -5,13 +5,11 @@ using SnapNFix.Application.Common.Models;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.SnapReport.DTOs;
 using SnapNFix.Domain.Interfaces;
-using SnapNFix.Domain.Enums;
 using SnapNFix.Application.Features.Issue.Queries;
 using Microsoft.EntityFrameworkCore;
-using SnapNFix.Application.Common.Interfaces;
+using SnapNFix.Application.Interfaces;
 
-namespace SnapNFix.Application.Features.SnapReport.Queries;
-
+namespace SnapNFix.Application.Features.Issue.Queries.GetSnapReportsByIssueId;
 public class GetSnapReportsByIssueIdQueryHandler : 
     IRequestHandler<GetSnapReportsByIssueIdQuery, GenericResponseModel<PagedList<ReportDetailsDto>>>
 {

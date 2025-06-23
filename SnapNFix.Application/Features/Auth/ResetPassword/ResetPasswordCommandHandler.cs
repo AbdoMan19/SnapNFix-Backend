@@ -7,6 +7,7 @@ using SnapNFix.Application.Resources;
 using SnapNFix.Application.Utilities;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Application.Common.Interfaces;
+using SnapNFix.Application.Interfaces;
 
 namespace SnapNFix.Application.Features.Auth.ResetPassword;
 

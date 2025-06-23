@@ -1,21 +1,10 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+using SnapNFix.Application.Common.Interfaces.ServiceLifetime;
 
-namespace SnapNFix.Application.Common.Interfaces;
-
-
-public interface ICacheService
+public interface ICacheService : IScoped
 {
-
-    Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default);
-    
-
-    Task SetAsync<T>(string key, T value, TimeSpan expiration, CancellationToken cancellationToken = default);
-    
-
-    Task RemoveAsync(string key, CancellationToken cancellationToken = default);
-    
-
-    Task RemoveByPatternAsync(string pattern, CancellationToken cancellationToken = default);
+    Task<T?> GetAsync<T>(string key) where T : class;
+    Task SetAsync<T>(string key, T value, TimeSpan? expiration = null) where T : class;
+    Task RemoveAsync(string key);
+    Task RemovePatternAsync(string pattern);
+    Task<T> GetOrSetAsync<T>(string key, Func<Task<T>> getItem, TimeSpan? expiration = null) where T : class;
 }

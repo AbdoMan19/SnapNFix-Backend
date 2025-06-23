@@ -1,10 +1,9 @@
+using SnapNFix.Application.Common.Interfaces.ServiceLifetime;
 
-namespace SnapNFix.Application.Common.Interfaces;
-
-public interface ICacheInvalidationService
+public interface ICacheInvalidationService : IScoped
 {
-
-    Task InvalidateCacheAsync(string key, CancellationToken cancellationToken = default);
-    
-    Task InvalidateCacheByPatternAsync(string pattern, CancellationToken cancellationToken = default);
+    Task InvalidateUserCacheAsync(Guid userId);
+    Task InvalidateIssueCacheAsync(Guid issueId);
+    Task InvalidateReportCacheAsync(Guid reportId, Guid? issueId = null);
+    Task InvalidateStatisticsCacheAsync();
 }

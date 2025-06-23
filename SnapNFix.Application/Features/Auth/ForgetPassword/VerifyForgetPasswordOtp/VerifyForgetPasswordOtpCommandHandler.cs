@@ -7,6 +7,7 @@ using SnapNFix.Application.Utilities;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Application.Common.Interfaces;
+using SnapNFix.Application.Interfaces;
 using SnapNFix.Application.Resources;
 
 namespace SnapNFix.Application.Features.Auth.ForgetPassword.VerifyForgetPasswordOtp;

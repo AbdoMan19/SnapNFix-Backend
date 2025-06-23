@@ -1,6 +1,6 @@
 ﻿using SnapNFix.Application.Common.Interfaces.ServiceLifetime;
 using Microsoft.AspNetCore.Http;
-namespace SnapNFix.Application.Common.Interfaces;
+namespace SnapNFix.Application.Interfaces;
 
 public interface IImageProcessingService : IScoped
 {

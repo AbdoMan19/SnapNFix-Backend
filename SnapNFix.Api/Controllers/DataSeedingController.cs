@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.Interfaces;
+using SnapNFix.Application.Interfaces;
 using SnapNFix.Infrastructure.Context;
 
 namespace SnapNFix.Api.Controllers;

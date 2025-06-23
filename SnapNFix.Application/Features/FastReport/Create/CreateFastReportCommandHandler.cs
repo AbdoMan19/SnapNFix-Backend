@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
-using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Application.Interfaces;
 using SnapNFix.Domain.Interfaces;
 using SnapNFix.Application.Resources;
 namespace SnapNFix.Application.Features.FastReport.Create;

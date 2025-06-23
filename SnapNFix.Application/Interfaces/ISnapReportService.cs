@@ -2,7 +2,7 @@ using SnapNFix.Application.Common.Interfaces.ServiceLifetime;
 using SnapNFix.Application.Common.Models;
 using SnapNFix.Application.Features.SnapReport.DTOs;
 
-namespace SnapNFix.Application.Common.Interfaces;
+namespace SnapNFix.Application.Interfaces;
 
 public interface ISnapReportService : IScoped
 {

@@ -1,10 +1,10 @@
 using Mapster;
 using MapsterMapper;
 using MediatR;
-using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.Models;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.SnapReport.DTOs;
+using SnapNFix.Application.Interfaces;
 using SnapNFix.Domain.Interfaces;
 using SnapNFix.Domain.Enums;
 

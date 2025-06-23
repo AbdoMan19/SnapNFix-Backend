@@ -8,6 +8,8 @@ using SnapNFix.Application.Features.Issue.Queries;
 using SnapNFix.Application.Features.SnapReport.DTOs;
 using SnapNFix.Application.Features.FastReport.DTOs; // Add this line
 using SnapNFix.Application.Common.Interfaces;
+using SnapNFix.Application.Features.Issue.Queries.GetSnapReportsByIssueId;
+using SnapNFix.Application.Interfaces;
 using SnapNFix.Infrastructure.Services.UserService;
 
 namespace SnapNFix.Api.Controllers;

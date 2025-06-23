@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Application.Common.Interfaces;
+using SnapNFix.Application.Interfaces;
 using SnapNFix.Infrastructure.Options;
 
 namespace SnapNFix.Infrastructure.Services.OtpService;

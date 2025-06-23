@@ -1,11 +1,8 @@
-using System;
-using System.Threading.Tasks;
-
-using Domain.Interfaces;
 using Application.DTOs;
 using Firebase.Database;
 using Firebase.Database.Query;
 using Microsoft.Extensions.Configuration;
+using SnapNFix.Application.Interfaces;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
 

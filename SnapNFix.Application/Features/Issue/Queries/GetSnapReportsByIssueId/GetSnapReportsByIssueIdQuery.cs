@@ -3,7 +3,7 @@ using SnapNFix.Application.Features.SnapReport.DTOs;
 using MediatR;
 using SnapNFix.Application.Common.Models;
 
-namespace SnapNFix.Application.Features.Issue.Queries;
+namespace SnapNFix.Application.Features.Issue.Queries.GetSnapReportsByIssueId;
 
 public class GetSnapReportsByIssueIdQuery : IRequest<GenericResponseModel<PagedList<ReportDetailsDto>>>
 {
