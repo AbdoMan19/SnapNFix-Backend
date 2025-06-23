@@ -24,7 +24,7 @@ public static class CacheKeys
     public const string MonthlyTarget = "monthly_target";
     public const string FullStatistics = "full_statistics";
     public const string CategoryDistribution = "category_distribution";
-    public static string GeographicDistribution(int limit) => $"geographic_distribution_{limit}";
+    public static string GeographicDistribution => $"geographic_distribution";
     public static string IncidentTrends(StatisticsInterval interval) => $"incident_trends_{interval}";
     
     // Patterns for bulk removal

@@ -7,5 +7,5 @@ namespace SnapNFix.Application.Features.Statistics.Queries.GetGeographicDistribu
 
 public class GetGeographicDistributionQuery : IRequest<GenericResponseModel<List<GeographicDistributionDto>>>
 {
-    public int Limit { get; set; } = 10;
+ 
 }

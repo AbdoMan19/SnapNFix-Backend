@@ -30,7 +30,7 @@ public class GetGeographicDistributionQueryHandler : IRequestHandler<GetGeograph
     {
         try
         {
-            var cacheKey = CacheKeys.GeographicDistribution(request.Limit);
+            var cacheKey = CacheKeys.GeographicDistribution;
 
             var cached = await _cacheService.GetAsync<List<GeographicDistributionDto>>(cacheKey);
             if (cached != null)
@@ -48,7 +48,6 @@ public class GetGeographicDistributionQueryHandler : IRequestHandler<GetGeograph
                     IncidentCount = g.Count(),
                 })
                 .OrderByDescending(g => g.IncidentCount)
-                .Take(request.Limit)
                 .ToListAsync(cancellationToken);
 
             var result = cityData.Select(g => new GeographicDistributionDto
