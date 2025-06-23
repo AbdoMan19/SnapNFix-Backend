@@ -103,7 +103,6 @@ public class RegisterAdminCommandHandler : IRequestHandler<RegisterAdminCommand,
                 FirstName = adminUser.FirstName,
                 LastName = adminUser.LastName,
                 CreatedAt = adminUser.CreatedAt,
-                Tokens = authResponse
             };
 
             return GenericResponseModel<AdminRegistrationResponse>.Success(response);

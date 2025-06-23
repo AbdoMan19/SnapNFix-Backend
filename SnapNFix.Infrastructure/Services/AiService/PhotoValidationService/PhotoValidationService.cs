@@ -37,6 +37,8 @@ public class PhotoValidationService : IPhotoValidationService
         {
             var aiEndpoint = _photoValidationOptions.ValidationEndpoint;
             var webhookUrl = _photoValidationOptions.WebhookUrl;
+            _logger.LogInformation("Preparing to send image for validation. ImageUrl: {ImageUrl}, WebhookUrl: {WebhookUrl}, Endpoint: {Endpoint}", 
+                imageUrl, webhookUrl, aiEndpoint);
 
             _logger.LogInformation("Sending image for validation to AI service. ImageUrl: {ImageUrl}, WebhookUrl: {WebhookUrl}", 
                 imageUrl, webhookUrl);

@@ -100,7 +100,7 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
                             report.Id, report.IssueId);
                         _backgroundTaskQueue.EnqueueScoped<IMediator>(async mediator => 
                         {
-                            await mediator.Publish(new SnapReportStatusChanged(report, oldStatus, request.ImageStatus), CancellationToken.None);
+                            await mediator.Publish(new IssueCreated(newIssue), CancellationToken.None);
                         });
                     }
                 }
