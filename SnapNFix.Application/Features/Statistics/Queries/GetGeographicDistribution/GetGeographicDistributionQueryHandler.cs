@@ -53,7 +53,7 @@ public class GetGeographicDistributionQueryHandler : IRequestHandler<GetGeograph
 
             var result = cityData.Select(g => new GeographicDistributionDto
             {
-                State = g.State[0].ToString(),
+                State = g.State,
                 IncidentCount = g.IncidentCount
             }).ToList();
 
