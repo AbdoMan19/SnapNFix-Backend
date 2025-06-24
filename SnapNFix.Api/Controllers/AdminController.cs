@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SnapNFix.Application.Common.Models;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Admin.Commands.AdminLogin;
 using SnapNFix.Application.Features.Admin.Commands.RegisterAdmin;
@@ -40,6 +41,18 @@ public class AdminController : ControllerBase
     public async Task<ActionResult<GenericResponseModel<LoginResponse>>> RegisterAdmin([FromBody] RegisterAdminCommand command)
     {
         var result = await _mediator.Send(command);
+        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
+    }
+
+    [HttpGet("users")]
+    [Authorize("SuperAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<GenericResponseModel<PagedList<UserDetailsDto>>>> GetAllUsers(
+        [FromQuery] GetAllUsersQuery query)
+    {
+        var result = await _mediator.Send(query);
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
 }

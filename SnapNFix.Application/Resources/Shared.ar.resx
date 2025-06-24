@@ -566,7 +566,7 @@
         <value>فشل في تحديث المشكلة</value>
     </data>
 
-    <data name="InvalidCategory" xml:space="preserve">
-        <value></value>
+    <data name="InvalidUserType" xml:space="preserve">
+        <value>نوع المستخدم غير صالح</value>
     </data>
 </root>

@@ -561,4 +561,7 @@
         <value>Failed to update issue</value>
     </data>
 
+    <data name="InvalidUserType" xml:space="preserve">
+        <value>Invalid user role</value>
+    </data>
 </root>
