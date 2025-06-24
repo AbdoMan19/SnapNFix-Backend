@@ -25,14 +25,19 @@ public class GetIssuesQueryHandler :
         var query = _unitOfWork.Repository<Domain.Entities.Issue>()
             .GetQuerableData();
         
-        if (!string.IsNullOrEmpty(request.Status))
+        if (request.Status.HasValue)
         {
-            query = query.Where(i => i.Status.ToString() == request.Status);
+            query = query.Where(i => i.Status == request.Status.Value);
         }
 
-        if (!string.IsNullOrEmpty(request.Category))
+        if (request.Category.HasValue)
         {
-            query = query.Where(i => i.Category.ToString() == request.Category);
+            query = query.Where(i => i.Category == request.Category.Value);
+        }
+
+        if (request.Severity.HasValue)
+        {
+            query = query.Where(i => i.Severity == request.Severity.Value);
         }
 
         query = query.OrderByDescending(i => i.CreatedAt);

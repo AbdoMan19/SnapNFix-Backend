@@ -1079,5 +1079,14 @@ namespace SnapNFix.Application.Resources {
             }
         }
 
+
+        public static string InvalidPageSize
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidPageSize", resourceCulture);
+            }
+        }
+
     }
 }
