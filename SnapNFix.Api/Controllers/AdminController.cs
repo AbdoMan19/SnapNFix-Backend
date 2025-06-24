@@ -57,29 +57,4 @@ public class AdminController : ControllerBase
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
 
-    [HttpPatch("users/{userId}/suspension")]
-    [Authorize("SuperAdmin")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<GenericResponseModel<bool>>> ManageUserSuspension(
-        Guid userId)
-    {
-        var query = new SuspendUserQuery { UserId = userId };
-        var result = await _mediator.Send(query);
-        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
-    }
-
-    [HttpDelete("users/{userId}")]
-    [Authorize("SuperAdmin")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<GenericResponseModel<bool>>> DeleteUser([FromRoute] DeleteUserQuery query)
-    {
-        var result = await _mediator.Send(query);
-        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
-    }
 }
