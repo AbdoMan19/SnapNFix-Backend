@@ -35,7 +35,7 @@ public class LogoutCommandHandler : IRequestHandler<LogoutCommand, GenericRespon
             var currentUserId = await _userService.GetCurrentUserIdAsync();
 
             await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
-            
+
             try
             {
                 var success = await _deviceManager.DeactivateDeviceAsync(currentUserId, currentDeviceId);
@@ -43,26 +43,23 @@ public class LogoutCommandHandler : IRequestHandler<LogoutCommand, GenericRespon
                 if (!success)
                 {
                     _logger.LogInformation("Logging out device {DeviceId} by expiring refresh token", currentDeviceId);
-                    return GenericResponseModel<bool>.Failure(Shared.LogoutFailed);
                 }
-                
+
                 await _unitOfWork.SaveChanges();
                 await transaction.CommitAsync(cancellationToken);
-                
-                return GenericResponseModel<bool>.Success(true);
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync(cancellationToken);
                 _logger.LogError(ex, "Error during logout process for device {DeviceId}", currentDeviceId);
-                throw;
             }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unhandled exception during logout");
-            return GenericResponseModel<bool>.Failure(Shared.LogoutFailed);
         }
+
+        return GenericResponseModel<bool>.Success(true);
     }
 }
 
