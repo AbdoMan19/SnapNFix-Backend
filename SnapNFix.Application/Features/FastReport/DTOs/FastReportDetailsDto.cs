@@ -1,3 +1,5 @@
+using FluentValidation;
+
 namespace SnapNFix.Application.Features.FastReport.DTOs;
 
 public class FastReportDetailsDto
@@ -9,4 +11,5 @@ public class FastReportDetailsDto
     public DateTime CreatedAt { get; set; }
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
+    public Severity Severity { get; set; }
 }
