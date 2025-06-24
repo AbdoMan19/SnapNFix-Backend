@@ -9,6 +9,7 @@ public class IssueDetailsDto
     public double Latitude { get; set; }
     public double Longitude { get; set; }
     public DateTime CreatedAt { get; set; }
+
     public IssueStatus Status { get; set; }
     public Severity Severity { get; set; }
     public List<string> Images { get; set; } = new List<string>();
@@ -20,4 +21,5 @@ public class IssueDetailsDto
     public string Country { get; set; } = string.Empty;
 
     public int ReportsCount { get; set; }
+
 }

@@ -338,7 +338,7 @@
         <value>Page size is required</value>
     </data>
     <data name="InvalidPageSize" xml:space="preserve">
-        <value>Page size must be between 1 and 100</value>
+        <value>Page size must be between 1 and 50</value>
     </data>
     <data name="LimitRequired" xml:space="preserve">
         <value>Limit is required</value>
@@ -561,4 +561,7 @@
         <value>Failed to update issue</value>
     </data>
 
+    <data name="InvalidUserType" xml:space="preserve">
+        <value>Invalid user role</value>
+    </data>
 </root>
