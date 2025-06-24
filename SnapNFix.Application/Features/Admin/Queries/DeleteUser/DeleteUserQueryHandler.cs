@@ -8,6 +8,8 @@ using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
 
+namespace SnapNFix.Application.Features.Admin.Queries.DeleteUser;
+
 
 public class DeleteUserQueryHandler : IRequestHandler<DeleteUserQuery, GenericResponseModel<bool>>
 {
@@ -33,7 +35,7 @@ public class DeleteUserQueryHandler : IRequestHandler<DeleteUserQuery, GenericRe
         _logger.LogInformation("Processing user deletion request for UserId: {UserId}", request.UserId);
 
         await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
-        
+
         try
         {
             var user = await _unitOfWork.Repository<User>()
@@ -65,7 +67,7 @@ public class DeleteUserQueryHandler : IRequestHandler<DeleteUserQuery, GenericRe
 
             user.IsDeleted = true;
             user.DeletedAt = DateTime.UtcNow;
-            
+
             user.AccessFailedCount = 3;
             user.LockoutEnd = DateTimeOffset.MaxValue;
 
@@ -82,13 +84,13 @@ public class DeleteUserQueryHandler : IRequestHandler<DeleteUserQuery, GenericRe
                 await _unitOfWork.Repository<RefreshToken>().Update(device.RefreshToken);
             }
 
-            
+
 
             await _unitOfWork.SaveChanges();
             await transaction.CommitAsync(cancellationToken);
 
             await _cacheInvalidationService.InvalidateUserCacheAsync(request.UserId);
-            
+
             return GenericResponseModel<bool>.Success(true);
         }
         catch (Exception ex)

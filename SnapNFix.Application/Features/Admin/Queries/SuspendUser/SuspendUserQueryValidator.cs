@@ -1,6 +1,7 @@
 using FluentValidation;
 using SnapNFix.Application.Resources;
 
+namespace SnapNFix.Application.Features.Admin.Queries.SuspendUser;
 
 public class SuspendUserQueryValidator : AbstractValidator<SuspendUserQuery>
 {

@@ -8,6 +8,8 @@ using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
 
+namespace SnapNFix.Application.Features.Admin.Queries.SuspendUser;
+
 
 public class SuspendUserQueryHandler : IRequestHandler<SuspendUserQuery, GenericResponseModel<bool>>
 {
@@ -33,11 +35,11 @@ public class SuspendUserQueryHandler : IRequestHandler<SuspendUserQuery, Generic
 
     public async Task<GenericResponseModel<bool>> Handle(SuspendUserQuery request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Processing user suspension request for UserId: {UserId}, Suspend: {IsSuspended}", 
+        _logger.LogInformation("Processing user suspension request for UserId: {UserId}, Suspend: {IsSuspended}",
             request.UserId, request.IsSuspended);
 
         await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
-        
+
         try
         {
             var user = await _unitOfWork.Repository<User>()
@@ -70,9 +72,9 @@ public class SuspendUserQueryHandler : IRequestHandler<SuspendUserQuery, Generic
 
             if (request.IsSuspended)
             {
-                user.AccessFailedCount = 3; 
-                user.LockoutEnd = DateTimeOffset.MaxValue; 
-                
+                user.AccessFailedCount = 3;
+                user.LockoutEnd = DateTimeOffset.MaxValue;
+
                 var userDevices = await _unitOfWork.Repository<UserDevice>()
                     .FindBy(d => d.UserId == request.UserId)
                     .Include(d => d.RefreshToken)
@@ -83,13 +85,13 @@ public class SuspendUserQueryHandler : IRequestHandler<SuspendUserQuery, Generic
                     device.RefreshToken.Expires = DateTime.UtcNow;
                     await _unitOfWork.Repository<RefreshToken>().Update(device.RefreshToken);
                 }
-                
+
             }
             else
             {
                 user.AccessFailedCount = 0;
                 user.LockoutEnd = null;
-                
+
                 _logger.LogInformation("User {UserId} unsuspended successfully", request.UserId);
             }
 
@@ -108,7 +110,7 @@ public class SuspendUserQueryHandler : IRequestHandler<SuspendUserQuery, Generic
 
             var action = request.IsSuspended ? "suspended" : "unsuspended";
             _logger.LogInformation("User {UserId} {Action} successfully", request.UserId, action);
-            
+
             return GenericResponseModel<bool>.Success(true);
         }
         catch (Exception ex)
