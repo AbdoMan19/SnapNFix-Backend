@@ -1,7 +1,7 @@
 using MediatR;
 using SnapNFix.Application.Common.ResponseModel;
 
-namespace SnapNFix.Application.Features.Admin.Commands.UpdateCityChannel;
+namespace SnapNFix.Application.Features.Admin.Commands.UpdateCityChannelStatus;
 
 public class UpdateCityChannelStatusCommand: IRequest<GenericResponseModel<bool>>
 {

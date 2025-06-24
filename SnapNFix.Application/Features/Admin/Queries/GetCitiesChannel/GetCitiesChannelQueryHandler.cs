@@ -6,7 +6,7 @@ using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Admin.DTOs;
 using SnapNFix.Domain.Interfaces;
 
-namespace SnapNFix.Application.Features.Admin.Queries.GetCities
+namespace SnapNFix.Application.Features.Admin.Queries.GetCitiesChannel
 {
     public class GetCitiesChannelQueryHandler : 
         IRequestHandler<GetCitiesChannelQuery, GenericResponseModel<PagedList<CityChannelDto>>>

@@ -3,7 +3,7 @@ using SnapNFix.Application.Common.Models;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Admin.DTOs;
 
-namespace SnapNFix.Application.Features.Admin.Queries.GetCities;
+namespace SnapNFix.Application.Features.Admin.Queries.GetCitiesChannel;
 
 public class GetCitiesChannelQuery : IRequest<GenericResponseModel<PagedList<CityChannelDto>>>
 {
