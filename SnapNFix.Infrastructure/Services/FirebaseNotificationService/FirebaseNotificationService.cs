@@ -88,25 +88,61 @@ namespace SnapNFix.Infrastructure.Services.FirebaseNotificationService
         {
             try
             {
-                var message = new Message
+                using (var scope = _serviceProvider.CreateScope())
                 {
-                    Topic = topicNotificationModel.Topic,
-                    Notification = new Notification
+                    var message = new Message
                     {
-                        Title = topicNotificationModel.Title,
-                        Body = topicNotificationModel.Body
-                    },
-                    Data = topicNotificationModel.Data
-                };
+                        Topic = topicNotificationModel.Topic,
+                        Notification = new Notification
+                        {
+                            Title = topicNotificationModel.Title,
+                            Body = topicNotificationModel.Body
+                        },
+                        Data = topicNotificationModel.Data
+                    };
 
-                var response = await _messaging.SendAsync(message);
-                _logger.LogInformation("Notification sent to topic {Topic}, message ID: {MessageId}", topicNotificationModel.Topic, response);
+                    var response = await _messaging.SendAsync(message);
+                    _logger.LogInformation("Notification sent to topic {Topic}, message ID: {MessageId}", topicNotificationModel.Topic, response);
                 
-                return !string.IsNullOrEmpty(response);
+                    return !string.IsNullOrEmpty(response);   
+                }
+                
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error sending notification to topic {Topic}", topicNotificationModel.Topic);
+                return false;
+            }
+        }
+
+        // Add to the FirebaseNotificationService class
+
+        public async Task<bool> SubscribeToTopicAsync(List<string> tokens, string topic)
+        {
+            try
+            {
+                await _messaging.SubscribeToTopicAsync(tokens, topic);
+                _logger.LogInformation("Devices with tokens {Tokens} subscribed to topic {Topic}", string.Join(", ", tokens), topic);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error subscribing devices with tokens {Tokens} to topic {Topic}", string.Join(", ", tokens), topic);
+                return false;
+            }
+        }
+
+        public async Task<bool> UnsubscribeFromTopicAsync(List<string> tokens, string topic)
+        {
+            try
+            {
+                await _messaging.UnsubscribeFromTopicAsync(tokens , topic);
+                _logger.LogInformation("Devices with tokens {Tokens} unsubscribed from topic {Topic}", string.Join(", ", tokens), topic);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error unsubscribing devices with tokens {Tokens} from topic {Topic}", string.Join(", ", tokens), topic);
                 return false;
             }
         }

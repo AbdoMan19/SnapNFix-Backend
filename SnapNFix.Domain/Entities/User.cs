@@ -22,4 +22,6 @@ public class User : IdentityUser<Guid>
     public virtual ICollection<SnapReport> SnapReports { get; set; } = [];
     public virtual ICollection<FastReport> FastReports { get; set; } = [];
     public virtual ICollection<UserDevice> UserDevices { get; set; } = [];
+    // In User.cs, add:
+    public virtual ICollection<UserCitySubscription> CityChannelSubscriptions { get; set; } = [];
 }

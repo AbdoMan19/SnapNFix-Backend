@@ -76,6 +76,16 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasForeignKey(r => r.UserId)
             .OnDelete(DeleteBehavior.Restrict);
         
+        builder.HasMany(u => u.UserDevices)
+            .WithOne(ud => ud.User)
+            .HasForeignKey(ud => ud.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.HasMany(u => u.CityChannelSubscriptions)
+            .WithOne(s => s.User)
+            .HasForeignKey(s => s.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
         builder.Ignore(sr => sr.FullName);
     }
 }
