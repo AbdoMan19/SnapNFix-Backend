@@ -1,7 +1,7 @@
 using MediatR;
 using SnapNFix.Application.Common.ResponseModel;
 
-namespace SnapNFix.Application.Features.Admin.Queries.SuspendUser;
+namespace SnapNFix.Application.Features.Admin.Commands.SuspendUser;
 
 
 public class SuspendUserQuery : IRequest<GenericResponseModel<bool>>

@@ -8,7 +8,7 @@ using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
 
-namespace SnapNFix.Application.Features.Admin.Queries.DeleteUser;
+namespace SnapNFix.Application.Features.Admin.Commands.DeleteUser;
 
 
 public class DeleteUserQueryHandler : IRequestHandler<DeleteUserQuery, GenericResponseModel<bool>>
@@ -90,6 +90,7 @@ public class DeleteUserQueryHandler : IRequestHandler<DeleteUserQuery, GenericRe
             await transaction.CommitAsync(cancellationToken);
 
             await _cacheInvalidationService.InvalidateUserCacheAsync(request.UserId);
+            
 
             return GenericResponseModel<bool>.Success(true);
         }

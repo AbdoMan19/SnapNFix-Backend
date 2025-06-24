@@ -5,9 +5,9 @@ using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.Models;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Admin.Commands.AdminLogin;
+using SnapNFix.Application.Features.Admin.Commands.DeleteUser;
 using SnapNFix.Application.Features.Admin.Commands.RegisterAdmin;
-using SnapNFix.Application.Features.Admin.Queries.DeleteUser;
-using SnapNFix.Application.Features.Admin.Queries.SuspendUser;
+using SnapNFix.Application.Features.Admin.Commands.SuspendUser;
 using SnapNFix.Application.Features.Auth.Dtos;
 using SnapNFix.Application.Resources;
 

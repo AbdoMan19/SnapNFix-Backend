@@ -1,7 +1,7 @@
 using MediatR;
 using SnapNFix.Application.Common.ResponseModel;
 
-namespace SnapNFix.Application.Features.Admin.Queries.DeleteUser;
+namespace SnapNFix.Application.Features.Admin.Commands.DeleteUser;
 
 public class DeleteUserQuery : IRequest<GenericResponseModel<bool>>
 {

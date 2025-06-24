@@ -8,7 +8,7 @@ using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
 
-namespace SnapNFix.Application.Features.Admin.Queries.SuspendUser;
+namespace SnapNFix.Application.Features.Admin.Commands.SuspendUser;
 
 
 public class SuspendUserQueryHandler : IRequestHandler<SuspendUserQuery, GenericResponseModel<bool>>
@@ -95,21 +95,14 @@ public class SuspendUserQueryHandler : IRequestHandler<SuspendUserQuery, Generic
                 _logger.LogInformation("User {UserId} unsuspended successfully", request.UserId);
             }
 
-            var result = await _userManager.UpdateAsync(user);
-            if (!result.Succeeded)
-            {
-                var errors = result.Errors.Select(e => ErrorResponseModel.Create(e.Code, e.Description)).ToList();
-                _logger.LogWarning("Failed to update user suspension status for UserId: {UserId}", request.UserId);
-                return GenericResponseModel<bool>.Failure(Shared.OperationFailed, errors);
-            }
-
+            await _unitOfWork.Repository<User>().Update(user);
+            
             await _unitOfWork.SaveChanges();
             await transaction.CommitAsync(cancellationToken);
 
             await _cacheInvalidationService.InvalidateUserCacheAsync(request.UserId);
 
-            var action = request.IsSuspended ? "suspended" : "unsuspended";
-            _logger.LogInformation("User {UserId} {Action} successfully", request.UserId, action);
+            _logger.LogInformation("User {UserId} {Action} successfully", request.UserId, request.IsSuspended ? "suspended" : "unsuspended");
 
             return GenericResponseModel<bool>.Success(true);
         }

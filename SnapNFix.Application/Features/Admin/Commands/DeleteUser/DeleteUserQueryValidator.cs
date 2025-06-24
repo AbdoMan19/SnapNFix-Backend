@@ -1,11 +1,11 @@
 using FluentValidation;
 using SnapNFix.Application.Resources;
 
-namespace SnapNFix.Application.Features.Admin.Queries.SuspendUser;
+namespace SnapNFix.Application.Features.Admin.Commands.DeleteUser;
 
-public class SuspendUserQueryValidator : AbstractValidator<SuspendUserQuery>
+public class DeleteUserQueryValidator : AbstractValidator<DeleteUserQuery>
 {
-    public SuspendUserQueryValidator()
+    public DeleteUserQueryValidator()
     {
         RuleFor(x => x.UserId)
             .NotEmpty()
