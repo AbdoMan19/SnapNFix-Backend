@@ -11,5 +11,5 @@ public class UserDetailsDto
     public bool IsSuspended { get; set; }
     public bool IsDeleted { get; set; }
     public DateTime CreatedAt { get; set; }
-    public List<string> Roles { get; set; } = new();
+    public List<string>? Roles { get; set; }
 }

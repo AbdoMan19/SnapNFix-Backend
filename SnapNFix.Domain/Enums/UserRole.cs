@@ -4,7 +4,7 @@ namespace SnapNFix.Domain.Enums
   {
 
       Admin,
-      User,
+      Citizen,
       SuperAdmin
     }
 }

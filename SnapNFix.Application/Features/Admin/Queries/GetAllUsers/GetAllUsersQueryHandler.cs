@@ -28,7 +28,7 @@ public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, Generic
         CancellationToken cancellationToken)
     {
         var cacheKey = $"admin:users:page:{request.PageNumber}:size:{request.PageSize}:" +
-                      $"search:{request.SearchTerm ?? "all"}:role:{request.Role.ToString() ?? "all"}:";
+                      $"search:{request.SearchTerm ?? "all"}:role:{request.Role?.ToString() ?? "all"}:";
 
         var cached = await _cacheService.GetAsync<PagedList<UserDetailsDto>>(cacheKey);
         if (cached != null)
@@ -40,7 +40,7 @@ public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, Generic
             .GetQuerableData()
             .AsQueryable();
 
-
+        // Apply search filter
         if (!string.IsNullOrWhiteSpace(request.SearchTerm))
         {
             var searchTerm = request.SearchTerm.ToLower();
@@ -51,8 +51,8 @@ public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, Generic
                 (u.PhoneNumber != null && u.PhoneNumber.Contains(searchTerm)));
         }
 
-
-        if (!string.IsNullOrWhiteSpace(request.Role.ToString()))
+        // Apply role filter if specified
+        if (request.Role.HasValue)
         {
             var usersInRole = await _userManager.GetUsersInRoleAsync(request.Role.ToString());
             var userIdsInRole = usersInRole.Select(u => u.Id).ToHashSet();
@@ -66,18 +66,11 @@ public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, Generic
             cancellationToken);
 
         var userDtos = new List<UserDetailsDto>();
-        
-        var userIds = pagedUsers.Items.Select(u => u.Id).ToList();
-        var allUserRoles = new Dictionary<Guid, IList<string>>();
-        
-        foreach (var user in pagedUsers.Items)
-        {
-            var roles = await _userManager.GetRolesAsync(user);
-            allUserRoles[user.Id] = roles;
-        }
 
         foreach (var user in pagedUsers.Items)
         {
+            var roles = await _userManager.GetRolesAsync(user);
+            
             var userDto = new UserDetailsDto
             {
                 Id = user.Id,
@@ -88,7 +81,7 @@ public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, Generic
                 IsSuspended = user.IsSuspended,
                 IsDeleted = user.IsDeleted,
                 CreatedAt = user.CreatedAt,
-                Roles = allUserRoles[user.Id].ToList(),
+                Roles = roles.ToList() 
             };
 
             userDtos.Add(userDto);
