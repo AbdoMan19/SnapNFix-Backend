@@ -34,7 +34,7 @@ namespace SnapNFix.API.Controllers
 
 
         [HttpGet("subscribed")]
-        [ProducesResponseType(typeof(GenericResponseModel<PagedList<UserCityChannelSubscriptionDto>>), 200)]
+        [ProducesResponseType(typeof(GenericResponseModel<PagedList<CityChannelSubscriptionDto>>), 200)]
         public async Task<IActionResult> GetSubscribedCityChannels([FromQuery] GetUserSubscribedCitiesChannelCommand query)
         {
             var result = await _mediator.Send(query);
