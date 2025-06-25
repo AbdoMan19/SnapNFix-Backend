@@ -28,16 +28,10 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.Logging.ClearProviders();
+        builder.Logging.AddConsole();
+        builder.Logging.AddDebug();
         builder.Logging.AddAzureWebAppDiagnostics();
-
-        builder.Services.Configure<AzureFileLoggerOptions>(
-            options =>
-            {
-                options.FileName = "log-{Date}.txt";
-                options.RetainedFileCountLimit = 5;
-                options.FileSizeLimit = 1024;
-            }
-        );
 
         builder.Services
             .AddWebApiServices(builder.Configuration)
