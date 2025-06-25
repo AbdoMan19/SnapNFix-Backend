@@ -65,7 +65,8 @@ namespace SnapNFix.Infrastructure.Services.FirebaseNotificationService
                             Title = notificationModel.Title,
                             Body = notificationModel.Body
                         },
-                        Data = notificationModel.Data
+                        Data = notificationModel.Data,
+                        
                     };
 
                     var response = await _messaging.SendEachForMulticastAsync(message);

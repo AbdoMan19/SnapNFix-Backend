@@ -53,7 +53,7 @@ namespace SnapNFix.API.Controllers
 
         [HttpDelete("subscribe/{cityId}")]
         [ProducesResponseType(typeof(GenericResponseModel<bool>), 200)]
-        public async Task<IActionResult> UnsubscribeFromCity(Guid cityId)
+        public async Task<IActionResult> UnsubscribeFromCity([FromRoute]Guid cityId)
         {
             var command = new UnsubscribeFromCityChannelCommand { CityId = cityId };
             var result = await _mediator.Send(command);
