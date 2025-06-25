@@ -120,8 +120,10 @@ public class PhotoValidationService : IPhotoValidationService
             const int maxRetries = 3;
             int retryCount = 0;
             string? taskId = null;
-            
-            while (retryCount < maxRetries && taskId == null)
+            taskId = await SendImageForValidationAsync(
+                imageUrl, 
+                cancellationToken);
+            /*while (retryCount < maxRetries && taskId == null)
             {
                 try
                 {
@@ -163,6 +165,7 @@ public class PhotoValidationService : IPhotoValidationService
                     return;
                 }
             }
+            */
             
             if (taskId == null)
             {
