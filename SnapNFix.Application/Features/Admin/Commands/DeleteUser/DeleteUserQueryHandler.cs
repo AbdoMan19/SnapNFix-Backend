@@ -84,13 +84,10 @@ public class DeleteUserQueryHandler : IRequestHandler<DeleteUserQuery, GenericRe
                 await _unitOfWork.Repository<RefreshToken>().Update(device.RefreshToken);
             }
 
-
-
             await _unitOfWork.SaveChanges();
             await transaction.CommitAsync(cancellationToken);
 
             await _cacheInvalidationService.InvalidateUserCacheAsync(request.UserId);
-            
 
             return GenericResponseModel<bool>.Success(true);
         }
@@ -98,13 +95,7 @@ public class DeleteUserQueryHandler : IRequestHandler<DeleteUserQuery, GenericRe
         {
             await transaction.RollbackAsync(cancellationToken);
             _logger.LogError(ex, "Error deleting user with UserId: {UserId}", request.UserId);
-            return GenericResponseModel<bool>.Failure(
-                Shared.OperationFailed,
-                new List<ErrorResponseModel>
-                {
-                    ErrorResponseModel.Create(nameof(request.UserId), Shared.OperationFailed)
-                }
-            );
+            return GenericResponseModel<bool>.Failure(Shared.OperationFailed);
         }
     }
 }

@@ -117,8 +117,8 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
             await _unitOfWork.SaveChanges();
             await transaction.CommitAsync(cancellationToken);
 
-            //await _cacheInvalidationService.InvalidateReportCacheAsync(report.Id, report.IssueId);
-            //await _cacheInvalidationService.InvalidateUserCacheAsync(report.UserId);
+            await _cacheInvalidationService.InvalidateReportCacheAsync(report.Id, report.IssueId);
+            await _cacheInvalidationService.InvalidateUserCacheAsync(report.UserId);
 
             _logger.LogInformation("Successfully processed AI validation result for TaskId: {TaskId}, Report: {ReportId}",
                 request.TaskId, report.Id);

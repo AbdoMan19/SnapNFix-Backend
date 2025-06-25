@@ -27,14 +27,8 @@ public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, Generic
         GetAllUsersQuery request, 
         CancellationToken cancellationToken)
     {
-        var cacheKey = $"admin:users:page:{request.PageNumber}:size:{request.PageSize}:" +
-                      $"search:{request.SearchTerm ?? "all"}:role:{request.Role?.ToString() ?? "all"}:";
 
-        var cached = await _cacheService.GetAsync<PagedList<UserDetailsDto>>(cacheKey);
-        if (cached != null)
-        {
-            return GenericResponseModel<PagedList<UserDetailsDto>>.Success(cached);
-        }
+   
 
         var query = _unitOfWork.Repository<User>()
             .GetQuerableData()
@@ -93,7 +87,6 @@ public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, Generic
             pagedUsers.PageNumber,
             pagedUsers.PageSize);
 
-        await _cacheService.SetAsync(cacheKey, result, TimeSpan.FromMinutes(5));
 
         return GenericResponseModel<PagedList<UserDetailsDto>>.Success(result);
     }

@@ -85,7 +85,6 @@ public class SuspendUserQueryHandler : IRequestHandler<SuspendUserQuery, Generic
                     device.RefreshToken.Expires = DateTime.UtcNow;
                     await _unitOfWork.Repository<RefreshToken>().Update(device.RefreshToken);
                 }
-
             }
             else
             {
@@ -110,13 +109,7 @@ public class SuspendUserQueryHandler : IRequestHandler<SuspendUserQuery, Generic
         {
             await transaction.RollbackAsync(cancellationToken);
             _logger.LogError(ex, "Error processing user suspension for UserId: {UserId}", request.UserId);
-            return GenericResponseModel<bool>.Failure(
-                Shared.OperationFailed,
-                new List<ErrorResponseModel>
-                {
-                    ErrorResponseModel.Create(nameof(request.UserId), Shared.OperationFailed)
-                }
-            );
+            return GenericResponseModel<bool>.Failure(Shared.OperationFailed);
         }
     }
 }
