@@ -11,7 +11,7 @@ namespace SnapNFix.Application.Features.Admin.Commands.UpdateCityChannelStatus
                 .NotEmpty().WithMessage("City ID is required");
             
             RuleFor(x => x.IsActive)
-                .NotEmpty()
+                .Must(value => value == true || value == false)
                 .WithMessage("City channel status is required");
         }
     }

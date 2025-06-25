@@ -34,10 +34,15 @@ namespace SnapNFix.API.Controllers
       
         [HttpPut("{cityId}/status")]
         [ProducesResponseType(typeof(GenericResponseModel<bool>), 200)]
-        public async Task<IActionResult> UpdateCityChannelStatus([FromRoute]Guid cityId, [FromBody] UpdateCityChannelStatusCommand request)
+        public async Task<IActionResult> UpdateCityChannelStatus([FromRoute]Guid cityId, [FromBody] UpdateStatusRequest request)
         {
+            var command =  new UpdateCityChannelStatusCommand
+            {
+                CityId = cityId,
+                IsActive = request.IsActive
+            };
             
-            var result = await _mediator.Send(request);
+            var result = await _mediator.Send(command);
             return Ok(result);
         }
     }
