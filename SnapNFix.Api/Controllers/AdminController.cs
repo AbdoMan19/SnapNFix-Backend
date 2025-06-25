@@ -112,7 +112,3 @@ public class AdminController : ControllerBase
 
 }
 
-public class SuspendUserRequest
-{
-    public bool IsSuspended { get; set; }
-}
