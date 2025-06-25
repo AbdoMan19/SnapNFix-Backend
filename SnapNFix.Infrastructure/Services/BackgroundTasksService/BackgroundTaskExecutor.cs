@@ -20,22 +20,52 @@ public class BackgroundTaskExecutor : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        while (!stoppingToken.IsCancellationRequested)
+        _logger.LogInformation("Background Task Executor starting");
+        
+        try
         {
-            var workItem = await _taskQueue.DequeueAsync(stoppingToken);
-
-            _ = Task.Run(async () =>
+            while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
-                    using var scope = _serviceProvider.CreateScope();
-                    await workItem(scope.ServiceProvider, stoppingToken);
+                    var workItem = await _taskQueue.DequeueAsync(stoppingToken);
+
+                    _ = Task.Run(async () =>
+                    {
+                        try
+                        {
+                            using var scope = _serviceProvider.CreateScope();
+                            await workItem(scope.ServiceProvider, stoppingToken);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, "Error occurred executing background task.");
+                        }
+                    }, stoppingToken);
+                }
+                catch (OperationCanceledException)
+                {
+                    // Expected during shutdown, no need to throw
+                    _logger.LogInformation("Background task dequeue operation was canceled");
+                    break;
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error occurred executing background task.");
+                    _logger.LogError(ex, "Error occurred dequeueing background task");
+                    
+                    // Add a small delay before retrying to prevent tight loops in error cases
+                    await Task.Delay(1000, stoppingToken);
                 }
-            }, stoppingToken);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unhandled exception in Background Task Executor");
+            throw;
+        }
+        finally
+        {
+            _logger.LogInformation("Background Task Executor stopping");
         }
     }  
 }
