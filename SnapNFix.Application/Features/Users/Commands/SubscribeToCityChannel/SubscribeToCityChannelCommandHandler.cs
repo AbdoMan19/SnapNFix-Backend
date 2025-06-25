@@ -7,7 +7,7 @@ using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
 using SnapNFix.Domain.Models.Notification;
 
-namespace SnapNFix.Application.Features.Users.Commands.SubscribeToCity
+namespace SnapNFix.Application.Features.Users.Commands.SubscribeToCityChannel
 {
     public class SubscribeToCityChannelCommandHandler : IRequestHandler<SubscribeToCityChannelCommand, GenericResponseModel<bool>>
     {
@@ -62,41 +62,46 @@ namespace SnapNFix.Application.Features.Users.Commands.SubscribeToCity
                 return GenericResponseModel<bool>.Success(true); // Already subscribed
             }
 
-            // Create new subscription
-            var subscription = new UserCitySubscription
-            {
-                UserId = currentUserId,
-                CityChannelId = request.CityId,
-                SubscribedAt = DateTime.UtcNow
-            };
-
-            await _unitOfWork.Repository<UserCitySubscription>().Add(subscription);
-            await _unitOfWork.SaveChanges();
-
-            // Subscribe user to Firebase topic for the city
-            var topicName = $"city_{cityChannel.Name.Replace(" ", "_").ToLower()}";
-            
+            await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
             try
             {
+                // Create new subscription
+                var subscription = new UserCitySubscription
+                {
+                    UserId = currentUserId,
+                    CityChannelId = request.CityId,
+                    SubscribedAt = DateTime.UtcNow
+                };
+
+                await _unitOfWork.Repository<UserCitySubscription>().Add(subscription);
+                await _unitOfWork.SaveChanges();
+                
+                // Subscribe user to Firebase topic for the city
+                var topicName = $"city_{cityChannel.Name.Replace(" ", "_").ToLower()}";
+                
                 // Get user's device tokens
                 var deviceManager = _unitOfWork.Repository<UserDevice>().GetQuerableData();
                 var deviceTokens = await deviceManager
                     .Where(d => d.UserId == currentUserId && !string.IsNullOrEmpty(d.FCMToken))
                     .Select(d => d.FCMToken)
                     .ToListAsync(cancellationToken);
-              
-                await _notificationService.SubscribeToTopicAsync(deviceTokens, topicName);
                 
+                if (deviceTokens.Any())
+                {
+                    await _notificationService.SubscribeToTopicAsync(deviceTokens, topicName);
+                }
+                
+                await transaction.CommitAsync(cancellationToken);
+                _logger.LogInformation("User {UserId} subscribed to city {CityId}", currentUserId, request.CityId);
+                
+                return GenericResponseModel<bool>.Success(true);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to subscribe user devices to city topic");
-                // Continue - subscription is still saved in database
+                await transaction.RollbackAsync(cancellationToken);
+                _logger.LogError(ex, "Failed to subscribe user {UserId} to city {CityId}", currentUserId, request.CityId);
+                return GenericResponseModel<bool>.Failure($"Failed to subscribe to city: {ex.Message}");
             }
-
-            _logger.LogInformation("User {UserId} subscribed to city {CityId}", currentUserId, request.CityId);
-            
-            return GenericResponseModel<bool>.Success(true);
         }
     }
 }

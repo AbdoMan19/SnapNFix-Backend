@@ -88,24 +88,23 @@ namespace SnapNFix.Infrastructure.Services.FirebaseNotificationService
         {
             try
             {
-                using (var scope = _serviceProvider.CreateScope())
-                {
-                    var message = new Message
-                    {
-                        Topic = topicNotificationModel.Topic,
-                        Notification = new Notification
-                        {
-                            Title = topicNotificationModel.Title,
-                            Body = topicNotificationModel.Body
-                        },
-                        Data = topicNotificationModel.Data
-                    };
-
-                    var response = await _messaging.SendAsync(message);
-                    _logger.LogInformation("Notification sent to topic {Topic}, message ID: {MessageId}", topicNotificationModel.Topic, response);
                 
-                    return !string.IsNullOrEmpty(response);   
-                }
+                var message = new Message
+                {
+                    Topic = topicNotificationModel.Topic,
+                    Notification = new Notification
+                    {
+                        Title = topicNotificationModel.Title,
+                        Body = topicNotificationModel.Body
+                    },
+                    Data = topicNotificationModel.Data
+                };
+
+                var response = await _messaging.SendAsync(message);
+                _logger.LogInformation("Notification sent to topic {Topic}, message ID: {MessageId}", topicNotificationModel.Topic, response);
+            
+                return !string.IsNullOrEmpty(response);   
+                
                 
             }
             catch (Exception ex)

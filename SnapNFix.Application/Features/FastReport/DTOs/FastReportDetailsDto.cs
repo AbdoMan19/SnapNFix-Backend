@@ -1,4 +1,4 @@
-using FluentValidation;
+using Severity = SnapNFix.Domain.Enums.Severity;
 
 namespace SnapNFix.Application.Features.FastReport.DTOs;
 

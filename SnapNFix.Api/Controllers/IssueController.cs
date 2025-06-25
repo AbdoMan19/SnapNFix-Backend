@@ -66,12 +66,14 @@ public class IssueController : ControllerBase
   [HttpGet("{id}/fastreports")]
   public async Task<ActionResult<GenericResponseModel<PagedList<FastReportDetailsDto>>>> GetFastReportsByIssueId(
       Guid id, 
-      [FromQuery] int pageNumber = 1)
+      [FromQuery] int pageNumber = 1,
+      [FromQuery] int pageSize = 10)
   {
     var query = new GetFastReportsByIssueIdQuery 
     { 
         Id = id, 
         PageNumber = pageNumber,
+        PageSize = pageSize
     };
     var result = await _mediator.Send(query);
     

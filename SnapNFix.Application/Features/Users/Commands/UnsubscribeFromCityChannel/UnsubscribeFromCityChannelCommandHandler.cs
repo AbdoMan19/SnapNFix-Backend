@@ -58,15 +58,16 @@ namespace SnapNFix.Application.Features.Users.Commands.UnsubscribeFromCityChanne
                 return GenericResponseModel<bool>.Success(true); // Already unsubscribed
             }
 
-            // Remove subscription
-            _unitOfWork.Repository<UserCitySubscription>().Delete(subscription.Id);
-            await _unitOfWork.SaveChanges();
-
-            // Unsubscribe from Firebase topic
-            var topicName = $"city_{city.Name.Replace(" ", "_").ToLower()}";
-            
+            await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
             try
             {
+                // Remove subscription
+                _unitOfWork.Repository<UserCitySubscription>().Delete(subscription.Id);
+                await _unitOfWork.SaveChanges();
+
+                // Unsubscribe from Firebase topic
+                var topicName = $"city_{city.Name.Replace(" ", "_").ToLower()}";
+                
                 // Get user's device tokens
                 var deviceManager = _unitOfWork.Repository<UserDevice>().GetQuerableData();
                 var deviceTokens = await deviceManager
@@ -74,20 +75,22 @@ namespace SnapNFix.Application.Features.Users.Commands.UnsubscribeFromCityChanne
                     .Select(d => d.FCMToken)
                     .ToListAsync(cancellationToken);
 
-                // Unsubscribe each device from the topic
-             
-                await _notificationService.UnsubscribeFromTopicAsync(deviceTokens, topicName);
+                if (deviceTokens.Any())
+                {
+                    await _notificationService.UnsubscribeFromTopicAsync(deviceTokens, topicName);
+                }
                 
+                await transaction.CommitAsync(cancellationToken);
+                _logger.LogInformation("User {UserId} unsubscribed from city {CityId}", currentUserId, request.CityId);
+                
+                return GenericResponseModel<bool>.Success(true);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to unsubscribe user devices from city topic");
-                // Continue - subscription is still removed from database
+                await transaction.RollbackAsync(cancellationToken);
+                _logger.LogError(ex, "Failed to unsubscribe user {UserId} from city {CityId}", currentUserId, request.CityId);
+                return GenericResponseModel<bool>.Failure($"Failed to unsubscribe from city: {ex.Message}");
             }
-
-            _logger.LogInformation("User {UserId} unsubscribed from city {CityId}", currentUserId, request.CityId);
-            
-            return GenericResponseModel<bool>.Success(true);
         }
     }
 }

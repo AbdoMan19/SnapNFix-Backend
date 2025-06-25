@@ -44,20 +44,24 @@ public class GetFastReportsByIssueIdQueryHandler :
             .OrderByDescending(r => r.CreatedAt)
             .Include(r => r.User);
 
-        var reports = await PagedList<Domain.Entities.FastReport>.CreateAsync(
-            query,
+        var result = await PagedList<FastReportDetailsDto>.CreateAsync(
+            query.Select(q => new FastReportDetailsDto
+            {
+                Id = q.Id,
+                IssueId = q.IssueId,
+                UserId = q.UserId,
+                CreatedAt = q.CreatedAt,
+                Comment = q.Comment,
+                FirstName = q.User.FirstName,
+                LastName = q.User.LastName,
+                Severity = q.Severity,
+                
+            }),
             request.PageNumber,
-            10,
+            request.PageSize,
             cancellationToken);
 
-        var mappedItems = _mapper.Map<List<FastReportDetailsDto>>(reports.Items);
-
-        var reportDtos = new PagedList<FastReportDetailsDto>(
-            mappedItems,
-            reports.TotalCount,
-            reports.PageNumber,
-            reports.PageSize);
-
-        return GenericResponseModel<PagedList<FastReportDetailsDto>>.Success(reportDtos);
+        
+        return GenericResponseModel<PagedList<FastReportDetailsDto>>.Success(result);
     }
 }

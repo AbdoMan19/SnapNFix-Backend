@@ -7,13 +7,6 @@ public static class MiddlewareExtension
         if (app.Environment.IsDevelopment() || app.Environment.IsStaging() || app.Environment.IsProduction())
         {
             app.UseDeveloperExceptionPage();
-        }
-        else
-        {
-            app.UseExceptionHandler("/error");
-            app.UseHsts();
-        }
-        {
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -22,6 +15,7 @@ public static class MiddlewareExtension
                 c.OAuthAppName("Swagger UI");
             });
         }
+        
         app.UseCookiePolicy(new CookiePolicyOptions
         {
             MinimumSameSitePolicy = SameSiteMode.Strict
