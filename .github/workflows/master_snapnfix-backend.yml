@@ -150,7 +150,7 @@ jobs:
                 "slotSetting": false
               },
               {
-                "name": "Firebase__CredentialsFile",
+                "name": "Firebase__CredentialFilePath",
                 "value": "firebase-credentials.json",
                 "slotSetting": false
               }
