@@ -148,6 +148,11 @@ jobs:
                 "name": "Firebase__AuthSecret",
                 "value": "${{ secrets.FIREBASE_AUTH_SECRET }}",
                 "slotSetting": false
+              },
+              {
+                "name": "Firebase__CredentialFilePath",
+                "value": "firebase-credentials.json",
+                "slotSetting": false
               }
             ]
           connection-strings-json: |
