@@ -62,7 +62,7 @@ public class GetAvailableCitiesChannelQueryHandler:
             // Transform to DTOs with subscription status and active issue counts
             var result = new List<CityChannelSubscriptionDto>();
 
-            foreach (var city in pagedCities.Items)
+            foreach (var city in pagedCities.Items.Where(c => !userSubscriptions.Contains(c.Id)))
             {
                 // Count active issues in this city
                 var activeIssueCount = await _unitOfWork.Repository<Domain.Entities.Issue>()
