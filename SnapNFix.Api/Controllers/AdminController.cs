@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -67,10 +68,10 @@ public class AdminController : ControllerBase
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<GenericResponseModel<bool>>> SuspendUser(
-        [FromRoute] Guid userId, 
+        [FromRoute] Guid userId,
         [FromBody] SuspendUserRequest request)
     {
-        _logger.LogInformation("Suspend user request received for UserId: {UserId}, IsSuspended: {IsSuspended}", 
+        _logger.LogInformation("Suspend user request received for UserId: {UserId}, IsSuspended: {IsSuspended}",
             userId, request.IsSuspended);
 
         if (userId == Guid.Empty)
@@ -79,12 +80,12 @@ public class AdminController : ControllerBase
             return BadRequest(GenericResponseModel<bool>.Failure("Invalid user ID"));
         }
 
-        var command = new SuspendUserQuery 
-        { 
-            UserId = userId, 
-            IsSuspended = request.IsSuspended 
+        var command = new SuspendUserQuery
+        {
+            UserId = userId,
+            IsSuspended = request.IsSuspended
         };
-        
+
         var result = await _mediator.Send(command);
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
@@ -106,6 +107,21 @@ public class AdminController : ControllerBase
         }
 
         var command = new DeleteUserQuery { UserId = userId };
+        var result = await _mediator.Send(command);
+        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
+    }
+    
+    [HttpPut("profile")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<GenericResponseModel<bool>>> UpdateProfile([FromBody] UpdateAdminProfileCommand command)
+    {
+        _logger.LogInformation("Admin profile update request received for user {UserId}", 
+            User.FindFirstValue(ClaimTypes.NameIdentifier));
+
         var result = await _mediator.Send(command);
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }

@@ -18,6 +18,7 @@ using Microsoft.IdentityModel.Tokens;
 using SnapNFix.Api.Extensions;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Extensions;
+using Microsoft.Extensions.Logging.AzureAppServices;
 
 namespace SnapNFix.Api;
 
@@ -26,6 +27,11 @@ public class Program
     public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        builder.Logging.ClearProviders();
+        builder.Logging.AddConsole();
+        builder.Logging.AddDebug();
+        builder.Logging.AddAzureWebAppDiagnostics();
 
         builder.Services
             .AddWebApiServices(builder.Configuration)
@@ -62,6 +68,8 @@ public class Program
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
                 };
             });
+
+        
         
         
 
