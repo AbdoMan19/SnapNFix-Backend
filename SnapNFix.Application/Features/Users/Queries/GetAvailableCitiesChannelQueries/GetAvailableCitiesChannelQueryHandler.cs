@@ -78,9 +78,7 @@ public class GetAvailableCitiesChannelQueryHandler:
                     Id = city.Id,
                     Name = city.Name,
                     State = city.State,
-                    Country = city.Country,
                     ActiveIssuesCount = activeIssueCount,
-                    IsSubscribed = userSubscriptions.Contains(city.Id)
                 });
             }
 
