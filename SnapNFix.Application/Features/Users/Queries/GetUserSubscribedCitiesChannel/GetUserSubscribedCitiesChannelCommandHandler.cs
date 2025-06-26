@@ -41,7 +41,7 @@ namespace SnapNFix.Application.Features.Users.Queries.GetUserSubscribedCitiesCha
 
             var subscriptions = _unitOfWork.Repository<UserCitySubscription>()
                 .GetQuerableData()
-                .Where(s => s.UserId == currentUserId)
+                .Where(s => s.UserId == currentUserId && s.CityChannel.IsActive)
                 .Include(s => s.CityChannel)
                 .OrderByDescending(s => s.SubscribedAt)
                 .Select(s => new CityChannelSubscriptionDto

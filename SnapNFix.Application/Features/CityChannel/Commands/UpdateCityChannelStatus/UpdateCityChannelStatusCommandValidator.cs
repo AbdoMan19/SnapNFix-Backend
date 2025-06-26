@@ -1,7 +1,6 @@
 using FluentValidation;
-using SnapNFix.Application.Features.Admin.Commands.UpdateCityChannelStatus;
 
-namespace SnapNFix.Application.Features.Admin.Commands.UpdateCityChannelStatus
+namespace SnapNFix.Application.Features.CityChannel.Commands.UpdateCityChannelStatus
 {
     public class UpdateCityChannelStatusCommandValidator : AbstractValidator<UpdateCityChannelStatusCommand>
     {
