@@ -43,7 +43,7 @@ namespace SnapNFix.Application.Features.Users.Commands.SubscribeToCityChannel
             }
 
             // Check if city exists and is active
-            var cityChannel = await _unitOfWork.Repository<CityChannel>()
+            var cityChannel = await _unitOfWork.Repository<Domain.Entities.CityChannel>()
                 .GetQuerableData()
                 .FirstOrDefaultAsync(c => c.Id == request.CityId && c.IsActive, cancellationToken);
 

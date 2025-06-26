@@ -45,6 +45,7 @@ namespace SnapNFix.Application.Features.Admin.Queries.GetCitiesChannel
             var citiesWithCounts = query
                 .Select(c => new CityChannelDto
                 {
+                    Id = c.Id,
                     Name = c.Name,
                     State = c.State,
                     Country = c.Country,

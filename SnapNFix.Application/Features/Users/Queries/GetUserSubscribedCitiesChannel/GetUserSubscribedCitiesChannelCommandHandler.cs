@@ -14,7 +14,7 @@ using SnapNFix.Domain.Interfaces;
 namespace SnapNFix.Application.Features.Users.Queries.GetUserSubscribedCitiesChannel;
 
     public class GetUserSubscribedCitiesChannelCommandHandler : 
-        IRequestHandler<GetUserSubscribedCitiesChannelCommand, GenericResponseModel<PagedList<UserCityChannelSubscriptionDto>>>
+        IRequestHandler<GetUserSubscribedCitiesChannelCommand, GenericResponseModel<PagedList<CityChannelSubscriptionDto>>>
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
@@ -30,13 +30,13 @@ namespace SnapNFix.Application.Features.Users.Queries.GetUserSubscribedCitiesCha
             _userService = userService;
         }
 
-        public async Task<GenericResponseModel<PagedList<UserCityChannelSubscriptionDto>>> Handle(
+        public async Task<GenericResponseModel<PagedList<CityChannelSubscriptionDto>>> Handle(
             GetUserSubscribedCitiesChannelCommand request, CancellationToken cancellationToken)
         {
             var currentUserId = await _userService.GetCurrentUserIdAsync();
             if (currentUserId == Guid.Empty)
             {
-                return GenericResponseModel<PagedList<UserCityChannelSubscriptionDto>>.Failure("User not authenticated");
+                return GenericResponseModel<PagedList<CityChannelSubscriptionDto>>.Failure("User not authenticated");
             }
 
             var subscriptions = _unitOfWork.Repository<UserCitySubscription>()
@@ -44,22 +44,22 @@ namespace SnapNFix.Application.Features.Users.Queries.GetUserSubscribedCitiesCha
                 .Where(s => s.UserId == currentUserId)
                 .Include(s => s.CityChannel)
                 .OrderByDescending(s => s.SubscribedAt)
-                .Select(s => new UserCityChannelSubscriptionDto
+                .Select(s => new CityChannelSubscriptionDto
                 {
-                    CityId = s.CityChannelId,
-                    CityName = s.CityChannel.Name,
+                    Id = s.CityChannelId,
+                    Name = s.CityChannel.Name,
                     State = s.CityChannel.State,
                     ActiveIssuesCount = _unitOfWork.Repository<Domain.Entities.Issue>().GetQuerableData()
                         .Count(i => i.City == s.CityChannel.Name &&
                                     i.State == s.CityChannel.State &&
                                     i.Status != IssueStatus.Completed)
                 });
-            var pagedSubscriptions = await PagedList<UserCityChannelSubscriptionDto>.CreateAsync(
+            var pagedSubscriptions = await PagedList<CityChannelSubscriptionDto>.CreateAsync(
                 subscriptions,
                 request.PageNumber,
                 request.PageSize,
                 cancellationToken);
 
-            return GenericResponseModel<PagedList<UserCityChannelSubscriptionDto>>.Success(pagedSubscriptions);
+            return GenericResponseModel<PagedList<CityChannelSubscriptionDto>>.Success(pagedSubscriptions);
         }
     }

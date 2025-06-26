@@ -32,7 +32,7 @@ public class GetAvailableCitiesChannelQueryHandler:
             }
 
             // Get all active cities
-            var query = _unitOfWork.Repository<CityChannel>()
+            var query = _unitOfWork.Repository<Domain.Entities.CityChannel>()
                 .GetQuerableData()
                 .Where(c => c.IsActive);
 
@@ -53,7 +53,7 @@ public class GetAvailableCitiesChannelQueryHandler:
                 .ToListAsync(cancellationToken);
 
             // Apply paging
-            var pagedCities = await PagedList<CityChannel>.CreateAsync(
+            var pagedCities = await PagedList<Domain.Entities.CityChannel>.CreateAsync(
                 query,
                 request.PageNumber,
                 request.PageSize,
@@ -62,7 +62,7 @@ public class GetAvailableCitiesChannelQueryHandler:
             // Transform to DTOs with subscription status and active issue counts
             var result = new List<CityChannelSubscriptionDto>();
 
-            foreach (var city in pagedCities.Items)
+            foreach (var city in pagedCities.Items.Where(c => !userSubscriptions.Contains(c.Id)))
             {
                 // Count active issues in this city
                 var activeIssueCount = await _unitOfWork.Repository<Domain.Entities.Issue>()
@@ -78,9 +78,7 @@ public class GetAvailableCitiesChannelQueryHandler:
                     Id = city.Id,
                     Name = city.Name,
                     State = city.State,
-                    Country = city.Country,
                     ActiveIssuesCount = activeIssueCount,
-                    IsSubscribed = userSubscriptions.Contains(city.Id)
                 });
             }
 

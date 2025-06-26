@@ -42,7 +42,7 @@ namespace SnapNFix.Application.Features.Users.Commands.UnsubscribeFromCityChanne
             }
 
             // Get city info
-            var city = await _unitOfWork.Repository<CityChannel>()
+            var city = await _unitOfWork.Repository<Domain.Entities.CityChannel>()
                 .FindBy(cc => cc.Id == request.CityId)
                 .FirstOrDefaultAsync(cancellationToken);
 

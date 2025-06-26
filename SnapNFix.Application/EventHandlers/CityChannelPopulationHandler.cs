@@ -7,14 +7,14 @@ using SnapNFix.Domain.Interfaces;
 
 namespace SnapNFix.Application.EventHandlers
 {
-    public class CityPopulationHandler : INotificationHandler<IssueCreated>
+    public class CityChannelPopulationHandler : INotificationHandler<IssueCreated>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger<CityPopulationHandler> _logger;
+        private readonly ILogger<CityChannelPopulationHandler> _logger;
 
-        public CityPopulationHandler(
+        public CityChannelPopulationHandler(
             IUnitOfWork unitOfWork,
-            ILogger<CityPopulationHandler> logger)
+            ILogger<CityChannelPopulationHandler> logger)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
