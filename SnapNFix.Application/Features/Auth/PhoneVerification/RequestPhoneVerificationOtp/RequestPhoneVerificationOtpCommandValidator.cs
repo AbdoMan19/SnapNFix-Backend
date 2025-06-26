@@ -11,7 +11,7 @@ public class RequestPhoneVerificationOtpCommandValidator : AbstractValidator<Req
     {
         RuleFor(x => x.PhoneNumber)
             .NotEmpty().WithMessage(Shared.PhoneRequired)
-            .Matches(@"^(\+20|0)?1[0125][0-9]{8}$").WithMessage(Shared.InvalidPhoneNumber)
+            .Matches(@"^01[0125][0-9]{8}$").WithMessage(Shared.InvalidPhoneNumber)
             .Must((command, phoneNumber) =>
             {
                 return !unitOfWork.Repository<User>().ExistsByName(u => u.PhoneNumber == phoneNumber);

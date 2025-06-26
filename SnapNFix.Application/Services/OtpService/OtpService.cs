@@ -51,7 +51,8 @@ public class OtpService : IOtpService
         if (IsPhoneNumber(emailOrPhoneNumber))
         {
             var message = CreateOtpMessage(otp, otpPurpose);
-            var smsSent = await _smsService.SendSmsAsync(emailOrPhoneNumber, message);
+            var phoneNumber = "+20" + emailOrPhoneNumber;
+            var smsSent = await _smsService.SendSmsAsync(phoneNumber, message);
             
             if (!smsSent)
             {
