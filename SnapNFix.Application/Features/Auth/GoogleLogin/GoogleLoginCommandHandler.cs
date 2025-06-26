@@ -65,15 +65,6 @@ public class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCommand, Gen
             _logger.LogInformation("Google token validated successfully for email {Email}", payload.Email);
 
             var user = await FindOrCreateUserAsync(payload);
-            if (user == null)
-            {
-                _logger.LogError("Failed to create or find user for Google login with email {Email}", payload.Email);
-                return GenericResponseModel<LoginResponse>.Failure(Shared.RegistrationFailed,
-                    new List<ErrorResponseModel>
-                    {
-                        ErrorResponseModel.Create("Authentication", Shared.EmailAlreadyRegistered)
-                    });
-            }
 
             if (user.IsDeleted)
             {
@@ -184,7 +175,7 @@ public class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCommand, Gen
         }
     }
 
-    private async Task<User?> FindOrCreateUserAsync(GoogleJsonWebSignature.Payload payload)
+    private async Task<User> FindOrCreateUserAsync(GoogleJsonWebSignature.Payload payload)
     {
         var existingUser = await _userManager.FindByEmailAsync(payload.Email);
         if (existingUser != null)
