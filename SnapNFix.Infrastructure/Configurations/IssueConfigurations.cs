@@ -71,28 +71,47 @@ public class IssueConfiguration : IEntityTypeConfiguration<Issue>
             .HasForeignKey(fr => fr.IssueId)
             .OnDelete(DeleteBehavior.SetNull);
 
-        // Indexes for performance
-        builder.HasIndex(i => i.Status);
-        builder.HasIndex(i => i.Category);
-        builder.HasIndex(i => i.City);
-        builder.HasIndex(i => i.State);
-        builder.HasIndex(i => i.Country);
-        builder.HasIndex(i => i.CreatedAt);
-        builder.HasIndex(i => i.Severity);
+        // OPTIMIZED INDEXES
         
-        // Spatial index for location
+        // Most critical indexes for dashboard and filtering
+        builder.HasIndex(i => i.Status)
+            .HasDatabaseName("IX_Issues_Status");
+
+        builder.HasIndex(i => i.CreatedAt)
+            .HasDatabaseName("IX_Issues_CreatedAt");
+
+        // Spatial index for location-based queries
         builder.HasIndex(i => i.Location)
-            .HasMethod("gist");
+            .HasMethod("gist")
+            .HasDatabaseName("IX_Issues_Location");
 
-        // Composite indexes for common queries
-        builder.HasIndex(i => new { i.Status, i.CreatedAt });
-        builder.HasIndex(i => new { i.Category, i.Status });
-        builder.HasIndex(i => new { i.City, i.Status });
+        // Composite indexes for common admin queries
+        
+        // Status + time filtering (dashboard metrics)
+        builder.HasIndex(i => new { i.Status, i.CreatedAt })
+            .HasDatabaseName("IX_Issues_Status_Created");
 
-        // Ignore computed property from database mapping
+        // Category + status filtering (statistics)
+        builder.HasIndex(i => new { i.Category, i.Status })
+            .HasDatabaseName("IX_Issues_Category_Status");
+
+        // Geographic analysis
+        builder.HasIndex(i => new { i.State, i.Status })
+            .HasDatabaseName("IX_Issues_State_Status")
+            .HasFilter("\"State\" IS NOT NULL AND \"State\" != ''");
+
+        // City-specific queries for city channels
+        builder.HasIndex(i => new { i.City, i.State, i.Status })
+            .HasDatabaseName("IX_Issues_City_State_Status")
+            .HasFilter("\"City\" IS NOT NULL AND \"State\" IS NOT NULL");
+
+        // Severity-based queries
+        builder.HasIndex(i => new { i.Severity, i.Status })
+            .HasDatabaseName("IX_Issues_Severity_Status");
+
+        // Ignore computed property
         builder.Ignore(i => i.FullAddress);
 
-        // Table name
         builder.ToTable("Issues");
     }
 }

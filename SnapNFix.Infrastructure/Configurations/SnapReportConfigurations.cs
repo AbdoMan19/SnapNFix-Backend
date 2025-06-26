@@ -8,10 +8,8 @@ public class SnapReportConfiguration : IEntityTypeConfiguration<SnapReport>
 {
     public void Configure(EntityTypeBuilder<SnapReport> builder)
     {
-        // Primary key
         builder.HasKey(sr => sr.Id);
 
-        // Basic properties
         builder.Property(sr => sr.Comment)
             .HasMaxLength(1000)
             .HasDefaultValue(string.Empty);
@@ -26,7 +24,6 @@ public class SnapReportConfiguration : IEntityTypeConfiguration<SnapReport>
         builder.Property(sr => sr.Threshold)
             .HasPrecision(5, 4);
 
-        // Enum properties
         builder.Property(sr => sr.ImageStatus)
             .IsRequired()
             .HasConversion<string>()
@@ -42,12 +39,10 @@ public class SnapReportConfiguration : IEntityTypeConfiguration<SnapReport>
             .HasConversion<string>()
             .HasDefaultValue(Domain.Enums.Severity.Low);
 
-        // Location property (PostGIS)
         builder.Property(sr => sr.Location) 
             .IsRequired()
             .HasColumnType("geometry (point, 4326)");
 
-        // Address properties
         builder.Property(sr => sr.Road)
             .HasMaxLength(200)
             .HasDefaultValue(string.Empty)
@@ -67,9 +62,7 @@ public class SnapReportConfiguration : IEntityTypeConfiguration<SnapReport>
             .HasMaxLength(100)
             .HasDefaultValue("Egypt")
             .IsRequired(false);
-        
 
-        // DateTime properties
         builder.Property(sr => sr.CreatedAt)
             .IsRequired()
             .HasDefaultValueSql("NOW()");
@@ -77,14 +70,12 @@ public class SnapReportConfiguration : IEntityTypeConfiguration<SnapReport>
         builder.Property(sr => sr.DeletedAt)
             .IsRequired(false);
 
-        // Foreign keys
         builder.Property(sr => sr.UserId)
             .IsRequired();
 
         builder.Property(sr => sr.IssueId)
             .IsRequired(false);
 
-        // Relationships
         builder.HasOne(sr => sr.User)
             .WithMany(u => u.SnapReports)
             .HasForeignKey(sr => sr.UserId)
@@ -95,38 +86,49 @@ public class SnapReportConfiguration : IEntityTypeConfiguration<SnapReport>
             .HasForeignKey(sr => sr.IssueId)
             .OnDelete(DeleteBehavior.SetNull);
 
-        // Indexes for performance
-        builder.HasIndex(sr => sr.UserId);
-        builder.HasIndex(sr => sr.IssueId);
-        builder.HasIndex(sr => sr.ImageStatus);
-        builder.HasIndex(sr => sr.ReportCategory);
-        builder.HasIndex(sr => sr.City);
-        builder.HasIndex(sr => sr.State);
-        builder.HasIndex(sr => sr.Country);
-        builder.HasIndex(sr => sr.CreatedAt);
-        builder.HasIndex(sr => sr.DeletedAt);
-        builder.HasIndex(sr => sr.Severity);
+        
+        builder.HasIndex(sr => sr.UserId)
+            .HasDatabaseName("IX_SnapReports_UserId");
 
-        // Spatial index for location
+        builder.HasIndex(sr => sr.IssueId)
+            .HasDatabaseName("IX_SnapReports_IssueId")
+            .HasFilter("\"IssueId\" IS NOT NULL");
+
         builder.HasIndex(sr => sr.Location)
-            .HasMethod("gist");
+            .HasMethod("gist")
+            .HasDatabaseName("IX_SnapReports_Location");
 
-        // Composite indexes for common filtering scenarios
-        builder.HasIndex(sr => new { sr.UserId, sr.CreatedAt });
-        builder.HasIndex(sr => new { sr.ImageStatus, sr.CreatedAt });
-        builder.HasIndex(sr => new { sr.ReportCategory, sr.ImageStatus });
-        builder.HasIndex(sr => new { sr.City, sr.ImageStatus });
-        builder.HasIndex(sr => new { sr.DeletedAt, sr.CreatedAt })
-            .HasFilter("\"DeletedAt\" IS NULL"); // Partial index for active reports
-        builder.HasIndex(sr => new { sr.IssueId, sr.CreatedAt });
+        builder.HasIndex(sr => sr.ImageStatus)
+            .HasDatabaseName("IX_SnapReports_ImageStatus");
+
+        builder.HasIndex(sr => sr.CreatedAt)
+            .HasDatabaseName("IX_SnapReports_CreatedAt");
+
+
+        builder.HasIndex(sr => new { sr.UserId, sr.ImageStatus, sr.CreatedAt })
+            .HasDatabaseName("IX_SnapReports_User_Status_Created");
+
+        builder.HasIndex(sr => new { sr.IssueId, sr.CreatedAt })
+            .HasDatabaseName("IX_SnapReports_Issue_Created")
+            .HasFilter("\"IssueId\" IS NOT NULL");
+
+        builder.HasIndex(sr => new { sr.City, sr.ImageStatus })
+            .HasDatabaseName("IX_SnapReports_City_Status")
+            .HasFilter("\"City\" IS NOT NULL AND \"City\" != ''");
+
+        builder.HasIndex(sr => sr.TaskId)
+            .HasDatabaseName("IX_SnapReports_TaskId")
+            .IsUnique()
+            .HasFilter("\"TaskId\" IS NOT NULL");
 
         builder.HasIndex(sr => new { sr.UserId, sr.IssueId })
-            .IsUnique();
-        
-        // Ignore computed property from database mapping
+            .IsUnique()
+            .HasDatabaseName("IX_SnapReports_User_Issue_Unique")
+            .HasFilter("\"IssueId\" IS NOT NULL");
+
+        // Ignore computed property
         builder.Ignore(sr => sr.FullAddress);
 
-        // Table name
         builder.ToTable("SnapReports");
     }
 }
