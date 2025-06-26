@@ -32,7 +32,7 @@ public class GetAvailableCitiesChannelQueryHandler:
             }
 
             // Get all active cities
-            var query = _unitOfWork.Repository<CityChannel>()
+            var query = _unitOfWork.Repository<Domain.Entities.CityChannel>()
                 .GetQuerableData()
                 .Where(c => c.IsActive);
 
@@ -53,7 +53,7 @@ public class GetAvailableCitiesChannelQueryHandler:
                 .ToListAsync(cancellationToken);
 
             // Apply paging
-            var pagedCities = await PagedList<CityChannel>.CreateAsync(
+            var pagedCities = await PagedList<Domain.Entities.CityChannel>.CreateAsync(
                 query,
                 request.PageNumber,
                 request.PageSize,

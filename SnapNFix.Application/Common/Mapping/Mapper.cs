@@ -14,7 +14,7 @@ public class Mapper : IRegister
     public void Register(TypeAdapterConfig config)
     {
         config.NewConfig<LoginWithPhoneOrEmailCommand, UserDevice>();
-        
+
         // Add User to LoginResponse.UserInfo mapping
         TypeAdapterConfig<User, LoginResponse.UserInfo>
             .NewConfig()
@@ -44,7 +44,7 @@ public class Mapper : IRegister
             .Map(dest => dest.Category, src => src.ReportCategory.ToString())
             .Map(dest => dest.Status, src => src.Issue != null ? src.Issue.Status.ToString() : "Unknown")
             .Map(dest => dest.Severity, src => src.Issue != null ? src.Issue.Severity.ToString() : "Unspecified");
-        
+
 
         TypeAdapterConfig<Domain.Entities.Issue, IssueDetailsDto>
             .NewConfig()
@@ -64,5 +64,8 @@ public class Mapper : IRegister
             .NewConfig()
             .Map(dest => dest.Latitude, src => src.Location != null ? src.Location.Y : 0)
             .Map(dest => dest.Longitude, src => src.Location != null ? src.Location.X : 0);
+            
+        config.NewConfig<HealthCondition, string>()
+        .Map(dest => dest, src => src.ToString());
     }
 }

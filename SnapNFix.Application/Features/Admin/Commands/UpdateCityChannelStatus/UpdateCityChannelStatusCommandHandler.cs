@@ -21,7 +21,7 @@ namespace SnapNFix.Application.Features.Admin.Commands.UpdateCityChannelStatus
         public async Task<GenericResponseModel<bool>> Handle(
             UpdateCityChannelStatusCommand request, CancellationToken cancellationToken)
         {
-            var cityRepo = _unitOfWork.Repository<CityChannel>();
+            var cityRepo = _unitOfWork.Repository<Domain.Entities.CityChannel>();
 
             var city = await cityRepo.FindBy(c => c.Id == request.CityId)
                 .FirstOrDefaultAsync(cancellationToken);
