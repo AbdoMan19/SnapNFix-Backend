@@ -5,7 +5,7 @@ using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
 
-namespace SnapNFix.Application.Features.Admin.Commands.UpdateCityChannelStatus
+namespace SnapNFix.Application.Features.CityChannel.Commands.UpdateCityChannelStatus
 {
     public class UpdateCityChannelStatusCommandHandler : IRequestHandler<UpdateCityChannelStatusCommand, GenericResponseModel<bool>>
     {

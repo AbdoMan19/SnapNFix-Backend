@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using SnapNFix.API.Models;
 using SnapNFix.Application.Common.Models;
 using SnapNFix.Application.Common.ResponseModel;
-using SnapNFix.Application.Features.Admin.Commands.UpdateCityChannelStatus;
 using SnapNFix.Application.Features.Admin.DTOs;
 using SnapNFix.Application.Features.Admin.Queries.GetCitiesChannel;
+using SnapNFix.Application.Features.CityChannel.Commands.UpdateCityChannelStatus;
 
 namespace SnapNFix.API.Controllers
 {
