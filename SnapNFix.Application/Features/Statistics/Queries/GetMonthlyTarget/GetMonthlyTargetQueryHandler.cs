@@ -98,7 +98,8 @@ public class GetMonthlyTargetQueryHandler : IRequestHandler<GetMonthlyTargetQuer
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving monthly target");
-            return GenericResponseModel<MonthlyTargetDto>.Failure(Shared.OperationFailed);
+            return GenericResponseModel<MonthlyTargetDto>.Failure(Shared.OperationFailed,
+                new List<ErrorResponseModel> { new ErrorResponseModel { Message = ex.Message } });
         }
     }
 }

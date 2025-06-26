@@ -33,7 +33,11 @@ public class ResendPhoneVerificationOtpCommandHandler : IRequestHandler<ResendPh
         if (string.IsNullOrEmpty(contactClaim))
         {
             _logger.LogWarning("Contact number not found in the request token");
-            return GenericResponseModel<bool>.Failure(Shared.ContactNotFound);
+            return GenericResponseModel<bool>.Failure(Shared.ContactNotFound,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(contactClaim), Shared.ContactNotFound)
+                });
         }
 
         try
@@ -51,7 +55,7 @@ public class ResendPhoneVerificationOtpCommandHandler : IRequestHandler<ResendPh
                 Shared.OperationFailed,
                 new List<ErrorResponseModel>
                 {
-                    ErrorResponseModel.Create(nameof(contactClaim), "Failed to resend verification code. Please try again.")
+                    ErrorResponseModel.Create(nameof(contactClaim), Shared.OtpFailedToSend)
                 });
         }
     }

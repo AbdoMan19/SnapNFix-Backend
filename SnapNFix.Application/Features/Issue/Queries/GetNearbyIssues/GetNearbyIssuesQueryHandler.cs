@@ -29,7 +29,14 @@ public class GetNearbyIssuesQueryHandler :
             request.NorthEastLng <= request.SouthWestLng)
         {
             return GenericResponseModel<List<NearbyIssueDto>>.Failure(
-                Shared.InvalidCoordinates);
+                Shared.InvalidCoordinates,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(request.NorthEastLat), Shared.InvalidCoordinates),
+                    ErrorResponseModel.Create(nameof(request.NorthEastLng), Shared.InvalidCoordinates),
+                    ErrorResponseModel.Create(nameof(request.SouthWestLat), Shared.InvalidCoordinates),
+                    ErrorResponseModel.Create(nameof(request.SouthWestLng), Shared.InvalidCoordinates)
+                });
         }
 
         var cacheKey = CacheKeys.NearbyIssues(request.NorthEastLat, request.NorthEastLng, request.SouthWestLat, request.SouthWestLng);

@@ -59,10 +59,10 @@ public class UpdateAdminProfileCommandHandler : IRequestHandler<UpdateAdminProfi
             {
                 _logger.LogWarning("User {UserId} attempted to update admin profile without admin privileges", currentUserId);
                 return GenericResponseModel<bool>.Failure(
-                    "Access denied. Admin or SuperAdmin role required.",
+                    Shared.AccessDenied,
                     new List<ErrorResponseModel>
                     {
-                        ErrorResponseModel.Create("Authorization", "Insufficient privileges")
+                        ErrorResponseModel.Create("Authorization", Shared.AccessDenied)
                     });
             }
 

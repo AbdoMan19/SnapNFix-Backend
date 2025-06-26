@@ -45,7 +45,9 @@ public class GetStatisticsQueryHandler : IRequestHandler<GetStatisticsQuery, Gen
             if (metricsResult.ErrorList.Count > 0 || monthlyTargetResult.ErrorList.Count > 0)
             {
                 _logger.LogError("Error retrieving statistics components");
-                return GenericResponseModel<StatisticsDto>.Failure(Shared.OperationFailed);
+                return GenericResponseModel<StatisticsDto>.Failure(Shared.OperationFailed,
+                    metricsResult.ErrorList.Concat(monthlyTargetResult.ErrorList).ToList()
+                    );
             }
 
             var statistics = new StatisticsDto
@@ -62,7 +64,11 @@ public class GetStatisticsQueryHandler : IRequestHandler<GetStatisticsQuery, Gen
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving statistics");
-            return GenericResponseModel<StatisticsDto>.Failure(Shared.OperationFailed);
+            return GenericResponseModel<StatisticsDto>.Failure(Shared.OperationFailed,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(ex), Shared.OperationFailed)
+                });
         }
     }
 }

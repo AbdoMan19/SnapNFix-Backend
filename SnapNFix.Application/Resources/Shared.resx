@@ -564,4 +564,27 @@
     <data name="InvalidUserType" xml:space="preserve">
         <value>Invalid user role</value>
     </data>
+
+    <data name="AdminUserCannotBeDeleted" xml:space="preserve">
+        <value>Admin user cannot be deleted</value>
+    </data>
+    <data name="AdminCannotBeSuspended" xml:space="preserve">
+        <value>Admin account cannot be suspended</value>
+    </data>
+    <data name="OtpFailedToSend" xml:space="preserve">
+        <value>Failed to send OTP</value>
+    </data>
+    <data name="CityNotFound" xml:space="preserve">
+        <value>City not found</value>
+    </data>
+    <data name="FailedToUpdateCity" xml:space="preserve">
+        <value>Failed to update city</value>
+    </data>
+    <data name="CityNotAvailableForSubscription" xml:space="preserve">
+        <value>City not available for subscription</value>
+    </data>
+    <data name="UserNotAuthenticated" xml:space="preserve">
+        <value>User not authenticated</value>
+    </data>
+
 </root>

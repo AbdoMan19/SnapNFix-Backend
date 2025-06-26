@@ -569,4 +569,27 @@
     <data name="InvalidUserType" xml:space="preserve">
         <value>نوع المستخدم غير صالح</value>
     </data>
+
+    <data name="AdminUserCannotBeDeleted" xml:space="preserve">
+        <value>لا يمكن حذف المستخدم الأدمن</value>
+    </data>
+    <data name="AdminCannotBeSuspended" xml:space="preserve">
+        <value>لا يمكن تعليق حساب الأدمن</value>
+    </data>
+    <data name="OtpFailedToSend" xml:space="preserve">
+        <value>فشل في إرسال رمز التحقق</value>
+    </data>
+    <data name="CityNotFound" xml:space="preserve">
+        <value>لم يتم العثور على المدينة</value>
+    </data>
+    <data name="FailedToUpdateCity" xml:space="preserve">
+        <value>فشل في تحديث بيانات المدينة</value>
+    </data>
+    <data name="CityNotAvailableForSubscription" xml:space="preserve">
+        <value>المدينة غير متاحة للاشتراك</value>
+    </data>
+    <data name="UserNotAuthenticated" xml:space="preserve">
+        <value>المستخدم غير مصادق عليه</value>
+    </data>
+
 </root>

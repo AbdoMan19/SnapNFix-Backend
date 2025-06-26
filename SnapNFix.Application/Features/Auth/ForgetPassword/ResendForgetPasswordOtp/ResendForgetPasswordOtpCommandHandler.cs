@@ -40,7 +40,11 @@ public class ResendForgetPasswordOtpCommandHandler : IRequestHandler<ResendForge
         if (string.IsNullOrEmpty(contactClaim))
         {
             _logger.LogWarning("Contact number not found in the request");
-            return GenericResponseModel<bool>.Failure(Shared.ContactNotFound);
+            return GenericResponseModel<bool>.Failure(Shared.ContactNotFound,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(contactClaim), Shared.ContactNotFound)
+                });
         }
 
         try
@@ -58,7 +62,7 @@ public class ResendForgetPasswordOtpCommandHandler : IRequestHandler<ResendForge
                 Shared.OperationFailed,
                 new List<ErrorResponseModel>
                 {
-                    ErrorResponseModel.Create(nameof(contactClaim), "Failed to resend password reset code. Please try again.")
+                    ErrorResponseModel.Create(nameof(contactClaim), Shared.OperationFailed)
                 });
         }
     }

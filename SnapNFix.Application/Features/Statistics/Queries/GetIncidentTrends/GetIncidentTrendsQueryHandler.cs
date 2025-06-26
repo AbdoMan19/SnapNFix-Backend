@@ -53,7 +53,11 @@ public class GetIncidentTrendsQueryHandler : IRequestHandler<GetIncidentTrendsQu
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving incident trends for interval {Interval}", request.Interval);
-            return GenericResponseModel<List<IncidentTrendDto>>.Failure(Shared.OperationFailed);
+            return GenericResponseModel<List<IncidentTrendDto>>.Failure(Shared.OperationFailed,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create("Interval", Shared.OperationFailed)
+                });
         }
     }
 

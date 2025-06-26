@@ -32,7 +32,11 @@ public class GetUserReportsStatisticsQueryHandler : IRequestHandler<GetUserRepor
         if (userId == Guid.Empty)
         {
             _logger.LogWarning("Failed to get current user ID");
-            return GenericResponseModel<UserReportsStatisticsDto>.Failure(Shared.UserNotFound);
+            return GenericResponseModel<UserReportsStatisticsDto>.Failure(Shared.UserNotFound,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(userId), Shared.UserNotFound)
+                });
         }
         
         try
@@ -65,7 +69,11 @@ public class GetUserReportsStatisticsQueryHandler : IRequestHandler<GetUserRepor
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving report counts for user {UserId}", userId);
-            return GenericResponseModel<UserReportsStatisticsDto>.Failure(Shared.OperationFailed);
+            return GenericResponseModel<UserReportsStatisticsDto>.Failure(Shared.OperationFailed,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(userId), Shared.OperationFailed)
+                });
         }
     }
 }

@@ -55,7 +55,11 @@ public class RequestForgetPasswordOtpCommandHandler : IRequestHandler<RequestFor
         {
             _logger.LogError(ex, "Error processing forgot password request for {EmailOrPhone}", 
                 request.EmailOrPhoneNumber);
-            return GenericResponseModel<string>.Failure(Shared.UnexpectedError);
+            return GenericResponseModel<string>.Failure(Shared.UnexpectedError,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(request.EmailOrPhoneNumber), Shared.UnexpectedError)
+                });
         }
     }
 }

@@ -89,7 +89,11 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, G
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unhandled exception during token refresh");
-            return GenericResponseModel<AuthResponse>.Failure(Shared.OperationFailed);
+            return GenericResponseModel<AuthResponse>.Failure(Shared.OperationFailed,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create("server.error", ex.Message)
+                });
         }
     }
 }

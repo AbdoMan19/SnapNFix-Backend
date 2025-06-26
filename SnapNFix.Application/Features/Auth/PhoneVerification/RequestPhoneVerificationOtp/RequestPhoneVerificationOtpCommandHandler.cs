@@ -44,7 +44,7 @@ public class RequestPhoneVerificationOtpCommandHandler : IRequestHandler<Request
                 Shared.OperationFailed,
                 new List<ErrorResponseModel>
                 {
-                    ErrorResponseModel.Create(nameof(request.PhoneNumber), "Failed to send verification code. Please try again.")
+                    ErrorResponseModel.Create(nameof(request.PhoneNumber), Shared.OtpFailedToSend)
                 });
         }
     }

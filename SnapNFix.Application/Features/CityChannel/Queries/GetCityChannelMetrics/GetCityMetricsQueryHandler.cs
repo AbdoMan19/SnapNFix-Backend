@@ -48,10 +48,10 @@ public class GetCityChannelMetricsQueryHandler : IRequestHandler<GetCityChannelM
             if (cityChannel == null)
             {
                 return GenericResponseModel<CityMetricsDto>.Failure(
-                    "City not found",
+                    Shared.CityNotFound,
                     new List<ErrorResponseModel>
                     {
-                        ErrorResponseModel.Create(nameof(request.CityId), "City with the provided ID does not exist.")
+                        ErrorResponseModel.Create(nameof(request.CityId), Shared.CityNotFound)
                     });
             }
             
@@ -112,7 +112,11 @@ public class GetCityChannelMetricsQueryHandler : IRequestHandler<GetCityChannelM
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving city metrics for {CityId}", request.CityId);
-            return GenericResponseModel<CityMetricsDto>.Failure(Shared.OperationFailed);
+            return GenericResponseModel<CityMetricsDto>.Failure(Shared.OperationFailed,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(request.CityId), Shared.OperationFailed)
+                });
         }
     }
 }

@@ -62,7 +62,11 @@ public class GetGeographicDistributionQueryHandler : IRequestHandler<GetGeograph
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving geographic distribution");
-            return GenericResponseModel<List<GeographicDistributionDto>>.Failure(Shared.OperationFailed);
+            return GenericResponseModel<List<GeographicDistributionDto>>.Failure(Shared.OperationFailed,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(ex), Shared.OperationFailed)
+                });
         }
     }
 }
