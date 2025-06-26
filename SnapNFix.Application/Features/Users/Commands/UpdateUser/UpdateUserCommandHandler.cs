@@ -33,15 +33,19 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand , Gene
             var user = await _unitOfWork.Repository<User>()
                 .FindBy(u => u.Id == userId)
                 .FirstOrDefaultAsync(cancellationToken);
-                
+
             if (user == null)
             {
                 _logger.LogWarning("User with ID {UserId} not found", userId);
-                return GenericResponseModel<bool>.Failure(Shared.UserNotFound);
+                return GenericResponseModel<bool>.Failure(Shared.UserNotFound,
+                    new List<ErrorResponseModel>
+                    {
+                        ErrorResponseModel.Create(nameof(userId), Shared.UserNotFound)
+                    });
             }
 
             await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
-            
+
             try
             {
                 bool hasChanges = false;
@@ -91,13 +95,21 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand , Gene
             {
                 await transaction.RollbackAsync(cancellationToken);
                 _logger.LogError(ex, "Error updating user with ID {UserId}", userId);
-                return GenericResponseModel<bool>.Failure(Shared.OperationFailed);
+                return GenericResponseModel<bool>.Failure(Shared.OperationFailed,
+                    new List<ErrorResponseModel>
+                    {
+                        ErrorResponseModel.Create(nameof(userId), Shared.OperationFailed)
+                    });
             }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unexpected error in updating user");
-            return GenericResponseModel<bool>.Failure(Shared.OperationFailed);
+            return GenericResponseModel<bool>.Failure(Shared.OperationFailed,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(request), Shared.OperationFailed)
+                });
         }
     }
 

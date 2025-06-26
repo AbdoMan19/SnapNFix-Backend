@@ -55,7 +55,11 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
             if (report == null)
             {
                 _logger.LogWarning("Report not found for TaskId: {TaskId}", request.TaskId);
-                return GenericResponseModel<bool>.Failure(Shared.ReportNotFound);
+                return GenericResponseModel<bool>.Failure(Shared.ReportNotFound,
+                    new List<ErrorResponseModel>
+                    {
+                        ErrorResponseModel.Create(nameof(request.TaskId), Shared.ReportNotFound)
+                    });
             }
 
             _logger.LogInformation("Found report {ReportId} for TaskId: {TaskId}. Current status: {CurrentStatus}",
@@ -65,7 +69,11 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
             {
                 _logger.LogWarning("Report {ReportId} with TaskId: {TaskId} is not in pending status. Current status: {CurrentStatus}",
                     report.Id, request.TaskId, report.ImageStatus);
-                return GenericResponseModel<bool>.Failure(Shared.ValidationError);
+                return GenericResponseModel<bool>.Failure(Shared.ValidationError,
+                    new List<ErrorResponseModel>
+                    {
+                        ErrorResponseModel.Create(nameof(request.TaskId), Shared.ValidationError)
+                    });
             }
 
             var oldStatus = report.ImageStatus;
@@ -133,7 +141,11 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
         {
             await transaction.RollbackAsync(cancellationToken);
             _logger.LogError(ex, "Concurrency conflict while processing AI validation result for TaskId: {TaskId}", request.TaskId);
-            return GenericResponseModel<bool>.Failure(Shared.OperationFailed);
+            return GenericResponseModel<bool>.Failure(Shared.OperationFailed,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(request.TaskId), Shared.OperationFailed)
+                });
         }
         catch (DbUpdateException ex)
         {
@@ -157,13 +169,21 @@ public class ImageValidationResultCommandHandler : IRequestHandler<ImageValidati
                 _logger.LogError(updateEx, "Failed to set report status to Declined after DbUpdateException for TaskId: {TaskId}", request.TaskId);
             }
 
-            return GenericResponseModel<bool>.Failure(Shared.OperationFailed);
+            return GenericResponseModel<bool>.Failure(Shared.OperationFailed,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(request.TaskId), Shared.OperationFailed)
+                });
         }
         catch (Exception ex)
         {
             await transaction.RollbackAsync(cancellationToken);
             _logger.LogError(ex, "Unexpected error processing AI validation result for TaskId: {TaskId}", request.TaskId);
-            return GenericResponseModel<bool>.Failure(Shared.UnexpectedError);
+            return GenericResponseModel<bool>.Failure(Shared.UnexpectedError,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(request.TaskId), Shared.UnexpectedError)
+                });
         }
     }
 }

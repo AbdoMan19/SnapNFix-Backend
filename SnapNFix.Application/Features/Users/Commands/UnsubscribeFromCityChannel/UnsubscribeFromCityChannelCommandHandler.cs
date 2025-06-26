@@ -34,7 +34,11 @@ namespace SnapNFix.Application.Features.Users.Commands.UnsubscribeFromCityChanne
             var currentUserId = await _userService.GetCurrentUserIdAsync();
             if (currentUserId == Guid.Empty)
             {
-                return GenericResponseModel<bool>.Failure("User not authenticated");
+                return GenericResponseModel<bool>.Failure("User not authenticated",
+                    new List<ErrorResponseModel>
+                    {
+                        ErrorResponseModel.Create(nameof(currentUserId), "User not authenticated")
+                    });
             }
 
             // Get city info
@@ -44,7 +48,11 @@ namespace SnapNFix.Application.Features.Users.Commands.UnsubscribeFromCityChanne
 
             if (city == null)
             {
-                return GenericResponseModel<bool>.Failure("City not found");
+                return GenericResponseModel<bool>.Failure("City not found",
+                    new List<ErrorResponseModel>
+                    {
+                        ErrorResponseModel.Create(nameof(request.CityId), "City not found")
+                    });
             }
 
             // Get subscription

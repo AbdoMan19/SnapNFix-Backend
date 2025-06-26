@@ -111,7 +111,11 @@ public class RegisterAdminCommandHandler : IRequestHandler<RegisterAdminCommand,
         {
             await transaction.RollbackAsync(cancellationToken);
             _logger.LogError(ex, "Admin registration failed with error for email {Email}", request.Email);
-            return GenericResponseModel<AdminRegistrationResponse>.Failure(Shared.UnexpectedError);
+            return GenericResponseModel<AdminRegistrationResponse>.Failure(Shared.UnexpectedError,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(request.Email), Shared.UnexpectedError)
+                });
         }
     }
 }

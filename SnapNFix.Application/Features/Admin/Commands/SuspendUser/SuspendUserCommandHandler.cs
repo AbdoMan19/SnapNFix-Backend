@@ -109,7 +109,11 @@ public class SuspendUserQueryHandler : IRequestHandler<SuspendUserQuery, Generic
         {
             await transaction.RollbackAsync(cancellationToken);
             _logger.LogError(ex, "Error processing user suspension for UserId: {UserId}", request.UserId);
-            return GenericResponseModel<bool>.Failure(Shared.OperationFailed);
+            return GenericResponseModel<bool>.Failure(Shared.OperationFailed,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(request.UserId), Shared.OperationFailed)
+                });
         }
     }
 }

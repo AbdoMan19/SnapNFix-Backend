@@ -77,7 +77,11 @@ public class AdminController : ControllerBase
         if (userId == Guid.Empty)
         {
             _logger.LogWarning("Invalid user ID received: {UserId}", userId);
-            return BadRequest(GenericResponseModel<bool>.Failure("Invalid user ID"));
+            return BadRequest(GenericResponseModel<bool>.Failure(Shared.UserNotFound,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(userId), Shared.UserNotFound)
+                }));
         }
 
         var command = new SuspendUserQuery
@@ -103,7 +107,11 @@ public class AdminController : ControllerBase
         if (userId == Guid.Empty)
         {
             _logger.LogWarning("Invalid user ID received: {UserId}", userId);
-            return BadRequest(GenericResponseModel<bool>.Failure(Shared.UserNotFound));
+            return BadRequest(GenericResponseModel<bool>.Failure(Shared.UserNotFound,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(userId), Shared.UserNotFound)
+                }));
         }
 
         var command = new DeleteUserQuery { UserId = userId };

@@ -52,7 +52,11 @@ namespace SnapNFix.Application.Features.Admin.Commands.UpdateCityChannelStatus
             {
                 await transaction.RollbackAsync(cancellationToken);
                 _logger.LogError(ex, "Failed to update city {CityId} status", request.CityId);
-                return GenericResponseModel<bool>.Failure($"Failed to update city status: {ex.Message}");
+                return GenericResponseModel<bool>.Failure($"Failed to update city status: {ex.Message}",
+                    new List<ErrorResponseModel>
+                    {
+                        ErrorResponseModel.Create(nameof(request.CityId), "Failed to update city status")
+                    });
             }
         }
     }
