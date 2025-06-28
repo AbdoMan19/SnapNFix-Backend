@@ -118,7 +118,7 @@ public class AdminController : ControllerBase
         var result = await _mediator.Send(command);
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
-    
+
     [HttpPut("profile")]
     [Authorize(Roles = "Admin,SuperAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -127,10 +127,31 @@ public class AdminController : ControllerBase
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<GenericResponseModel<bool>>> UpdateProfile([FromBody] UpdateAdminProfileCommand command)
     {
-        _logger.LogInformation("Admin profile update request received for user {UserId}", 
+        _logger.LogInformation("Admin profile update request received for user {UserId}",
             User.FindFirstValue(ClaimTypes.NameIdentifier));
 
         var result = await _mediator.Send(command);
+        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
+    }
+    
+    [HttpPost("target")]
+    [Authorize(Roles = "SuperAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<GenericResponseModel<bool>>> SetTarget([FromBody] SetTargetCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
+    }
+
+    [HttpGet("target")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<GenericResponseModel<double>>> GetCurrentTarget()
+    {
+        var result = await _mediator.Send(new GetCurrentTargetQuery());
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
 
