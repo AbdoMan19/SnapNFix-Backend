@@ -592,4 +592,12 @@
         <value>المستخدم غير مصادق عليه</value>
     </data>
 
+
+    <data name="FastReportAlreadyExists" xml:space="preserve">
+        <value>لقد قمت بإنشاء تقرير سريع لهذه المشكلة من قبل</value>
+    </data>
+    <data name="CannotCreateFastReportForOwnSnapReport" xml:space="preserve">
+        <value>لا يمكنك إنشاء تقرير سريع لمشكلة قمت بالإبلاغ عنها بالفعل</value>
+    </data>
+
 </root>

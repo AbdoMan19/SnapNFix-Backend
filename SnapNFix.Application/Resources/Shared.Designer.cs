@@ -1145,5 +1145,22 @@ namespace SnapNFix.Application.Resources {
                 return ResourceManager.GetString("UserNotAuthenticated", resourceCulture);
             }
         }
+
+        public static string CannotCreateFastReportForOwnSnapReport
+        {
+            get
+            {
+                return ResourceManager.GetString("CannotCreateFastReportForOwnSnapReport", resourceCulture);
+            }
+        }
+
+        public static string FastReportAlreadyExists
+        {
+            get
+            {
+                return ResourceManager.GetString("FastReportAlreadyExists", resourceCulture);
+            }
+        }
+
     }
 }

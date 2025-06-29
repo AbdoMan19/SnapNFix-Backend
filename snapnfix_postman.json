@@ -1,0 +1,1482 @@
+{
+	"info": {
+		"name": "SnapNFix API",
+		"description": "Complete API collection for SnapNFix application - A civic reporting platform for infrastructure issues",
+		"version": "1.0.0",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://localhost:7129",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refresh_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "device_id",
+			"value": "postman-device-{{$randomUUID}}",
+			"type": "string"
+		},
+		{
+			"key": "phone_verification_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "registration_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "password_reset_token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Phone Verification - Request OTP",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"phoneNumber\": \"01012345678\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/verify-phone/request-otp",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "verify-phone", "request-otp"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data) {",
+									"        pm.environment.set('phone_verification_token', response.data);",
+									"    }",
+									"}"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Phone Verification - Verify OTP",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{phone_verification_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"otp\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/verify-phone/verify-otp",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "verify-phone", "verify-otp"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data) {",
+									"        pm.environment.set('registration_token', response.data);",
+									"    }",
+									"}"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Phone Verification - Resend OTP",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{phone_verification_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/verify-phone/resend-otp",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "verify-phone", "resend-otp"]
+						}
+					}
+				},
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{registration_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"password\": \"Password@123\",\n  \"confirmPassword\": \"Password@123\",\n  \"deviceId\": \"{{device_id}}\",\n  \"deviceName\": \"Postman Client\",\n  \"deviceType\": \"Web\",\n  \"platform\": \"Postman\",\n  \"fcmToken\": \"postman-fcm-token\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "register"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.tokens) {",
+									"        pm.environment.set('access_token', response.data.tokens.token);",
+									"        pm.environment.set('refresh_token', response.data.tokens.refreshToken);",
+									"    }",
+									"}"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Login with Phone/Email",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"emailOrPhoneNumber\": \"01012345678\",\n  \"password\": \"Password@123\",\n  \"deviceId\": \"{{device_id}}\",\n  \"deviceName\": \"Postman Client\",\n  \"deviceType\": \"Web\",\n  \"platform\": \"Postman\",\n  \"fcmToken\": \"postman-fcm-token\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "login"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.tokens) {",
+									"        pm.environment.set('access_token', response.data.tokens.token);",
+									"        pm.environment.set('refresh_token', response.data.tokens.refreshToken);",
+									"    }",
+									"}"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Google Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idToken\": \"google_id_token_here\",\n  \"deviceId\": \"{{device_id}}\",\n  \"deviceName\": \"Postman Client\",\n  \"deviceType\": \"Web\",\n  \"platform\": \"Postman\",\n  \"fcmToken\": \"postman-fcm-token\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/google/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "google", "login"]
+						}
+					}
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/refresh-token",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "refresh-token"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data) {",
+									"        pm.environment.set('access_token', response.data.token);",
+									"        pm.environment.set('refresh_token', response.data.refreshToken);",
+									"    }",
+									"}"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/logout",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "logout"]
+						}
+					}
+				},
+				{
+					"name": "Forgot Password - Request OTP",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"emailOrPhoneNumber\": \"01012345678\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/forget-password/request-otp",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "forget-password", "request-otp"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data) {",
+									"        pm.environment.set('password_reset_token', response.data);",
+									"    }",
+									"}"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Forgot Password - Verify OTP",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{password_reset_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"otp\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/forget-password/verify-otp",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "forget-password", "verify-otp"]
+						}
+					}
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{password_reset_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"newPassword\": \"NewPassword@123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/forget-password/reset",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "forget-password", "reset"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Citizen Profile",
+			"item": [
+				{
+					"name": "Update Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"John Updated\",\n  \"lastName\": \"Doe Updated\",\n  \"gender\": \"Male\",\n  \"birthDate\": \"1990-01-15\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/citizen/profile",
+							"host": ["{{base_url}}"],
+							"path": ["api", "citizen", "profile"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Snap Reports",
+			"item": [
+				{
+					"name": "Create Snap Report",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "comment",
+									"value": "Large pothole on main street causing traffic issues",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "latitude",
+									"value": "30.0444",
+									"type": "text"
+								},
+								{
+									"key": "longitude",
+									"value": "31.2357",
+									"type": "text"
+								},
+								{
+									"key": "severity",
+									"value": "High",
+									"type": "text"
+								},
+								{
+									"key": "road",
+									"value": "Main Street",
+									"type": "text"
+								},
+								{
+									"key": "city",
+									"value": "Cairo",
+									"type": "text"
+								},
+								{
+									"key": "state",
+									"value": "Cairo Governorate",
+									"type": "text"
+								},
+								{
+									"key": "country",
+									"value": "Egypt",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/snapreports/create",
+							"host": ["{{base_url}}"],
+							"path": ["api", "snapreports", "create"]
+						}
+					}
+				},
+				{
+					"name": "Get My Reports",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/snapreports/my-reports?pageNumber=1&pageSize=10&status=Pending&category=Pothole",
+							"host": ["{{base_url}}"],
+							"path": ["api", "snapreports", "my-reports"],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								},
+								{
+									"key": "status",
+									"value": "Pending"
+								},
+								{
+									"key": "category",
+									"value": "Pothole"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Report Statistics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/snapreports/statistics",
+							"host": ["{{base_url}}"],
+							"path": ["api", "snapreports", "statistics"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Fast Reports",
+			"item": [
+				{
+					"name": "Create Fast Report",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"issueId\": \"{{$randomUUID}}\",\n  \"comment\": \"This pothole is getting worse and needs immediate attention\",\n  \"severity\": \"High\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/fastreport/create",
+							"host": ["{{base_url}}"],
+							"path": ["api", "fastreport", "create"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Issues",
+			"item": [
+				{
+					"name": "Get Nearby Issues",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/issue/get-nearby-issues?northEastLat=30.1&northEastLng=31.3&southWestLat=29.9&southWestLng=31.1&maxResults=50",
+							"host": ["{{base_url}}"],
+							"path": ["api", "issue", "get-nearby-issues"],
+							"query": [
+								{
+									"key": "northEastLat",
+									"value": "30.1"
+								},
+								{
+									"key": "northEastLng",
+									"value": "31.3"
+								},
+								{
+									"key": "southWestLat",
+									"value": "29.9"
+								},
+								{
+									"key": "southWestLng",
+									"value": "31.1"
+								},
+								{
+									"key": "maxResults",
+									"value": "50"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Issue by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/issue/{{$randomUUID}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "issue", "{{$randomUUID}}"]
+						}
+					}
+				},
+				{
+					"name": "Get Issues (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/issue/get-issues?status=Pending&category=Pothole&severity=High&pageNumber=1&pageSize=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "issue", "get-issues"],
+							"query": [
+								{
+									"key": "status",
+									"value": "Pending"
+								},
+								{
+									"key": "category",
+									"value": "Pothole"
+								},
+								{
+									"key": "severity",
+									"value": "High"
+								},
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Issue (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"InProgress\",\n  \"severity\": \"High\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/issue/{{$randomUUID}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "issue", "{{$randomUUID}}"]
+						}
+					}
+				},
+				{
+					"name": "Get Snap Reports by Issue ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/issue/{{$randomUUID}}/snapreports",
+							"host": ["{{base_url}}"],
+							"path": ["api", "issue", "{{$randomUUID}}", "snapreports"]
+						}
+					}
+				},
+				{
+					"name": "Get Fast Reports by Issue ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/issue/{{$randomUUID}}/fastreports?pageNumber=1&pageSize=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "issue", "{{$randomUUID}}", "fastreports"],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "City Channels",
+			"item": [
+				{
+					"name": "Get Available City Channels",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/city-channels/available?pageNumber=1&pageSize=20&searchTerm=Cairo",
+							"host": ["{{base_url}}"],
+							"path": ["api", "city-channels", "available"],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "20"
+								},
+								{
+									"key": "searchTerm",
+									"value": "Cairo"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Subscribed City Channels",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/city-channels/subscribed?pageNumber=1&pageSize=5",
+							"host": ["{{base_url}}"],
+							"path": ["api", "city-channels", "subscribed"],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "5"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Subscribe to City",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"cityId\": \"{{$randomUUID}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/city-channels/subscribe",
+							"host": ["{{base_url}}"],
+							"path": ["api", "city-channels", "subscribe"]
+						}
+					}
+				},
+				{
+					"name": "Unsubscribe from City",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/city-channels/subscribe/{{$randomUUID}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "city-channels", "subscribe", "{{$randomUUID}}"]
+						}
+					}
+				},
+				{
+					"name": "Get City Metrics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/city-channels/{{$randomUUID}}/metrics",
+							"host": ["{{base_url}}"],
+							"path": ["api", "city-channels", "{{$randomUUID}}", "metrics"]
+						}
+					}
+				},
+				{
+					"name": "Get City Issues",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/city-channels/{{$randomUUID}}/issues?status=Pending&pageNumber=1&pageSize=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "city-channels", "{{$randomUUID}}", "issues"],
+							"query": [
+								{
+									"key": "status",
+									"value": "Pending"
+								},
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Admin Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"superadmin@snapnfix.com\",\n  \"password\": \"SuperAdmin@123\",\n  \"deviceId\": \"{{device_id}}\",\n  \"deviceName\": \"Postman Admin\",\n  \"deviceType\": \"Web\",\n  \"platform\": \"Postman\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "login"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.tokens) {",
+									"        pm.environment.set('access_token', response.data.tokens.token);",
+									"        pm.environment.set('refresh_token', response.data.tokens.refreshToken);",
+									"    }",
+									"}"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Register Admin (SuperAdmin only)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Admin\",\n  \"lastName\": \"User\",\n  \"email\": \"admin@snapnfix.com\",\n  \"password\": \"AdminPassword@123\",\n  \"confirmPassword\": \"AdminPassword@123\",\n  \"deviceId\": \"{{device_id}}\",\n  \"deviceName\": \"Postman Admin\",\n  \"deviceType\": \"Web\",\n  \"platform\": \"Postman\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/register",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "register"]
+						}
+					}
+				},
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/admin/users?searchTerm=john&role=Citizen&pageNumber=1&pageSize=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "users"],
+							"query": [
+								{
+									"key": "searchTerm",
+									"value": "john"
+								},
+								{
+									"key": "role",
+									"value": "Citizen"
+								},
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Suspend User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"isSuspended\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/users/{{$randomUUID}}/suspend",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "users", "{{$randomUUID}}", "suspend"]
+						}
+					}
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/admin/users/{{$randomUUID}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "users", "{{$randomUUID}}"]
+						}
+					}
+				},
+				{
+					"name": "Update Admin Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Updated Admin\",\n  \"lastName\": \"Name\",\n  \"phoneNumber\": \"01087654321\",\n  \"birthDate\": \"1985-03-15\",\n  \"gender\": \"Male\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/profile",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "profile"]
+						}
+					}
+				},
+				{
+					"name": "Set Target",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"targetResolutionRate\": 95.0\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/target",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "target"]
+						}
+					}
+				},
+				{
+					"name": "Get Current Target",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/admin/target",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "target"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Admin City Channels",
+			"item": [
+				{
+					"name": "Get Cities Channel (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/admin/city-channels?pageNumber=1&pageSize=20&isActive=true&searchTerm=Cairo",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "city-channels"],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "20"
+								},
+								{
+									"key": "isActive",
+									"value": "true"
+								},
+								{
+									"key": "searchTerm",
+									"value": "Cairo"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update City Channel Status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"isActive\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/city-channels/{{$randomUUID}}/status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "city-channels", "{{$randomUUID}}", "status"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Statistics",
+			"item": [
+				{
+					"name": "Get Dashboard Summary",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/statistics/dashboard-summary",
+							"host": ["{{base_url}}"],
+							"path": ["api", "statistics", "dashboard-summary"]
+						}
+					}
+				},
+				{
+					"name": "Get Metrics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/statistics/metrics",
+							"host": ["{{base_url}}"],
+							"path": ["api", "statistics", "metrics"]
+						}
+					}
+				},
+				{
+					"name": "Get Category Distribution",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/statistics/categories",
+							"host": ["{{base_url}}"],
+							"path": ["api", "statistics", "categories"]
+						}
+					}
+				},
+				{
+					"name": "Get Monthly Target",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/statistics/monthly-target",
+							"host": ["{{base_url}}"],
+							"path": ["api", "statistics", "monthly-target"]
+						}
+					}
+				},
+				{
+					"name": "Get Incident Trends",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/statistics/trends?interval=Monthly",
+							"host": ["{{base_url}}"],
+							"path": ["api", "statistics", "trends"],
+							"query": [
+								{
+									"key": "interval",
+									"value": "Monthly"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Geographic Distribution",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/statistics/geographic-distribution",
+							"host": ["{{base_url}}"],
+							"path": ["api", "statistics", "geographic-distribution"]
+						}
+					}
+				},
+				{
+					"name": "Get Full Statistics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/statistics/statistics",
+							"host": ["{{base_url}}"],
+							"path": ["api", "statistics", "statistics"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "AI Webhook",
+			"item": [
+				{
+					"name": "AI Validation Result Webhook",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "SNAPNFIX_API_KEY",
+								"value": "your_webhook_api_key_here"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"task_id\": \"task_{{$randomUUID}}\",\n  \"status\": \"completed\",\n  \"category\": \"pothole\",\n  \"threshold\": 0.85\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/aiwebhook/validation-result",
+							"host": ["{{base_url}}"],
+							"path": ["api", "aiwebhook", "validation-result"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Data Seeding (Development)",
+			"item": [
+				{
+					"name": "Seed Data",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/dataseeding/seed?users=50&reports=200",
+							"host": ["{{base_url}}"],
+							"path": ["api", "dataseeding", "seed"],
+							"query": [
+								{
+									"key": "users",
+									"value": "50"
+								},
+								{
+									"key": "reports",
+									"value": "200"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Seed Large Dataset",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/dataseeding/seed-large",
+							"host": ["{{base_url}}"],
+							"path": ["api", "dataseeding", "seed-large"]
+						}
+					}
+				},
+				{
+					"name": "Clear All Data",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/dataseeding/clear-all?confirm=true",
+							"host": ["{{base_url}}"],
+							"path": ["api", "dataseeding", "clear-all"],
+							"query": [
+								{
+									"key": "confirm",
+									"value": "true"
+								}
+							]
+						}
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Auto-refresh token if expired",
+					"const tokenExpiration = pm.environment.get('token_expires_at');",
+					"const refreshToken = pm.environment.get('refresh_token');",
+					"",
+					"if (tokenExpiration && refreshToken) {",
+					"    const now = new Date().getTime();",
+					"    const expirationTime = new Date(tokenExpiration).getTime();",
+					"    ",
+					"    // Refresh token 5 minutes before expiration",
+					"    if (now >= (expirationTime - 300000)) {",
+					"        pm.sendRequest({",
+					"            url: pm.environment.get('base_url') + '/api/auth/refresh-token',",
+					"            method: 'POST',",
+					"            header: {",
+					"                'Content-Type': 'application/json'",
+					"            },",
+					"            body: {",
+					"                mode: 'raw',",
+					"                raw: JSON.stringify({",
+					"                    refreshToken: refreshToken",
+					"                })",
+					"            }",
+					"        }, function (err, response) {",
+					"            if (response && response.code === 200) {",
+					"                const responseData = response.json();",
+					"                if (responseData.data) {",
+					"                    pm.environment.set('access_token', responseData.data.token);",
+					"                    pm.environment.set('refresh_token', responseData.data.refreshToken);",
+					"                    pm.environment.set('token_expires_at', responseData.data.expiresAt);",
+					"                }",
+					"            }",
+					"        });",
+					"    }",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Global test script for common validations",
+					"",
+					"// Test for successful responses",
+					"if (pm.response.code >= 200 && pm.response.code < 300) {",
+					"    pm.test('Status code is successful', function () {",
+					"        pm.expect(pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+					"    });",
+					"    ",
+					"    // Test response time",
+					"    pm.test('Response time is less than 5000ms', function () {",
+					"        pm.expect(pm.response.responseTime).to.be.below(5000);",
+					"    });",
+					"    ",
+					"    // Test content type for JSON responses",
+					"    if (pm.response.headers.get('Content-Type') && pm.response.headers.get('Content-Type').includes('application/json')) {",
+					"        pm.test('Response is valid JSON', function () {",
+					"            pm.response.to.have.jsonBody();",
+					"        });",
+					"    }",
+					"}",
+					"",
+					"// Test for error responses",
+					"if (pm.response.code >= 400) {",
+					"    pm.test('Error response has proper structure', function () {",
+					"        const response = pm.response.json();",
+					"        pm.expect(response).to.have.property('message');",
+					"        pm.expect(response).to.have.property('errorList');",
+					"    });",
+					"}"
+				]
+			}
+		}
+	]
+}

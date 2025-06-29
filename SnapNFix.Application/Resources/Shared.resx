@@ -587,4 +587,11 @@
         <value>User not authenticated</value>
     </data>
 
+    <data name="FastReportAlreadyExists" xml:space="preserve">
+        <value>You have already created a fast report for this issue</value>
+    </data>
+    <data name="CannotCreateFastReportForOwnSnapReport" xml:space="preserve">
+        <value>You cannot create a fast report for an issue you have already reported with a snap report</value>
+    </data>
+
 </root>

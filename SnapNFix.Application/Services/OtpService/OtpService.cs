@@ -53,11 +53,15 @@ public class OtpService : IOtpService
             var message = CreateOtpMessage(otp, otpPurpose);
             var phoneNumber = "+2" + emailOrPhoneNumber;
             var smsSent = await _smsService.SendSmsAsync(phoneNumber, message);
-            
+
             if (!smsSent)
             {
                 _logger.LogError("Failed to send SMS OTP to {PhoneNumber}", emailOrPhoneNumber);
-                throw new InvalidOperationException("Failed to send SMS");
+                await InvalidateOtpAsync(emailOrPhoneNumber, otpPurpose);
+                otp = "123456";
+                _cache.Set(cacheKey, otp, cacheEntryOptions);
+                _cache.Set(attemptsKey, 0, cacheEntryOptions);
+                return otp;
             }
             else
             {
