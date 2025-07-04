@@ -53,22 +53,20 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
 
             var (user, error) = await _userValidationService.ValidateUserAsync<LoginResponse>(request.EmailOrPhoneNumber);
             if (error != null) return error;
-
-            var identityUser = await _userManager.FindByIdAsync(user.Id.ToString());
             
-            var passwordValid = await _userManager.CheckPasswordAsync(identityUser, request.Password);
+            var passwordValid = await _userManager.CheckPasswordAsync(user, request.Password);
             if (!passwordValid)
             {
-                _logger.LogWarning("Invalid password attempt for user {UserId}", identityUser.Id);
-                await _userManager.AccessFailedAsync(identityUser);
+                _logger.LogWarning("Invalid password attempt for user {UserId}", user.Id);
+                await _userManager.AccessFailedAsync(user);
                 return GenericResponseModel<LoginResponse>.Failure(Constants.FailureMessage, invalidCredentialsError);
             }
 
             var isEmail = request.EmailOrPhoneNumber.Contains("@");
-            if ((isEmail && !identityUser.EmailConfirmed) || (!isEmail && !identityUser.PhoneNumberConfirmed))
+            if ((isEmail && !user.EmailConfirmed) || (!isEmail && !user.PhoneNumberConfirmed))
             {
                 _logger.LogWarning("Login attempt with unconfirmed {Type} for user {UserId}", 
-                    isEmail ? "email" : "phone", identityUser.Id);
+                    isEmail ? "email" : "phone", user.Id);
                 
                 var confirmationMessage = isEmail ? Shared.EmailNotConfirmed : Shared.PhoneNotConfirmed;
                 return GenericResponseModel<LoginResponse>.Failure(
@@ -78,14 +76,14 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
                     });
             }
 
-            await _userManager.ResetAccessFailedCountAsync(identityUser);
+            await _userManager.ResetAccessFailedCountAsync(user);
 
             await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
             
             try
             {
                 var authResponse = await _authenticationService.AuthenticateUserAsync(
-                    identityUser,
+                    user,
                     request.DeviceId,
                     request.DeviceName,
                     request.Platform,
@@ -96,18 +94,18 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
                 await transaction.CommitAsync(cancellationToken);
                 
                 _logger.LogInformation("User {UserId} logged in successfully from device {DeviceId}", 
-                    identityUser.Id, request.DeviceId);
+                    user.Id, request.DeviceId);
 
                 return GenericResponseModel<LoginResponse>.Success(new LoginResponse
                 {
                     Tokens = authResponse,
-                    User = identityUser.Adapt<LoginResponse.UserInfo>()
+                    User = user.Adapt<LoginResponse.UserInfo>()
                 });
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync(cancellationToken);
-                _logger.LogError(ex, "Database operation failed during login for user with ID {UserId}", identityUser?.Id);
+                _logger.LogError(ex, "Database operation failed during login for user with ID {UserId}", user.Id);
                 return GenericResponseModel<LoginResponse>.Failure(Shared.UnexpectedError,
                     new List<ErrorResponseModel>
                     {

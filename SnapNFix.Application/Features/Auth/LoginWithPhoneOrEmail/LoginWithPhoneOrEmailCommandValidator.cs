@@ -36,8 +36,8 @@ public class LoginWithPhoneOrEmailCommandValidator : AbstractValidator<LoginWith
             .NotEmpty()
             .WithMessage(Shared.PlatformRequired);
         RuleFor(x => x.FCMToken)
-            .NotEmpty()
-            .WithMessage(Shared.FCMTokenRequired);
+            .MaximumLength(200)
+            .WithMessage("Shared.FCMTokenMaxLength");
 
     }
     

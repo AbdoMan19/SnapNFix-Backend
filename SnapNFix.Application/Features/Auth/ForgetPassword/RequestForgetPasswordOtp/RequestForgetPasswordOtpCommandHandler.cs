@@ -44,7 +44,7 @@ public class RequestForgetPasswordOtpCommandHandler : IRequestHandler<RequestFor
             }
 
             await _otpService.InvalidateOtpAsync(request.EmailOrPhoneNumber, OtpPurpose.ForgotPassword);
-            var otp = await _otpService.GenerateOtpAsync(request.EmailOrPhoneNumber, OtpPurpose.ForgotPassword);
+            await _otpService.GenerateOtpAsync(request.EmailOrPhoneNumber, OtpPurpose.ForgotPassword);
 
             var resetRequestToken = _tokenService.GenerateToken(request.EmailOrPhoneNumber, TokenPurpose.PasswordResetVerification);
             
