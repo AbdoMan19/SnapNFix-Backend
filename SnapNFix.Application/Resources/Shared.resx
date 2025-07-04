@@ -593,5 +593,8 @@
     <data name="CannotCreateFastReportForOwnSnapReport" xml:space="preserve">
         <value>You cannot create a fast report for an issue you have already reported with a snap report</value>
     </data>
+    <data name="FCMTokenMaxLength" xml:space="preserve">
+        <value>FCMToken must not exceed 200 characters</value>
+    </data>
 
 </root>
