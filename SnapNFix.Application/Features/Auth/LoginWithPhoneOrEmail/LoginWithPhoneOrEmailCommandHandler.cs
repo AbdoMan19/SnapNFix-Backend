@@ -108,13 +108,21 @@ public class LoginWithPhoneOrEmailCommandHandler : IRequestHandler<LoginWithPhon
             {
                 await transaction.RollbackAsync(cancellationToken);
                 _logger.LogError(ex, "Database operation failed during login for user with ID {UserId}", identityUser?.Id);
-                return GenericResponseModel<LoginResponse>.Failure(Shared.UnexpectedError);
+                return GenericResponseModel<LoginResponse>.Failure(Shared.UnexpectedError,
+                    new List<ErrorResponseModel>
+                    {
+                        ErrorResponseModel.Create("Database", Shared.UnexpectedError)
+                    });
             }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Login failed for {EmailOrPhone}", request.EmailOrPhoneNumber);
-            return GenericResponseModel<LoginResponse>.Failure(Shared.UnexpectedError);
+            return GenericResponseModel<LoginResponse>.Failure(Shared.UnexpectedError,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(request.EmailOrPhoneNumber), Shared.UnexpectedError)
+                });
         }
     }
 }

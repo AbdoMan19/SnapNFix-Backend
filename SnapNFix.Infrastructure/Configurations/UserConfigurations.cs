@@ -21,19 +21,13 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.PhoneNumber)
             .IsRequired(false); 
             
-        builder.HasIndex(u => u.PhoneNumber)
-            .IsUnique()
-            .HasFilter("\"PhoneNumber\" IS NOT NULL");
-            
         builder.Property(u => u.Email)
             .IsRequired(false)
             .HasMaxLength(256);
 
-
         builder.Property(u => u.NormalizedEmail)
             .IsRequired(false)
             .HasMaxLength(256);
-
 
         builder.Property(u => u.CreatedAt)
             .IsRequired()
@@ -57,15 +51,26 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.BirthDate)
             .HasColumnType("date")
             .IsRequired(false);
-        
-        builder.HasIndex(u => new { u.FirstName, u.LastName });
-        builder.HasIndex(u => u.CreatedAt);
-        builder.HasIndex(u => u.IsDeleted);
-        builder.HasIndex(u => u.Gender);
-        builder.HasIndex(u => u.DeletedAt);
+
+        builder.HasIndex(u => u.PhoneNumber)
+            .IsUnique()
+            .HasDatabaseName("IX_Users_PhoneNumber")
+            .HasFilter("\"PhoneNumber\" IS NOT NULL");
+
+        builder.HasIndex(u => u.Email)
+            .HasDatabaseName("IX_Users_Email")
+            .HasFilter("\"Email\" IS NOT NULL");
+
+        builder.HasIndex(u => u.IsDeleted)
+            .HasDatabaseName("IX_Users_IsDeleted");
+
+        builder.HasIndex(u => new { u.IsDeleted, u.CreatedAt })
+            .HasDatabaseName("IX_Users_IsDeleted_Created");
+
         builder.HasIndex(u => new { u.FirstName, u.LastName })
-            .HasFilter("\"DeletedAt\" IS NULL");
-        
+            .HasDatabaseName("IX_Users_Name")
+            .HasFilter("\"IsDeleted\" = false");
+
         builder.HasMany(u => u.SnapReports)
             .WithOne(r => r.User)
             .HasForeignKey(r => r.UserId)
@@ -86,6 +91,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasForeignKey(s => s.UserId)
             .OnDelete(DeleteBehavior.Cascade);
         
-        builder.Ignore(sr => sr.FullName);
+        builder.Ignore(u => u.FullName);
+
+        builder.ToTable("Users");
     }
 }

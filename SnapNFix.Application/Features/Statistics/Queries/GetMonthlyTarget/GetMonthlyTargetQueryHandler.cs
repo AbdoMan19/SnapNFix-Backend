@@ -6,6 +6,8 @@ using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
 using SnapNFix.Application.Common.Interfaces;
+using SnapNFix.Domain.Entities;
+using Mapster;
 
 namespace SnapNFix.Application.Features.Statistics.Queries.GetMonthlyTarget;
 
@@ -31,14 +33,19 @@ public class GetMonthlyTargetQueryHandler : IRequestHandler<GetMonthlyTargetQuer
     {
         try
         {
-
             var cached = await _cacheService.GetAsync<MonthlyTargetDto>(CacheKeys.MonthlyTarget);
             if (cached != null)
             {
                 return GenericResponseModel<MonthlyTargetDto>.Success(cached);
             }
 
-            const double targetResolutionRate = 95.0;
+            // Get current target from database
+            var currentTarget = await _unitOfWork.Repository<AdminTarget>()
+                .FindBy(t => t.IsActive)
+                .OrderByDescending(t => t.CreatedAt)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            var targetResolutionRate = currentTarget?.TargetResolutionRate ?? 95.0;
 
             var now = DateTime.UtcNow;
             var startOfMonth = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -93,12 +100,14 @@ public class GetMonthlyTargetQueryHandler : IRequestHandler<GetMonthlyTargetQuer
             };
 
             await _cacheService.SetAsync(CacheKeys.MonthlyTarget, target, TimeSpan.FromMinutes(5));
+            
             return GenericResponseModel<MonthlyTargetDto>.Success(target);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving monthly target");
-            return GenericResponseModel<MonthlyTargetDto>.Failure(Shared.OperationFailed);
+            return GenericResponseModel<MonthlyTargetDto>.Failure(Shared.OperationFailed,
+                new List<ErrorResponseModel> { new ErrorResponseModel { Message = ex.Message } });
         }
     }
 }

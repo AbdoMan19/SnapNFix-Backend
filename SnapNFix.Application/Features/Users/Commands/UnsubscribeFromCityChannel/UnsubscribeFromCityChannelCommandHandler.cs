@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Interfaces;
+using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
 
@@ -34,7 +35,11 @@ namespace SnapNFix.Application.Features.Users.Commands.UnsubscribeFromCityChanne
             var currentUserId = await _userService.GetCurrentUserIdAsync();
             if (currentUserId == Guid.Empty)
             {
-                return GenericResponseModel<bool>.Failure("User not authenticated");
+                return GenericResponseModel<bool>.Failure(Shared.UserNotAuthenticated,
+                    new List<ErrorResponseModel>
+                    {
+                        ErrorResponseModel.Create(nameof(currentUserId), Shared.UserNotAuthenticated)
+                    });
             }
 
             // Get city info
@@ -44,7 +49,11 @@ namespace SnapNFix.Application.Features.Users.Commands.UnsubscribeFromCityChanne
 
             if (city == null)
             {
-                return GenericResponseModel<bool>.Failure("City not found");
+                return GenericResponseModel<bool>.Failure(Shared.CityNotFound,
+                    new List<ErrorResponseModel>
+                    {
+                        ErrorResponseModel.Create(nameof(request.CityId), Shared.CityNotFound)
+                    });
             }
 
             // Get subscription
@@ -89,7 +98,11 @@ namespace SnapNFix.Application.Features.Users.Commands.UnsubscribeFromCityChanne
             {
                 await transaction.RollbackAsync(cancellationToken);
                 _logger.LogError(ex, "Failed to unsubscribe user {UserId} from city {CityId}", currentUserId, request.CityId);
-                return GenericResponseModel<bool>.Failure($"Failed to unsubscribe from city: {ex.Message}");
+                return GenericResponseModel<bool>.Failure($"Failed to unsubscribe from city: {ex.Message}",
+                    new List<ErrorResponseModel>
+                    {
+                        ErrorResponseModel.Create(nameof(request.CityId), $"Failed to unsubscribe from city: {ex.Message}"),
+                    });
             }
         }
     }

@@ -10,7 +10,7 @@ public class RequestForgetPasswordOtpCommandValidator : AbstractValidator<Reques
         RuleFor(f => f.EmailOrPhoneNumber)
             .NotEmpty()
             .WithMessage(Shared.EmailOrPhoneNumberRequired)
-            .Matches(@"(^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)|(^(\+20|0)?1[0125][0-9]{8}$)")
+            .Matches(@"(^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)|(^01[0125][0-9]{8}$)")
             .WithMessage(Shared.InvalidEmailOrPhoneNumber);
     }
 }

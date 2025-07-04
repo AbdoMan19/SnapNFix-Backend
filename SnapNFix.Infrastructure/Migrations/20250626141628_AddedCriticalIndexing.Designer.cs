@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,11 @@ using SnapNFix.Infrastructure.Context;
 namespace SnapNFix.Infrastructure.Migrations
 {
     [DbContext(typeof(SnapNFixContext))]
-    partial class SnapNFixContextModelSnapshot : ModelSnapshot
+    [Migration("20250626141628_AddedCriticalIndexing")]
+    partial class AddedCriticalIndexing
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -156,40 +159,6 @@ namespace SnapNFix.Infrastructure.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("UserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("SnapNFix.Domain.Entities.AdminTarget", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
-
-                    b.Property<Guid>("CreatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<double>("TargetResolutionRate")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("double precision");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedBy");
-
-                    b.HasIndex("IsActive")
-                        .HasDatabaseName("IX_AdminTargets_IsActive");
-
-                    b.ToTable("AdminTargets", (string)null);
                 });
 
             modelBuilder.Entity("SnapNFix.Domain.Entities.CityChannel", b =>
@@ -796,17 +765,6 @@ namespace SnapNFix.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("SnapNFix.Domain.Entities.AdminTarget", b =>
-                {
-                    b.HasOne("SnapNFix.Domain.Entities.User", "CreatedByUser")
-                        .WithMany()
-                        .HasForeignKey("CreatedBy")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("CreatedByUser");
                 });
 
             modelBuilder.Entity("SnapNFix.Domain.Entities.FastReport", b =>

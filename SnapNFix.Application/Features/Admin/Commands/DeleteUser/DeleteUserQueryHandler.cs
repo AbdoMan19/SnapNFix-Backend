@@ -58,10 +58,10 @@ public class DeleteUserQueryHandler : IRequestHandler<DeleteUserQuery, GenericRe
             {
                 _logger.LogWarning("Attempt to delete SuperAdmin user: {UserId}", request.UserId);
                 return GenericResponseModel<bool>.Failure(
-                    "Cannot delete SuperAdmin users",
+                    Shared.AdminUserCannotBeDeleted,
                     new List<ErrorResponseModel>
                     {
-                        ErrorResponseModel.Create(nameof(request.UserId), "SuperAdmin users cannot be deleted")
+                        ErrorResponseModel.Create(nameof(request.UserId), Shared.AdminUserCannotBeDeleted)
                     });
             }
 
@@ -95,7 +95,11 @@ public class DeleteUserQueryHandler : IRequestHandler<DeleteUserQuery, GenericRe
         {
             await transaction.RollbackAsync(cancellationToken);
             _logger.LogError(ex, "Error deleting user with UserId: {UserId}", request.UserId);
-            return GenericResponseModel<bool>.Failure(Shared.OperationFailed);
+            return GenericResponseModel<bool>.Failure(Shared.OperationFailed,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(request.UserId), Shared.OperationFailed)
+                });
         }
     }
 }

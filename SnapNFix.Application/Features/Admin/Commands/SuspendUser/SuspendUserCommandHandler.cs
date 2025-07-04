@@ -63,10 +63,10 @@ public class SuspendUserQueryHandler : IRequestHandler<SuspendUserQuery, Generic
             {
                 _logger.LogWarning("Attempt to suspend SuperAdmin user: {UserId}", request.UserId);
                 return GenericResponseModel<bool>.Failure(
-                    "Cannot suspend SuperAdmin users",
+                    Shared.AdminCannotBeSuspended,
                     new List<ErrorResponseModel>
                     {
-                        ErrorResponseModel.Create(nameof(request.UserId), "SuperAdmin users cannot be suspended")
+                        ErrorResponseModel.Create(nameof(request.UserId), Shared.AdminCannotBeSuspended)
                     });
             }
 
@@ -109,7 +109,11 @@ public class SuspendUserQueryHandler : IRequestHandler<SuspendUserQuery, Generic
         {
             await transaction.RollbackAsync(cancellationToken);
             _logger.LogError(ex, "Error processing user suspension for UserId: {UserId}", request.UserId);
-            return GenericResponseModel<bool>.Failure(Shared.OperationFailed);
+            return GenericResponseModel<bool>.Failure(Shared.OperationFailed,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(request.UserId), Shared.OperationFailed)
+                });
         }
     }
 }

@@ -15,6 +15,8 @@ using SnapNFix.Application.Features.Auth.ForgetPassword.ResendForgetPasswordOtp;
 using SnapNFix.Application.Features.Auth.PhoneVerification.ResendPhoneVerificationOtp;
 using SnapNFix.Application.Features.Auth.GoogleLogin;
 using System.Security.Claims;
+using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Application.Features.Auth.Dtos;
 
 namespace SnapNFix.Api.Controllers;
 
@@ -124,6 +126,9 @@ public class AuthController : ControllerBase
 
     [HttpPost("google/login")]
     [AllowAnonymous]
+    [ProducesResponseType(typeof(GenericResponseModel<LoginResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(GenericResponseModel<LoginResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginCommand command)
     {
         var result = await _mediator.Send(command);

@@ -28,14 +28,14 @@ public class StatisticsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<GenericResponseModel<StatisticsDto>>> GetDashboardSummary(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetDashboardSummary(CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new GetDashboardSummaryQuery(), cancellationToken);
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
     }
 
     [HttpGet("metrics")]
-    public async Task<ActionResult<GenericResponseModel<MetricsOverviewDto>>> GetMetrics(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetMetrics(CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new GetMetricsQuery(), cancellationToken);
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
@@ -45,7 +45,7 @@ public class StatisticsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<GenericResponseModel<List<CategoryDistributionDto>>>> GetCategoryDistribution(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetCategoryDistribution(CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new GetCategoryDistributionQuery(), cancellationToken);
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
@@ -55,7 +55,7 @@ public class StatisticsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<GenericResponseModel<MonthlyTargetDto>>> GetMonthlyTarget(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetMonthlyTarget(CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new GetMonthlyTargetQuery(), cancellationToken);
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
@@ -65,7 +65,7 @@ public class StatisticsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<GenericResponseModel<List<IncidentTrendDto>>>> GetIncidentTrends(
+    public async Task<IActionResult> GetIncidentTrends(
         [FromQuery] GetIncidentTrendsQuery query, 
         CancellationToken cancellationToken = default)
     {
@@ -77,7 +77,7 @@ public class StatisticsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<GenericResponseModel<List<GeographicDistributionDto>>>> GetGeographicDistribution(
+    public async Task<IActionResult> GetGeographicDistribution(
         [FromQuery] GetGeographicDistributionQuery query, 
         CancellationToken cancellationToken = default)
     {
@@ -89,7 +89,7 @@ public class StatisticsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<GenericResponseModel<StatisticsDto>>> GetStatistics(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetStatistics(CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new GetStatisticsQuery(), cancellationToken);
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);

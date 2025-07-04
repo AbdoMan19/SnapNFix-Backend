@@ -30,14 +30,8 @@ public class GetUserReportsQueryHandler :
         GetUserReportsQuery request, CancellationToken cancellationToken)
     {
         var user = await _userService.GetCurrentUserAsync();
-        var cacheKey = CacheKeys.UserReports(user.Id, request.PageNumber, request.Status);
 
-        // Try cache first
-        var cached = await _cacheService.GetAsync<PagedList<ReportDetailsDto>>(cacheKey);
-        if (cached != null)
-        {
-            return GenericResponseModel<PagedList<ReportDetailsDto>>.Success(cached);
-        }
+
 
         var query = _unitOfWork.Repository<Domain.Entities.SnapReport>()
             .GetQuerableData()
@@ -74,9 +68,6 @@ public class GetUserReportsQueryHandler :
             reports.TotalCount,
             reports.PageNumber,
             reports.PageSize);
-
-        // Cache the result
-        await _cacheService.SetAsync(cacheKey, reportDtos, TimeSpan.FromMinutes(10));
 
         return GenericResponseModel<PagedList<ReportDetailsDto>>.Success(reportDtos);
     }

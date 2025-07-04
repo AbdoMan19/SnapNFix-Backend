@@ -67,7 +67,11 @@ public class GetCategoryDistributionQueryHandler : IRequestHandler<GetCategoryDi
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving category distribution");
-            return GenericResponseModel<List<CategoryDistributionDto>>.Failure(Shared.OperationFailed);
+            return GenericResponseModel<List<CategoryDistributionDto>>.Failure(Shared.OperationFailed,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(ex), Shared.OperationFailed)
+                });
         }
     }
 }

@@ -21,7 +21,7 @@ public class UpdateAdminProfileCommandValidator : AbstractValidator<UpdateAdminP
             .When(x => !string.IsNullOrWhiteSpace(x.LastName));
 
         RuleFor(x => x.PhoneNumber)
-            .Matches(@"^(\+20|0)?1[0125][0-9]{8}$")
+            .Matches(@"^01[0125][0-9]{8}$")
             .WithMessage(Shared.InvalidPhoneNumber)
             .When(x => !string.IsNullOrWhiteSpace(x.PhoneNumber));
 

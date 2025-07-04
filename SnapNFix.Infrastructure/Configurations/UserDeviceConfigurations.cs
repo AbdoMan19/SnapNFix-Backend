@@ -8,10 +8,8 @@ public class UserDeviceConfigurations : IEntityTypeConfiguration<UserDevice>
 {
     public void Configure(EntityTypeBuilder<UserDevice> builder)
     {
-        // Primary Key
         builder.HasKey(u => u.Id);
         
-        // Properties
         builder.Property(u => u.DeviceName)
             .IsRequired()
             .HasMaxLength(50);
@@ -31,12 +29,18 @@ public class UserDeviceConfigurations : IEntityTypeConfiguration<UserDevice>
         builder.Property(u => u.FCMToken)
             .IsRequired()
             .HasMaxLength(200);
-            
-        // Indexes
-        builder.HasIndex(u => new { u.DeviceName, u.DeviceId })
-            .IsUnique();
-        
-        // Relationships
+
+        builder.HasIndex(u => u.DeviceId)
+            .IsUnique()
+            .HasDatabaseName("IX_UserDevices_DeviceId");
+
+        builder.HasIndex(u => new { u.UserId, u.LastUsedAt })
+            .HasDatabaseName("IX_UserDevices_User_LastUsed");
+
+        builder.HasIndex(u => u.FCMToken)
+            .HasDatabaseName("IX_UserDevices_FCMToken")
+            .HasFilter("\"FCMToken\" IS NOT NULL AND \"FCMToken\" != ''");
+
         builder.HasOne(u => u.User)
             .WithMany(u => u.UserDevices)
             .HasForeignKey(u => u.UserId)
@@ -46,5 +50,7 @@ public class UserDeviceConfigurations : IEntityTypeConfiguration<UserDevice>
             .WithOne(u => u.UserDevice)
             .HasForeignKey<RefreshToken>(u => u.UserDeviceId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.ToTable("UserDevices");
     }
 }

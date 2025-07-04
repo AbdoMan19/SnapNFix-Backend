@@ -1,13 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Common.Services.UserValidationServices;
 using SnapNFix.Application.Interfaces;
+using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
-using SnapNFix.Application.Resources;
 
 namespace SnapNFix.Application.Features.Auth.ForgetPassword.ResendForgetPasswordOtp;
 
@@ -41,16 +40,30 @@ public class ResendForgetPasswordOtpCommandHandler : IRequestHandler<ResendForge
         if (string.IsNullOrEmpty(contactClaim))
         {
             _logger.LogWarning("Contact number not found in the request");
-            return GenericResponseModel<bool>.Failure(Shared.ContactNotFound);
+            return GenericResponseModel<bool>.Failure(Shared.ContactNotFound,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(contactClaim), Shared.ContactNotFound)
+                });
         }
 
-        await _otpService.InvalidateOtpAsync(contactClaim, OtpPurpose.ForgotPassword);
+        try
+        {
+            await _otpService.InvalidateOtpAsync(contactClaim, OtpPurpose.ForgotPassword);
+            var otp = await _otpService.GenerateOtpAsync(contactClaim, OtpPurpose.ForgotPassword);
 
-        var otp = await _otpService.GenerateOtpAsync(contactClaim, OtpPurpose.ForgotPassword);
-
-        // TODO : Send OTP to user via SMS
-
-        _logger.LogInformation("OTP sent successfully to {ContactClaim}", contactClaim);
-        return GenericResponseModel<bool>.Success(true);
+            _logger.LogInformation("Password reset OTP resent successfully to {ContactClaim}", contactClaim);
+            return GenericResponseModel<bool>.Success(true);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error resending password reset OTP to {ContactClaim}", contactClaim);
+            return GenericResponseModel<bool>.Failure(
+                Shared.OperationFailed,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(contactClaim), Shared.OperationFailed)
+                });
+        }
     }
 }

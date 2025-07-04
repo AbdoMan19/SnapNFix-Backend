@@ -51,7 +51,11 @@ public class GetDashboardSummaryQueryHandler : IRequestHandler<GetDashboardSumma
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving dashboard summary");
-            return GenericResponseModel<StatisticsDto>.Failure(Shared.OperationFailed);
+            return GenericResponseModel<StatisticsDto>.Failure(Shared.OperationFailed,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create("Error", Shared.OperationFailed)
+                });
         }
     }
 

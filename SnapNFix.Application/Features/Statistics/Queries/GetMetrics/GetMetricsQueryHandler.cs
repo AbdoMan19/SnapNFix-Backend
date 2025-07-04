@@ -94,7 +94,8 @@ public class GetMetricsQueryHandler : IRequestHandler<GetMetricsQuery, GenericRe
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving metrics");
-            return GenericResponseModel<MetricsOverviewDto>.Failure(Shared.OperationFailed);
+            return GenericResponseModel<MetricsOverviewDto>.Failure(Shared.OperationFailed,
+                new List<ErrorResponseModel> { new ErrorResponseModel { Message = ex.Message } });
         }
     }
 }

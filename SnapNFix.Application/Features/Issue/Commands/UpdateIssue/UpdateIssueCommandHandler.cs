@@ -105,13 +105,21 @@ public class UpdateIssueCommandHandler : IRequestHandler<UpdateIssueCommand, Gen
         {
             await transaction.RollbackAsync(cancellationToken);
             _logger.LogError(ex, "Concurrency conflict while updating issue {IssueId}", request.Id);
-            return GenericResponseModel<bool>.Failure(Shared.ConcurrencyConflict);
+            return GenericResponseModel<bool>.Failure(Shared.ConcurrencyConflict,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(request.Id), Shared.ConcurrencyConflict)
+                });
         }
         catch (Exception ex)
         {
             await transaction.RollbackAsync(cancellationToken);
             _logger.LogError(ex, "Error updating issue {IssueId}", request.Id);
-            return GenericResponseModel<bool>.Failure(Shared.IssueUpdateFailed);
+            return GenericResponseModel<bool>.Failure(Shared.IssueUpdateFailed,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(request.Id), Shared.IssueUpdateFailed)
+                });
         }
     }
 }

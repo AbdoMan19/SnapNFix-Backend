@@ -103,7 +103,11 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
         {
             await transaction.RollbackAsync(cancellationToken);
             _logger.LogError(ex, "Registration failed with error");
-            return GenericResponseModel<LoginResponse>.Failure(Shared.UnexpectedError);
+            return GenericResponseModel<LoginResponse>.Failure(Shared.UnexpectedError,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create("Registration", Shared.UnexpectedError)
+                });
         }
     }
 }

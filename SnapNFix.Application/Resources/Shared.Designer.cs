@@ -1096,5 +1096,71 @@ namespace SnapNFix.Application.Resources {
             }
         }
 
+        public static string AdminUserCannotBeDeleted
+        {
+            get
+            {
+                return ResourceManager.GetString("AdminUserCannotBeDeleted", resourceCulture);
+            }
+        }
+        public static string AdminCannotBeSuspended
+        {
+            get
+            {
+                return ResourceManager.GetString("AdminCannotBeSuspended", resourceCulture);
+            }
+        }
+        public static string OtpFailedToSend
+        {
+            get
+            {
+                return ResourceManager.GetString("OtpFailedToSend", resourceCulture);
+            }
+        }
+        public static string CityNotFound
+        {
+            get
+            {
+                return ResourceManager.GetString("CityNotFound", resourceCulture);
+            }
+        }
+        public static string FailedToUpdateCity
+        {
+            get
+            {
+                return ResourceManager.GetString("FailedToUpdateCity", resourceCulture);
+            }
+        }
+        public static string CityNotAvailableForSubscription
+        {
+            get
+            {
+                return ResourceManager.GetString("CityNotAvailableForSubscription", resourceCulture);
+            }
+        }
+        public static string UserNotAuthenticated
+        {
+            get
+            {
+                return ResourceManager.GetString("UserNotAuthenticated", resourceCulture);
+            }
+        }
+
+        public static string CannotCreateFastReportForOwnSnapReport
+        {
+            get
+            {
+                return ResourceManager.GetString("CannotCreateFastReportForOwnSnapReport", resourceCulture);
+            }
+        }
+
+        public static string FastReportAlreadyExists
+        {
+            get
+            {
+                return ResourceManager.GetString("FastReportAlreadyExists", resourceCulture);
+            }
+        }
+
     }
 }

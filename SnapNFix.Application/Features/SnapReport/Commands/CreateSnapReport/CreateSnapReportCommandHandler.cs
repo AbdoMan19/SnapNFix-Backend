@@ -60,7 +60,11 @@ public class CreateSnapReportCommandHandler : IRequestHandler<CreateSnapReportCo
         if (!isValid)
         {
             _logger.LogWarning("Image validation failed: {ErrorMessage}", errorMessage);
-            return GenericResponseModel<ReportDetailsDto>.Failure(errorMessage);
+            return GenericResponseModel<ReportDetailsDto>.Failure(errorMessage,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create("Image", errorMessage)
+                });
         }
 
         try
@@ -108,19 +112,31 @@ public class CreateSnapReportCommandHandler : IRequestHandler<CreateSnapReportCo
             {
                 await transaction.RollbackAsync(cancellationToken);
                 _logger.LogError(dbEx, "Database error creating snap report");
-                return GenericResponseModel<ReportDetailsDto>.Failure(Shared.OperationFailed);
+                return GenericResponseModel<ReportDetailsDto>.Failure(Shared.OperationFailed,
+                    new List<ErrorResponseModel>
+                    {
+                        ErrorResponseModel.Create("Database", Shared.OperationFailed)
+                    });
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync(cancellationToken);
                 _logger.LogError(ex, "Error during snap report creation transaction");
-                return GenericResponseModel<ReportDetailsDto>.Failure(Shared.OperationFailed);
+                return GenericResponseModel<ReportDetailsDto>.Failure(Shared.OperationFailed,
+                    new List<ErrorResponseModel>
+                    {
+                        ErrorResponseModel.Create("Transaction", Shared.OperationFailed)
+                    });
             }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unhandled exception creating snap report");
-            return GenericResponseModel<ReportDetailsDto>.Failure(Shared.OperationFailed);
+            return GenericResponseModel<ReportDetailsDto>.Failure(Shared.OperationFailed,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create("Unhandled", Shared.OperationFailed)
+                });
         }
     }
 }

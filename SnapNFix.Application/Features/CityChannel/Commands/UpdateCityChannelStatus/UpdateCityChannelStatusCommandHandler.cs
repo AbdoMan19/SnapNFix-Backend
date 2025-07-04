@@ -2,10 +2,11 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
 
-namespace SnapNFix.Application.Features.Admin.Commands.UpdateCityChannelStatus
+namespace SnapNFix.Application.Features.CityChannel.Commands.UpdateCityChannelStatus
 {
     public class UpdateCityChannelStatusCommandHandler : IRequestHandler<UpdateCityChannelStatusCommand, GenericResponseModel<bool>>
     {
@@ -28,10 +29,10 @@ namespace SnapNFix.Application.Features.Admin.Commands.UpdateCityChannelStatus
             if (city == null)
             {
                 return GenericResponseModel<bool>.Failure(
-                    "City not found",
+                    Shared.CityNotFound,
                     new List<ErrorResponseModel>
                     {
-                        ErrorResponseModel.Create(nameof(request.CityId), "City with this ID does not exist")
+                        ErrorResponseModel.Create(nameof(request.CityId), Shared.CityNotFound)
                     });
             }
 
@@ -52,7 +53,11 @@ namespace SnapNFix.Application.Features.Admin.Commands.UpdateCityChannelStatus
             {
                 await transaction.RollbackAsync(cancellationToken);
                 _logger.LogError(ex, "Failed to update city {CityId} status", request.CityId);
-                return GenericResponseModel<bool>.Failure($"Failed to update city status: {ex.Message}");
+                return GenericResponseModel<bool>.Failure($"Failed to update city status: {ex.Message}",
+                    new List<ErrorResponseModel>
+                    {
+                        ErrorResponseModel.Create(nameof(request.CityId), Shared.FailedToUpdateCity)
+                    });
             }
         }
     }

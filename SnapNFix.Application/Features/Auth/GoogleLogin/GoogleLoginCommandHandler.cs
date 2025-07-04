@@ -4,10 +4,10 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Auth.Dtos;
 using SnapNFix.Application.Interfaces;
+using SnapNFix.Application.Resources;
 using SnapNFix.Application.Utilities;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
@@ -17,163 +17,235 @@ namespace SnapNFix.Application.Features.Auth.GoogleLogin;
 public class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCommand, GenericResponseModel<LoginResponse>>
 {
     private readonly UserManager<User> _userManager;
-    private readonly ITokenService _tokenService;
+    private readonly RoleManager<IdentityRole<Guid>> _roleManager;
     private readonly IConfiguration _configuration;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<GoogleLoginCommandHandler> _logger;
-    private readonly IDeviceManager _deviceManager;
+    private readonly IAuthenticationService _authenticationService;
+    private readonly ICacheInvalidationService _cacheInvalidationService;
 
     public GoogleLoginCommandHandler(
         UserManager<User> userManager,
-        ITokenService tokenService,
+        RoleManager<IdentityRole<Guid>> roleManager,
         IConfiguration configuration,
         IUnitOfWork unitOfWork,
         ILogger<GoogleLoginCommandHandler> logger,
-        IDeviceManager deviceManager)
+        IAuthenticationService authenticationService,
+        ICacheInvalidationService cacheInvalidationService)
     {
         _userManager = userManager;
-        _tokenService = tokenService;
+        _roleManager = roleManager;
         _configuration = configuration;
         _unitOfWork = unitOfWork;
         _logger = logger;
-        _deviceManager = deviceManager;
+        _authenticationService = authenticationService;
+        _cacheInvalidationService = cacheInvalidationService;
     }
 
-    public async Task<GenericResponseModel<LoginResponse>> Handle(GoogleLoginCommand request, CancellationToken cancellationToken)
+    public async Task<GenericResponseModel<LoginResponse>> Handle(
+        GoogleLoginCommand request, 
+        CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Processing Google login for device {DeviceId}", request.DeviceId);
+
         try
         {
-            // Step 1: Validate Google token (no DB operation)
-            var settings = new GoogleJsonWebSignature.ValidationSettings
-            {
-                Audience = new[] { _configuration["Authentication:Google:ClientId"] }
-            };
-            
-            var payload = await GoogleJsonWebSignature.ValidateAsync(request.AccessToken, settings);
+            var payload = await ValidateGoogleTokenAsync(request.IdToken);
             if (payload == null)
             {
-                _logger.LogWarning("Google authentication failed - invalid token");
-                return GenericResponseModel<LoginResponse>.Failure("Invalid Google token");
+                _logger.LogWarning("Google token validation failed for device {DeviceId}", request.DeviceId);
+                return GenericResponseModel<LoginResponse>.Failure(
+                    Constants.FailureMessage,
+                    new List<ErrorResponseModel>
+                    {
+                        ErrorResponseModel.Create("Authentication", Shared.InvalidGoogleToken)
+                    });
             }
 
-            _logger.LogInformation("Google authentication successful for email {Email}", payload.Email);
+            _logger.LogInformation("Google token validated successfully for email {Email}", payload.Email);
 
-            // Step 2: Find or create user (UserManager has its own transaction management)
-            var user = await _userManager.FindByEmailAsync(payload.Email);
-            if (user == null)
+            var user = await FindOrCreateUserAsync(payload);
+
+            if (user.IsDeleted)
             {
-                user = new User
-                {
-                    Email = payload.Email,
-                    FirstName = payload.GivenName,
-                    LastName = payload.FamilyName,
-                    EmailConfirmed = payload.EmailVerified,
-                    UserName = payload.Email
-                };
-
-                var randomPassword = PasswordGenerator.GenerateStrongPassword();
-                var result = await _userManager.CreateAsync(user, randomPassword);
-                
-                if (!result.Succeeded)
-                {
-                    var errors = result.Errors.Select(e => ErrorResponseModel.Create(e.Code, e.Description)).ToList();
-                    _logger.LogWarning("Failed to create user from Google login with {ErrorCount} errors", errors.Count);
-                    return GenericResponseModel<LoginResponse>.Failure(Constants.FailureMessage, errors);
-                }
-
-                await _userManager.AddToRoleAsync(user, "Citizen");
-                _logger.LogInformation("Created new user from Google login: {UserId}", user.Id);
+                _logger.LogWarning("Deleted user attempted Google login: {UserId}", user.Id);
+                return GenericResponseModel<LoginResponse>.Failure(
+                    Constants.FailureMessage,
+                    new List<ErrorResponseModel>
+                    {
+                        ErrorResponseModel.Create("Authentication", Shared.UserNotFound)
+                    });
             }
 
-            // Step 3: Start an explicit transaction for our operations
-            // Start a transaction for all database operations
+            if (user.IsSuspended)
+            {
+                _logger.LogWarning("Suspended user attempted Google login: {UserId}", user.Id);
+                return GenericResponseModel<LoginResponse>.Failure(
+                    Constants.FailureMessage,
+                    new List<ErrorResponseModel>
+                    {
+                        ErrorResponseModel.Create("Authentication", Shared.AccountSuspended)
+                    });
+            }
+
             await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
             
             try
             {
-                var userDevice = await _deviceManager.RegisterDeviceAsync(
-                    user.Id,
+                var authResponse = await _authenticationService.AuthenticateUserAsync(
+                    user,
                     request.DeviceId,
                     request.DeviceName,
                     request.Platform,
                     request.DeviceType,
                     request.FCMToken);
 
-                bool isNewDevice = userDevice.Id == Guid.Empty;
-                
-                if (isNewDevice)
-                {
-                    await _unitOfWork.Repository<UserDevice>().Add(userDevice);
-                    // Save now only if we need the ID for child entities
-                    await _unitOfWork.SaveChanges();
-                    
-                    _logger.LogInformation("New device registered for user {UserId} with device ID {DeviceId}",
-                        user.Id, request.DeviceId);
-                }
-                else
-                {
-                    userDevice.LastUsedAt = DateTime.UtcNow;
-                    await _unitOfWork.Repository<UserDevice>().Update(userDevice);
-                }
-
-                var accessToken = await _tokenService.GenerateJwtToken(user, userDevice);
-                string refreshTokenString;
-
-                if (userDevice.RefreshToken != null)
-                {
-                    refreshTokenString = _tokenService.GenerateRefreshToken();
-                    userDevice.RefreshToken.Token = refreshTokenString;
-                    userDevice.RefreshToken.Expires = _tokenService.GetRefreshTokenExpirationDays();
-                    userDevice.RefreshToken.CreatedAt = DateTime.UtcNow;
-                    await _unitOfWork.Repository<Domain.Entities.RefreshToken>().Update(userDevice.RefreshToken);
-                }
-                else
-                {
-                    var refreshTokenObj = new Domain.Entities.RefreshToken
-                    {
-                        Token = _tokenService.GenerateRefreshToken(),
-                        UserDeviceId = userDevice.Id,
-                        Expires = _tokenService.GetRefreshTokenExpirationDays(),
-                        CreatedAt = DateTime.UtcNow
-                    };
-                    refreshTokenString = refreshTokenObj.Token;
-                    await _unitOfWork.Repository<Domain.Entities.RefreshToken>().Add(refreshTokenObj);
-                    userDevice.RefreshToken = refreshTokenObj;
-                }
-
-                // Single SaveChanges() for all pending changes
                 await _unitOfWork.SaveChanges();
-                
-                // Commit the transaction
                 await transaction.CommitAsync(cancellationToken);
-                
-                _logger.LogInformation("User {UserId} logged in successfully from device {DeviceId}", 
+
+                // Step 5: Invalidate user cache
+                await _cacheInvalidationService.InvalidateUserCacheAsync(user.Id);
+
+                _logger.LogInformation("Google login successful for user {UserId} on device {DeviceId}", 
                     user.Id, request.DeviceId);
 
                 return GenericResponseModel<LoginResponse>.Success(new LoginResponse
                 {
-                    Tokens = new AuthResponse
-                    {
-                        Token = accessToken,
-                        RefreshToken = refreshTokenString,
-                        ExpiresAt = userDevice.RefreshToken.Expires
-                    },
+                    Tokens = authResponse,
                     User = user.Adapt<LoginResponse.UserInfo>()
                 });
             }
             catch (Exception ex)
             {
-                // Rollback on error
                 await transaction.RollbackAsync(cancellationToken);
-                _logger.LogError(ex, "Database operation failed during login for user with ID {UserId}", user.Id);
-                return GenericResponseModel<LoginResponse>.Failure("An error occurred during login");
+                _logger.LogError(ex, "Database operation failed during Google login for user {UserId}", user.Id);
+                return GenericResponseModel<LoginResponse>.Failure(Shared.UnexpectedError,
+                    new List<ErrorResponseModel>
+                    {
+                        ErrorResponseModel.Create("Database", Shared.UnexpectedError)
+                    });
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Google login failed for token beginning with {TokenPrefix}", 
-                request.AccessToken.Length > 10 ? request.AccessToken.Substring(0, 10) + "..." : "[empty]");
-            return GenericResponseModel<LoginResponse>.Failure("An error occurred during login");
+            _logger.LogError(ex, "Google login failed for device {DeviceId}", request.DeviceId);
+            return GenericResponseModel<LoginResponse>.Failure(Shared.UnexpectedError,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create("Authentication", Shared.UnexpectedError)
+                });
+        }
+    }
+
+    private async Task<GoogleJsonWebSignature.Payload?> ValidateGoogleTokenAsync(string idToken)
+    {
+        try
+        {
+            var settings = new GoogleJsonWebSignature.ValidationSettings
+            {
+                Audience = new[] { _configuration["Authentication:Google:ClientId"] }
+            };
+
+            var payload = await GoogleJsonWebSignature.ValidateAsync(idToken, settings);
+            
+            // Additional validation
+            if (payload == null || string.IsNullOrEmpty(payload.Email))
+            {
+                _logger.LogWarning("Google token validation returned null or empty email");
+                return null;
+            }
+
+            if (!payload.EmailVerified)
+            {
+                _logger.LogWarning("Google account email not verified for {Email}", payload.Email);
+                return null;
+            }
+
+            return payload;
+        }
+        catch (InvalidJwtException ex)
+        {
+            _logger.LogWarning(ex, "Invalid Google JWT token");
+            return null;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error validating Google token");
+            return null;
+        }
+    }
+
+    private async Task<User> FindOrCreateUserAsync(GoogleJsonWebSignature.Payload payload)
+    {
+        var existingUser = await _userManager.FindByEmailAsync(payload.Email);
+        if (existingUser != null)
+        {
+            var hasChanges = false;
+
+            if (string.IsNullOrEmpty(existingUser.FirstName) && !string.IsNullOrEmpty(payload.GivenName))
+            {
+                existingUser.FirstName = payload.GivenName;
+                hasChanges = true;
+            }
+
+            if (string.IsNullOrEmpty(existingUser.LastName) && !string.IsNullOrEmpty(payload.FamilyName))
+            {
+                existingUser.LastName = payload.FamilyName;
+                hasChanges = true;
+            }
+
+            if (!existingUser.EmailConfirmed)
+            {
+                existingUser.EmailConfirmed = payload.EmailVerified;
+                hasChanges = true;
+            }
+
+            if (hasChanges)
+            {
+                existingUser.UpdatedAt = DateTime.UtcNow;
+                await _userManager.UpdateAsync(existingUser);
+                _logger.LogInformation("Updated existing user {UserId} with Google profile info", existingUser.Id);
+            }
+
+            return existingUser;
+        }
+
+        var newUser = new User
+        {
+            FirstName = payload.GivenName ?? "User",
+            LastName = payload.FamilyName ?? "Google",
+            Email = payload.Email,
+            UserName = payload.Email,
+            EmailConfirmed = payload.EmailVerified,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+
+        var randomPassword = PasswordGenerator.GenerateStrongPassword();
+        var result = await _userManager.CreateAsync(newUser, randomPassword);
+
+        if (!result.Succeeded)
+        {
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            _logger.LogError("Failed to create user from Google login: {Errors}", errors);
+            return null;
+        }
+
+        await EnsureRoleExistsAsync("Citizen");
+        await _userManager.AddToRoleAsync(newUser, "Citizen");
+
+        _logger.LogInformation("Created new user {UserId} from Google login with email {Email}", 
+            newUser.Id, newUser.Email);
+
+        return newUser;
+    }
+
+    private async Task EnsureRoleExistsAsync(string roleName)
+    {
+        if (!await _roleManager.RoleExistsAsync(roleName))
+        {
+            _logger.LogInformation("Creating role {RoleName} as it doesn't exist", roleName);
+            await _roleManager.CreateAsync(new IdentityRole<Guid>(roleName));
         }
     }
 }

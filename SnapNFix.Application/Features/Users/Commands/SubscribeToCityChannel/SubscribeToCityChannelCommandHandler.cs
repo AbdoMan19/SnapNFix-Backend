@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Interfaces;
+using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
 using SnapNFix.Domain.Models.Notification;
@@ -34,7 +35,12 @@ namespace SnapNFix.Application.Features.Users.Commands.SubscribeToCityChannel
             var currentUserId = await _userService.GetCurrentUserIdAsync();
             if (currentUserId == Guid.Empty)
             {
-                return GenericResponseModel<bool>.Failure("User not authenticated");
+                return GenericResponseModel<bool>.Failure(Shared.UserNotAuthenticated,
+                    new List<ErrorResponseModel>
+                    {
+                        ErrorResponseModel.Create(nameof(currentUserId), Shared.UserNotAuthenticated)
+                    }
+                );
             }
 
             // Check if city exists and is active
@@ -45,10 +51,10 @@ namespace SnapNFix.Application.Features.Users.Commands.SubscribeToCityChannel
             if (cityChannel == null)
             {
                 return GenericResponseModel<bool>.Failure(
-                    "City not found or not available for subscription",
+                    Shared.CityNotAvailableForSubscription,
                     new List<ErrorResponseModel>
                     {
-                        ErrorResponseModel.Create(nameof(request.CityId), "City is not available for subscription")
+                        ErrorResponseModel.Create(nameof(request.CityId), Shared.CityNotAvailableForSubscription)
                     });
             }
 
@@ -100,7 +106,11 @@ namespace SnapNFix.Application.Features.Users.Commands.SubscribeToCityChannel
             {
                 await transaction.RollbackAsync(cancellationToken);
                 _logger.LogError(ex, "Failed to subscribe user {UserId} to city {CityId}", currentUserId, request.CityId);
-                return GenericResponseModel<bool>.Failure($"Failed to subscribe to city: {ex.Message}");
+                return GenericResponseModel<bool>.Failure($"Failed to subscribe to city: {ex.Message}",
+                    new List<ErrorResponseModel>
+                    {
+                        ErrorResponseModel.Create(nameof(request.CityId), $"Failed to subscribe to city: {ex.Message}")
+                    });
             }
         }
     }

@@ -127,13 +127,21 @@ public class AdminLoginCommandHandler : IRequestHandler<AdminLoginCommand, Gener
             {
                 await transaction.RollbackAsync(cancellationToken);
                 _logger.LogError(ex, "Database operation failed during admin login for user {UserId}", identityUser.Id);
-                return GenericResponseModel<LoginResponse>.Failure(Shared.UnexpectedError);
+                return GenericResponseModel<LoginResponse>.Failure(Shared.UnexpectedError,
+                    new List<ErrorResponseModel>
+                    {
+                        ErrorResponseModel.Create("Database", Shared.UnexpectedError)
+                    });
             }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Admin login failed for email {Email}", request.Email);
-            return GenericResponseModel<LoginResponse>.Failure(Shared.UnexpectedError);
+            return GenericResponseModel<LoginResponse>.Failure(Shared.UnexpectedError,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create("Authentication", Shared.UnexpectedError)
+                });
         }
     }
 }

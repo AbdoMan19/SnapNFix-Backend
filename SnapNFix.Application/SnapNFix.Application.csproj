@@ -44,6 +44,7 @@
 
     <ItemGroup>
       <Folder Include="Common\Interfaces\" />
+      <Folder Include="Features\CityChannel\Commands\" />
     </ItemGroup>
 
 </Project>

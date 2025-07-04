@@ -6,6 +6,7 @@ using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Users.DTOs;
 using SnapNFix.Application.Features.Users.Queries.GetUserSubscribedCitiesChannel;
 using SnapNFix.Application.Interfaces;
+using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
@@ -36,12 +37,16 @@ namespace SnapNFix.Application.Features.Users.Queries.GetUserSubscribedCitiesCha
             var currentUserId = await _userService.GetCurrentUserIdAsync();
             if (currentUserId == Guid.Empty)
             {
-                return GenericResponseModel<PagedList<CityChannelSubscriptionDto>>.Failure("User not authenticated");
+                return GenericResponseModel<PagedList<CityChannelSubscriptionDto>>.Failure(Shared.UserNotAuthenticated,
+                    new List<ErrorResponseModel>
+                    {
+                        ErrorResponseModel.Create(nameof(currentUserId), Shared.UserNotAuthenticated)
+                    });
             }
 
             var subscriptions = _unitOfWork.Repository<UserCitySubscription>()
                 .GetQuerableData()
-                .Where(s => s.UserId == currentUserId)
+                .Where(s => s.UserId == currentUserId && s.CityChannel.IsActive)
                 .Include(s => s.CityChannel)
                 .OrderByDescending(s => s.SubscribedAt)
                 .Select(s => new CityChannelSubscriptionDto

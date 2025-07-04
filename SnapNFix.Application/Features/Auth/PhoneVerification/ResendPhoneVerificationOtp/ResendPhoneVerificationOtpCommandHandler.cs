@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Enums;
-using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Application.Interfaces;
 
 namespace SnapNFix.Application.Features.Auth.PhoneVerification.ResendPhoneVerificationOtp;
@@ -34,18 +33,30 @@ public class ResendPhoneVerificationOtpCommandHandler : IRequestHandler<ResendPh
         if (string.IsNullOrEmpty(contactClaim))
         {
             _logger.LogWarning("Contact number not found in the request token");
-            return GenericResponseModel<bool>.Failure(Shared.ContactNotFound);
+            return GenericResponseModel<bool>.Failure(Shared.ContactNotFound,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(contactClaim), Shared.ContactNotFound)
+                });
         }
 
-        await _otpService.InvalidateOtpAsync(contactClaim, OtpPurpose.PhoneVerification);
+        try
+        {
+            await _otpService.InvalidateOtpAsync(contactClaim, OtpPurpose.PhoneVerification);
+            var otp = await _otpService.GenerateOtpAsync(contactClaim, OtpPurpose.PhoneVerification);
 
-        var otp = await _otpService.GenerateOtpAsync(contactClaim, OtpPurpose.PhoneVerification);
-
-        // TODO: Send OTP to user via SMS
-        // When you implement SMS service, uncomment and use it here
-        // await _smsService.SendSmsAsync(contactClaim, otp, "Your verification code is: {0}");
-
-        _logger.LogInformation("Verification OTP resent successfully to {ContactClaim}", contactClaim);
-        return GenericResponseModel<bool>.Success(true);
+            _logger.LogInformation("Verification OTP resent successfully to {ContactClaim}", contactClaim);
+            return GenericResponseModel<bool>.Success(true);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error resending OTP to {ContactClaim}", contactClaim);
+            return GenericResponseModel<bool>.Failure(
+                Shared.OperationFailed,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(contactClaim), Shared.OtpFailedToSend)
+                });
+        }
     }
 }
