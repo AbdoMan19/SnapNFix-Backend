@@ -28,7 +28,7 @@ public class SnapReportsController : ControllerBase
 
     [Authorize("Citizen")]
     [HttpPost("create")]
-    public async Task<ActionResult<GenericResponseModel<ReportDetailsDto>>> CreateReport(
+    public async Task<IActionResult> CreateReport(
         [FromForm] CreateSnapReportCommand command)
     {
         var result = await _mediator.Send(command);
@@ -38,7 +38,7 @@ public class SnapReportsController : ControllerBase
 
     [Authorize("Citizen")]
     [HttpGet("my-reports")]
-    public async Task<ActionResult<GenericResponseModel<List<ReportDetailsDto>>>> GetMyReports(
+    public async Task<IActionResult> GetMyReports(
         [FromQuery] GetUserReportsQuery query)
     {
         var result = await _mediator.Send(query);
@@ -48,7 +48,7 @@ public class SnapReportsController : ControllerBase
     
     [Authorize("Citizen")]
     [HttpGet("statistics")]
-    public async Task<ActionResult<GenericResponseModel<UserReportsStatisticsDto>>> Statistics()
+    public async Task<IActionResult> Statistics()
     {
         var result = await _mediator.Send(new GetUserReportsStatisticsQuery());
         if (result.ErrorList.Count != 0) return BadRequest(result);

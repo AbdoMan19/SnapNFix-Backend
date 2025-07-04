@@ -11,16 +11,20 @@ public class SetTargetCommandHandler : IRequestHandler<SetTargetCommand, Generic
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserService _userService;
         private readonly ILogger<SetTargetCommandHandler> _logger;
+        
+        private readonly ICacheInvalidationService _cacheInvalidationService;
 
-        public SetTargetCommandHandler(
-            IUnitOfWork unitOfWork,
-            IUserService userService,
-            ILogger<SetTargetCommandHandler> logger)
-        {
-            _unitOfWork = unitOfWork;
-            _userService = userService;
-            _logger = logger;
-        }
+    public SetTargetCommandHandler(
+    IUnitOfWork unitOfWork,
+    IUserService userService,
+    ICacheInvalidationService cacheInvalidationService,
+    ILogger<SetTargetCommandHandler> logger)
+    {
+        _unitOfWork = unitOfWork;
+        _userService = userService;
+        _logger = logger;
+        _cacheInvalidationService = cacheInvalidationService;
+    }
 
         public async Task<GenericResponseModel<bool>> Handle(SetTargetCommand request, CancellationToken cancellationToken)
         {
@@ -54,6 +58,8 @@ public class SetTargetCommandHandler : IRequestHandler<SetTargetCommand, Generic
 
                 _logger.LogInformation("Target updated to {Target}% by SuperAdmin {UserId}", 
                     request.TargetResolutionRate, currentUserId);
+
+                await _cacheInvalidationService.InvalidateStatisticsCacheAsync();
 
                 return GenericResponseModel<bool>.Success(true);
             }

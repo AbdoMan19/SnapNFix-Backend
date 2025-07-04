@@ -32,7 +32,7 @@ public class AdminController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<GenericResponseModel<LoginResponse>>> AdminLogin([FromBody] AdminLoginCommand command)
+    public async Task<IActionResult> AdminLogin([FromBody] AdminLoginCommand command)
     {
         var result = await _mediator.Send(command);
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
@@ -43,7 +43,7 @@ public class AdminController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<ActionResult<GenericResponseModel<LoginResponse>>> RegisterAdmin([FromBody] RegisterAdminCommand command)
+    public async Task<IActionResult> RegisterAdmin([FromBody] RegisterAdminCommand command)
     {
         var result = await _mediator.Send(command);
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
@@ -54,7 +54,7 @@ public class AdminController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<ActionResult<GenericResponseModel<PagedList<UserDetailsDto>>>> GetAllUsers(
+    public async Task<IActionResult> GetAllUsers(
         [FromQuery] GetAllUsersQuery query)
     {
         var result = await _mediator.Send(query);
@@ -67,7 +67,7 @@ public class AdminController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<GenericResponseModel<bool>>> SuspendUser(
+    public async Task<IActionResult> SuspendUser(
         [FromRoute] Guid userId,
         [FromBody] SuspendUserRequest request)
     {
@@ -100,7 +100,7 @@ public class AdminController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<GenericResponseModel<bool>>> DeleteUser([FromRoute] Guid userId)
+    public async Task<IActionResult> DeleteUser([FromRoute] Guid userId)
     {
         _logger.LogInformation("Delete user request received for UserId: {UserId}", userId);
 
@@ -125,8 +125,17 @@ public class AdminController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<ActionResult<GenericResponseModel<bool>>> UpdateProfile([FromBody] UpdateAdminProfileCommand command)
+    public async Task<IActionResult> UpdateProfile([FromBody] UpdateAdminProfileCommand command)
     {
+        if (command == null)
+        {
+            var response = GenericResponseModel<bool>.Failure(Shared.OperationFailed,
+                new List<ErrorResponseModel>
+                {
+                    ErrorResponseModel.Create(nameof(command), "Invalid request body or invalid enum value.")
+                });
+            return BadRequest(response);
+        }
         _logger.LogInformation("Admin profile update request received for user {UserId}",
             User.FindFirstValue(ClaimTypes.NameIdentifier));
 
@@ -139,7 +148,7 @@ public class AdminController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<ActionResult<GenericResponseModel<bool>>> SetTarget([FromBody] SetTargetCommand command)
+    public async Task<IActionResult> SetTarget([FromBody] SetTargetCommand command)
     {
         var result = await _mediator.Send(command);
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
@@ -149,7 +158,7 @@ public class AdminController : ControllerBase
     [Authorize(Roles = "Admin,SuperAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<GenericResponseModel<double>>> GetCurrentTarget()
+    public async Task<IActionResult> GetCurrentTarget()
     {
         var result = await _mediator.Send(new GetCurrentTargetQuery());
         return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);

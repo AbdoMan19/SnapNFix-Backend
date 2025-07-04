@@ -30,7 +30,7 @@ public class IssueController : ControllerBase
 
   [Authorize("Citizen")]
   [HttpGet("get-nearby-issues")]
-  public async Task<ActionResult<GenericResponseModel<List<NearbyIssueDto>>>> GetNearbyIssues(
+  public async Task<IActionResult> GetNearbyIssues(
       [FromQuery] GetNearbyIssuesQuery query)
   {
       var result = await _mediator.Send(query);
@@ -40,7 +40,7 @@ public class IssueController : ControllerBase
 
   [Authorize(Roles = "Citizen,Admin,SuperAdmin")]
   [HttpGet("{id}")]
-  public async Task<ActionResult<GenericResponseModel<IssueDetailsDto>>> GetIssueById(Guid id)
+  public async Task<IActionResult> GetIssueById(Guid id)
   {
     var query = new GetIssueByIdQuery { Id = id };
     var result = await _mediator.Send(query);
@@ -52,7 +52,7 @@ public class IssueController : ControllerBase
 
   [Authorize(Roles = "Citizen,Admin,SuperAdmin")]
   [HttpGet("{id}/snapreports")]
-  public async Task<ActionResult<GenericResponseModel<PagedList<ReportDetailsDto>>>> GetSnapReportsByIssueId(Guid id)
+  public async Task<IActionResult> GetSnapReportsByIssueId(Guid id)
   {
     var query = new GetSnapReportsByIssueIdQuery { Id = id };
     var result = await _mediator.Send(query);
@@ -64,7 +64,7 @@ public class IssueController : ControllerBase
 
   [Authorize(Roles = "Citizen,Admin,SuperAdmin")]
   [HttpGet("{id}/fastreports")]
-  public async Task<ActionResult<GenericResponseModel<PagedList<FastReportDetailsDto>>>> GetFastReportsByIssueId(
+  public async Task<IActionResult> GetFastReportsByIssueId(
       Guid id, 
       [FromQuery] int pageNumber = 1,
       [FromQuery] int pageSize = 10)
@@ -84,7 +84,7 @@ public class IssueController : ControllerBase
 
   [Authorize(Roles = "Admin,SuperAdmin")]
   [HttpGet("get-issues")]
-  public async Task<ActionResult<GenericResponseModel<PagedList<IssueDetailsDto>>>> GetIssues(
+  public async Task<IActionResult> GetIssues(
       [FromQuery] GetIssuesQuery query)
   {
     var result = await _mediator.Send(query);
@@ -95,7 +95,7 @@ public class IssueController : ControllerBase
   }
   [Authorize(Roles = "Admin,SuperAdmin")]
   [HttpPut("{id}")]
-    public async Task<ActionResult<GenericResponseModel<bool>>> UpdateIssue(
+    public async Task<IActionResult> UpdateIssue(
         Guid id, 
         [FromBody] UpdateIssueCommand command)
     {

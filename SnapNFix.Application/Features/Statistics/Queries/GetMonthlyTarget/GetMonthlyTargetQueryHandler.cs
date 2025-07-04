@@ -7,6 +7,7 @@ using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
 using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Domain.Entities;
+using Mapster;
 
 namespace SnapNFix.Application.Features.Statistics.Queries.GetMonthlyTarget;
 
@@ -99,12 +100,13 @@ public class GetMonthlyTargetQueryHandler : IRequestHandler<GetMonthlyTargetQuer
             };
 
             await _cacheService.SetAsync(CacheKeys.MonthlyTarget, target, TimeSpan.FromMinutes(5));
+            
             return GenericResponseModel<MonthlyTargetDto>.Success(target);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving monthly target");
-            return GenericResponseModel<MonthlyTargetDto>.Failure("Operation failed",
+            return GenericResponseModel<MonthlyTargetDto>.Failure(Shared.OperationFailed,
                 new List<ErrorResponseModel> { new ErrorResponseModel { Message = ex.Message } });
         }
     }
