@@ -35,7 +35,12 @@ public class CacheInvalidationService : ICacheInvalidationService
 
     public async Task InvalidateStatisticsCacheAsync()
     {
-        await _cacheService.RemovePatternAsync(CacheKeys.StatisticsPattern);
+        await _cacheService.RemoveAsync(CacheKeys.FullStatistics);
+        await _cacheService.RemoveAsync(CacheKeys.DashboardSummary);
+        await _cacheService.RemoveAsync(CacheKeys.MonthlyTarget);
+        await _cacheService.RemoveAsync(CacheKeys.MetricsOverview);
+        await _cacheService.RemoveAsync(CacheKeys.CategoryDistribution);
+        await _cacheService.RemoveAsync(CacheKeys.GeographicDistribution);
     }
 
     public Task InvalidateMonthlyTargetCacheAsync()
