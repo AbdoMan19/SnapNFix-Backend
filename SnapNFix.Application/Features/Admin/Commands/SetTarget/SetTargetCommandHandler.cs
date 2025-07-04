@@ -59,7 +59,7 @@ public class SetTargetCommandHandler : IRequestHandler<SetTargetCommand, Generic
                 _logger.LogInformation("Target updated to {Target}% by SuperAdmin {UserId}", 
                     request.TargetResolutionRate, currentUserId);
 
-                await _cacheInvalidationService.InvalidateStatisticsCacheAsync();
+                await _cacheInvalidationService.InvalidateMonthlyTargetCacheAsync();
 
                 return GenericResponseModel<bool>.Success(true);
             }

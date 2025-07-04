@@ -24,17 +24,22 @@ public class CacheInvalidationService : ICacheInvalidationService
     public async Task InvalidateReportCacheAsync(Guid reportId, Guid? issueId = null)
     {
         await _cacheService.RemoveAsync(CacheKeys.ReportDetails(reportId));
-        
+
         if (issueId.HasValue)
         {
             await InvalidateIssueCacheAsync(issueId.Value);
         }
-        
+
         await InvalidateStatisticsCacheAsync();
     }
 
     public async Task InvalidateStatisticsCacheAsync()
     {
         await _cacheService.RemovePatternAsync(CacheKeys.StatisticsPattern);
+    }
+
+    public Task InvalidateMonthlyTargetCacheAsync()
+    {
+        return _cacheService.RemoveAsync(CacheKeys.MonthlyTarget);
     }
 }

@@ -6,4 +6,6 @@ public interface ICacheInvalidationService : IScoped
     Task InvalidateIssueCacheAsync(Guid issueId);
     Task InvalidateReportCacheAsync(Guid reportId, Guid? issueId = null);
     Task InvalidateStatisticsCacheAsync();
+
+    Task InvalidateMonthlyTargetCacheAsync();
 }
