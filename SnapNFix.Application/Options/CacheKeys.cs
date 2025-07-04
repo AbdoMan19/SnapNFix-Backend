@@ -1,3 +1,4 @@
+namespace SnapNFix.Application.Options;
 public static class CacheKeys
 {
 

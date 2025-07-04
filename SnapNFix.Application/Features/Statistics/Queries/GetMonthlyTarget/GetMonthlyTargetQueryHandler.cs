@@ -8,6 +8,7 @@ using SnapNFix.Domain.Interfaces;
 using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Domain.Entities;
 using Mapster;
+using SnapNFix.Application.Options;
 
 namespace SnapNFix.Application.Features.Statistics.Queries.GetMonthlyTarget;
 

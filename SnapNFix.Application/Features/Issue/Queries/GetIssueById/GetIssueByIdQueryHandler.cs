@@ -6,6 +6,7 @@ using SnapNFix.Application.Features.Issue.DTOs;
 using SnapNFix.Domain.Interfaces;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Application.Resources;
+using SnapNFix.Application.Options;
 
 namespace SnapNFix.Application.Features.Issue.Queries;
 

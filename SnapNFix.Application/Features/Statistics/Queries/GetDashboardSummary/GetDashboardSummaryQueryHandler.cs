@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Application.Options;
 using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;

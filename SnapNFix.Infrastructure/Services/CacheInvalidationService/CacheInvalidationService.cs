@@ -1,3 +1,6 @@
+
+using SnapNFix.Application.Options;
+
 public class CacheInvalidationService : ICacheInvalidationService
 {
     private readonly ICacheService _cacheService;
@@ -41,6 +44,9 @@ public class CacheInvalidationService : ICacheInvalidationService
         await _cacheService.RemoveAsync(CacheKeys.MetricsOverview);
         await _cacheService.RemoveAsync(CacheKeys.CategoryDistribution);
         await _cacheService.RemoveAsync(CacheKeys.GeographicDistribution);
+        await _cacheService.RemoveAsync(CacheKeys.IncidentTrends(StatisticsInterval.Monthly));
+        await _cacheService.RemoveAsync(CacheKeys.IncidentTrends(StatisticsInterval.Quarterly));
+        await _cacheService.RemoveAsync(CacheKeys.IncidentTrends(StatisticsInterval.Yearly));
     }
 
     public Task InvalidateMonthlyTargetCacheAsync()
