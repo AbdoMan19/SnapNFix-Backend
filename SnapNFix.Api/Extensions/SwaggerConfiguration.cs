@@ -18,8 +18,6 @@ public static class SwaggerConfiguration
                     Email = "support@snapnfix.com"
                 }
             });
-
-            // JWT Authentication for Swagger
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 Description = "JWT Authorization header using the Bearer scheme",

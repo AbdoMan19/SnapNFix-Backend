@@ -23,15 +23,10 @@ public static class DependencyInjection
                 npgsqlOptions =>
                 {
                     npgsqlOptions.UseNetTopologySuite();
-                    //npgsqlOptions.EnableRetryOnFailure(3);
                     npgsqlOptions.CommandTimeout(30);
                 });
         });
-        /*services.AddHealthChecks()
-            .AddDbContextCheck<SnapNFixContext>();*/
-        
-        
-        // Add additional infrastructure services
+     
         services.AddMemoryCache();
         
         services.AddHttpClient();
@@ -41,17 +36,9 @@ public static class DependencyInjection
         
         services.Configure<PhotoValidationOptions>(
             configuration.GetSection("AI").GetSection("PhotoValidation"));
-        
-        services.Configure<RedisOptions>(
-            configuration.GetSection("Redis"));
 
         services.AddHostedService<BackgroundTaskExecutor>();
-        /*services.AddStackExchangeRedisCache(options =>
-        {
-             options.Configuration = configuration.GetConnectionString("Redis");
-             options.InstanceName = "SnapNFix:";
-        });*/
-
+      
         return services;
     }
 

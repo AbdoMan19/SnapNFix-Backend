@@ -23,18 +23,12 @@ public static class MiddlewareExtension
         app.UseHsts();
         app.UseExceptionHandler();
         app.UseHttpsRedirection();
-        
-        // Add localization middleware here
         app.UseRequestLocalization();
-        
-        //app.UseMiddleware<IpRateLimitingMiddleware>();
-        //app.UseRateLimiter();
         app.UseCors("DefaultPolicy");
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
-        // app.MapHealthChecks("/health");
 
         return app;
     }

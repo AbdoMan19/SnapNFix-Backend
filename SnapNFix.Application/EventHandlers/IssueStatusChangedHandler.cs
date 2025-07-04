@@ -28,7 +28,7 @@ namespace Application.EventHandlers
             _logger = logger;
             _unitOfWork = unitOfWork;
         }
-        
+
         public async Task Handle(IssueStatusChanged notification, CancellationToken cancellationToken)
         {
             // Log the activity
@@ -40,7 +40,8 @@ namespace Application.EventHandlers
                     {
                         Type = "IssueStatusChanged",
                         IssueId = notification.IssueId,
-                        Description = $"Issue status changed from {notification.PreviousStatus} to {notification.NewStatus}",
+                        Description =
+                            $"Issue status changed from {notification.PreviousStatus} to {notification.NewStatus}",
                         AdditionalData = new
                         {
                             PreviousStatus = notification.PreviousStatus,
@@ -52,41 +53,42 @@ namespace Application.EventHandlers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error handling IssueStatusChanged event for issue {IssueId}", 
+                _logger.LogError(ex, "Error handling IssueStatusChanged event for issue {IssueId}",
                     notification.IssueId);
             }
-            
-            // Notify city about the issue status change
-            try
+
+            // Notify users who report on the issue about  status change
+            var issue = await _unitOfWork.Repository<Issue>()
+                .FindBy(i => i.Id == notification.IssueId)
+                .Include(i => i.AssociatedSnapReports)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (issue != null)
             {
-                // Get the issue details to determine the city
-                var issue = await _unitOfWork.Repository<Issue>()
-                    .FindBy(i => i.Id == notification.IssueId)
-                    .FirstOrDefaultAsync(cancellationToken);
-                    
-                if (issue != null && !string.IsNullOrEmpty(issue.City))
+                foreach (var report in issue.AssociatedSnapReports)
                 {
-                    // Format the city name for topic
-                    var cityTopic = $"city_{issue.City.Replace(" ", "_").ToLower()}";
-                    
-                    // Send notification to the city topic
-                    await _notificationService.SendNotificationToTopicAsync(new TopicNotificationModel
+                    var notificationModel = new NotificationModel
                     {
-                        Topic = cityTopic,
-                        Title = $"Issue Update in {issue.City}",
-                        Body = $"An issue status has changed from {notification.PreviousStatus} to {notification.NewStatus}",
+                        UserId = report.UserId,
+                        Title = "Issue Status Updated",
+                        Body =
+                            $"Issue #{notification.IssueId} status changed from {notification.PreviousStatus} to {notification.NewStatus}",
                         Data = new Dictionary<string, string>
                         {
-                            { "issueId", issue.Id.ToString() },
-                            { "type", "IssueStatusChanged" },
-                            { "city", issue.City }
+                            ["issueId"] = notification.IssueId.ToString(),
+                            ["previousStatus"] = notification.PreviousStatus.ToString(),
+                            ["newStatus"] = notification.NewStatus.ToString(),
+                            ["type"] = "ISSUE_STATUS_CHANGED"
                         }
-                    });
+                    };
+
+                    await _notificationService.SendNotificationToUserAsync(notificationModel);
                 }
             }
-            catch (Exception ex)
+            else
             {
-                _logger.LogError(ex, "Failed to send city topic notification for issue {IssueId}", notification.IssueId);
+                _logger.LogWarning("Issue with ID {IssueId} not found or has no reporter.", notification.IssueId);
+
             }
         }
     }

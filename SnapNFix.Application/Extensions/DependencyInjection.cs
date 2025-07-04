@@ -24,7 +24,6 @@ public static class DependencyInjection
             cfg.RegisterServicesFromAssemblies(assembly);
             cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));});
 
-        // Register Mapster
         var config = TypeAdapterConfig.GlobalSettings;
         config.Scan(assembly);
         services.AddSingleton(config);
