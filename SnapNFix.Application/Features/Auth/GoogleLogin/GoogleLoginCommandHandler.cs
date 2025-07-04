@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
+using SnapNFix.Application.Common.Services.UserValidationServices;
 using SnapNFix.Application.Features.Auth.Dtos;
 using SnapNFix.Application.Interfaces;
 using SnapNFix.Application.Resources;
@@ -23,6 +24,7 @@ public class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCommand, Gen
     private readonly ILogger<GoogleLoginCommandHandler> _logger;
     private readonly IAuthenticationService _authenticationService;
     private readonly ICacheInvalidationService _cacheInvalidationService;
+    private readonly IUserValidationService _userValidationService;
 
     public GoogleLoginCommandHandler(
         UserManager<User> userManager,
@@ -31,7 +33,8 @@ public class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCommand, Gen
         IUnitOfWork unitOfWork,
         ILogger<GoogleLoginCommandHandler> logger,
         IAuthenticationService authenticationService,
-        ICacheInvalidationService cacheInvalidationService)
+        ICacheInvalidationService cacheInvalidationService,
+        IUserValidationService userValidationService)
     {
         _userManager = userManager;
         _roleManager = roleManager;
@@ -40,6 +43,7 @@ public class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCommand, Gen
         _logger = logger;
         _authenticationService = authenticationService;
         _cacheInvalidationService = cacheInvalidationService;
+        _userValidationService = userValidationService;
     }
 
     public async Task<GenericResponseModel<LoginResponse>> Handle(
@@ -65,7 +69,7 @@ public class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCommand, Gen
             _logger.LogInformation("Google token validated successfully for email {Email}", payload.Email);
 
             var user = await FindOrCreateUserAsync(payload);
-
+            
             if (user.IsDeleted)
             {
                 _logger.LogWarning("Deleted user attempted Google login: {UserId}", user.Id);
@@ -87,6 +91,7 @@ public class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCommand, Gen
                         ErrorResponseModel.Create("Authentication", Shared.AccountSuspended)
                     });
             }
+
 
             await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
             
@@ -177,7 +182,7 @@ public class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCommand, Gen
 
     private async Task<User> FindOrCreateUserAsync(GoogleJsonWebSignature.Payload payload)
     {
-        var existingUser = await _userManager.FindByEmailAsync(payload.Email);
+        var existingUser = await _unitOfWork.Repository<User>().FirstOrDefault(u=> u.Email == payload.Email);
         if (existingUser != null)
         {
             var hasChanges = false;

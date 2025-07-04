@@ -27,7 +27,6 @@ public class UserDeviceConfigurations : IEntityTypeConfiguration<UserDevice>
             .HasMaxLength(50);
 
         builder.Property(u => u.FCMToken)
-            .IsRequired()
             .HasMaxLength(200);
 
         builder.HasIndex(u => u.DeviceId)

@@ -26,6 +26,9 @@ public class GoogleLoginCommandValidator : AbstractValidator<GoogleLoginCommand>
         RuleFor(x => x.Platform)
             .NotEmpty()
             .WithMessage(Shared.PlatformRequired);
+        RuleFor(x => x.FCMToken)
+            .MaximumLength(200)
+            .WithMessage("Shared.FCMTokenMaxLength");
 
         // FCMToken is optional, don't validate it as required
     }
