@@ -8,7 +8,7 @@ using SnapNFix.Domain.Entities;
 using SnapNFix.Domain.Interfaces;
 using SnapNFix.Domain.Models.Notification;
 
-namespace Application.EventHandlers
+namespace SnapNFix.Application.EventHandlers
 {
     public class IssueStatusChangedHandler : INotificationHandler<IssueStatusChanged>
     {
@@ -57,38 +57,48 @@ namespace Application.EventHandlers
                     notification.IssueId);
             }
 
-            // Notify users who report on the issue about  status change
-            var issue = await _unitOfWork.Repository<Issue>()
-                .FindBy(i => i.Id == notification.IssueId)
-                .Include(i => i.AssociatedSnapReports)
-                .FirstOrDefaultAsync(cancellationToken);
-
-            if (issue != null)
+            try
             {
-                foreach (var report in issue.AssociatedSnapReports)
-                {
-                    var notificationModel = new NotificationModel
-                    {
-                        UserId = report.UserId,
-                        Title = "Issue Status Updated",
-                        Body =
-                            $"Issue #{notification.IssueId} status changed from {notification.PreviousStatus} to {notification.NewStatus}",
-                        Data = new Dictionary<string, string>
-                        {
-                            ["issueId"] = notification.IssueId.ToString(),
-                            ["previousStatus"] = notification.PreviousStatus.ToString(),
-                            ["newStatus"] = notification.NewStatus.ToString(),
-                            ["type"] = "ISSUE_STATUS_CHANGED"
-                        }
-                    };
+                // Notify users who report on the issue about  status change
+                var issue = await _unitOfWork.Repository<Issue>()
+                    .FindBy(i => i.Id == notification.IssueId)
+                    .Include(i => i.AssociatedSnapReports)
+                    .FirstOrDefaultAsync(cancellationToken);
 
-                    await _notificationService.SendNotificationToUserAsync(notificationModel);
+                if (issue != null)
+                {
+                    foreach (var report in issue.AssociatedSnapReports)
+                    {
+                        var notificationModel = new NotificationModel
+                        {
+                            UserId = report.UserId,
+                            Title = "Issue Status Updated",
+                            Body =
+                                $"Issue #{notification.IssueId} status changed from {notification.PreviousStatus} to {notification.NewStatus}",
+                            Data = new Dictionary<string, string>
+                            {
+                                {"issueId" , notification.IssueId.ToString()},
+                                { "previousStatus", notification.PreviousStatus.ToString() },
+                                { "newStatus", notification.NewStatus.ToString() },
+                                { "type" , "ISSUE_STATUS_CHANGED" }
+                            }
+                        };
+                        _logger.LogInformation("Sending notification to user {UserId} for issue {IssueId}",
+                            report.UserId, notification.IssueId);
+
+                        await _notificationService.SendNotificationToUserAsync(notificationModel);
+                    }
+                }
+                else
+                {
+                    _logger.LogWarning("Issue with ID {IssueId} not found or has no reporter.", notification.IssueId);
+
                 }
             }
-            else
+            catch (Exception ex)
             {
-                _logger.LogWarning("Issue with ID {IssueId} not found or has no reporter.", notification.IssueId);
-
+                _logger.LogError(ex, "Error handling IssueStatusChanged event for issue {IssueId}",
+                    notification.IssueId);
             }
         }
     }
