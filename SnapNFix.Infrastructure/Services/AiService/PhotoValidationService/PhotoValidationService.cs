@@ -112,61 +112,15 @@ public class PhotoValidationService : IPhotoValidationService
         {
             var logger = serviceProvider.GetRequiredService<ILogger<PhotoValidationService>>();
             var unitOfWork = serviceProvider.GetRequiredService<IUnitOfWork>();
-            var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-            var options = serviceProvider.GetRequiredService<IOptions<PhotoValidationOptions>>();
             
             logger.LogInformation("Starting background photo validation for report {ReportId}", reportId);
             
             const int maxRetries = 3;
-            int retryCount = 0;
             string? taskId = null;
             taskId = await SendImageForValidationAsync(
                 imageUrl, 
                 cancellationToken);
-            /*while (retryCount < maxRetries && taskId == null)
-            {
-                try
-                {
-                    // Create a validation service instance within the scope
-                    var validationService = new PhotoValidationService(
-                        logger,
-                        httpClientFactory,
-                        unitOfWork,
-                        options,
-                        serviceProvider.GetRequiredService<IBackgroundTaskQueue>());
-                    
-                    taskId = await validationService.SendImageForValidationAsync(
-                        imageUrl, 
-                        cancellationToken);
-                        
-                    break;
-                }
-                catch (Exception ex) when (ex is HttpRequestException || ex is TimeoutException)
-                {
-                    retryCount++;
-                    if (retryCount >= maxRetries)
-                    {
-                        logger.LogError(ex, "Failed to send image for validation after {RetryCount} attempts for report {ReportId}", 
-                            retryCount, reportId);
-                        // Mark as failed after all retries
-                        await MarkReportAsDeclined(unitOfWork, reportId, logger);
-                        return;
-                    }
-                    
-                    var delay = TimeSpan.FromSeconds(Math.Pow(2, retryCount)); // Exponential backoff
-                    logger.LogWarning(ex, "Error sending image for validation, retry {RetryCount}/{MaxRetries} in {Delay}s for report {ReportId}", 
-                        retryCount, maxRetries, delay.TotalSeconds, reportId);
-                    await Task.Delay(delay, cancellationToken);
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(ex, "Unexpected error processing photo validation for report {ReportId}", reportId);
-                    await MarkReportAsDeclined(unitOfWork, reportId, logger);
-                    return;
-                }
-            }
-            */
-            
+           
             if (taskId == null)
             {
                 logger.LogError("Failed to get task ID for report {ReportId}", reportId);

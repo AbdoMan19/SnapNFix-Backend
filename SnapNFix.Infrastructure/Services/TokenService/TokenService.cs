@@ -111,7 +111,7 @@ public class TokenService : ITokenService
         {
             minutesToExpire = configMinutes;
         }
-        return DateTime.UtcNow.AddHours(minutesToExpire);
+        return DateTime.UtcNow.AddMinutes(minutesToExpire);
     }
 
 

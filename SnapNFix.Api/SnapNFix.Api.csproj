@@ -36,8 +36,4 @@
       <ProjectReference Include="..\SnapNFix.Infrastructure\SnapNFix.Infrastructure.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Configuration\" />
-    </ItemGroup>
-
 </Project>

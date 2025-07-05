@@ -59,6 +59,5 @@ public class ReportService : IReportService
             report.IssueId = newIssue.Id;
             report.Issue = newIssue;
             return newIssue;
-            //save the report with the new issue in case error
     }
 }

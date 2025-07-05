@@ -1,5 +1,5 @@
 
-using SnapNFix.Application.Options;
+using SnapNFix.Application.Common.Options;
 
 public class CacheInvalidationService : ICacheInvalidationService
 {

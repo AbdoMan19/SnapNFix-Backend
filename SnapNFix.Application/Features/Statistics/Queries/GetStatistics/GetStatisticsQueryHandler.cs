@@ -1,11 +1,10 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
+using SnapNFix.Application.Common.Options;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Statistics.Queries.GetMetrics;
 using SnapNFix.Application.Features.Statistics.Queries.GetMonthlyTarget;
 using SnapNFix.Application.Resources;
-using SnapNFix.Application.Common.Interfaces;
-using SnapNFix.Application.Options;
 
 namespace SnapNFix.Application.Features.Statistics.Queries.GetStatistics;
 

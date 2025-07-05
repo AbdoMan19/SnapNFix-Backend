@@ -1,12 +1,12 @@
 using MapsterMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using SnapNFix.Application.Common.Options;
 using SnapNFix.Application.Common.ResponseModel;
 using SnapNFix.Application.Features.Issue.DTOs;
 using SnapNFix.Domain.Interfaces;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Application.Resources;
-using SnapNFix.Application.Options;
 
 namespace SnapNFix.Application.Features.Issue.Queries;
 

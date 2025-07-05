@@ -2,10 +2,9 @@
 using Microsoft.Extensions.Logging;
 using SnapNFix.Application.Common.ResponseModel;
 using Microsoft.EntityFrameworkCore;
+using SnapNFix.Application.Common.Options;
 using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Interfaces;
-using SnapNFix.Application.Common.Interfaces;
-using SnapNFix.Application.Options;
 
 namespace SnapNFix.Application.Features.Statistics.Queries.GetGeographicDistribution;
 

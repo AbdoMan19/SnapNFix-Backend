@@ -5,10 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
-using SnapNFix.Application.Common.Interfaces;
 using SnapNFix.Domain.Entities;
-using Mapster;
-using SnapNFix.Application.Options;
+using SnapNFix.Application.Common.Options;
 
 namespace SnapNFix.Application.Features.Statistics.Queries.GetMonthlyTarget;
 
