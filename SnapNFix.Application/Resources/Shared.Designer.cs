@@ -1162,5 +1162,13 @@ namespace SnapNFix.Application.Resources {
             }
         }
 
+        public static string FCMTokenMaxLength
+        {
+            get
+            {
+                return ResourceManager.GetString("FCMTokenMaxLength", resourceCulture);
+            }
+        }
+
     }
 }

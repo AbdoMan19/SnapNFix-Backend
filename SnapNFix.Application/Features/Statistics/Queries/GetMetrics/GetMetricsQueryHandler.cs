@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using SnapNFix.Application.Resources;
 using SnapNFix.Domain.Enums;
 using SnapNFix.Domain.Interfaces;
+using SnapNFix.Application.Options;
 
 namespace SnapNFix.Application.Features.Statistics.Queries.GetMetrics;
 

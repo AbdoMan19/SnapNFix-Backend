@@ -600,4 +600,9 @@
         <value>لا يمكنك إنشاء تقرير سريع لمشكلة قمت بالإبلاغ عنها بالفعل</value>
     </data>
 
+    <data name="FCMTokenMaxLength" xml:space="preserve">
+        <value>لا يجب أن يزيد عدد حروف رمز FCM عن 200 حرف</value>
+    </data>
+
+
 </root>

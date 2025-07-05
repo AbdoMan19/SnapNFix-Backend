@@ -6,6 +6,7 @@ using SnapNFix.Domain.Interfaces;
 using SnapNFix.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using SnapNFix.Application.Common.Interfaces;
+using SnapNFix.Application.Options;
 
 namespace SnapNFix.Application.Features.Statistics.Queries.GetIncidentTrends;
 
