@@ -1,8 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SnapNFix.Application.Common.ResponseModel;
-using SnapNFix.Application.Features.Statistics.Queries.GetDashboardSummary;
 using SnapNFix.Application.Features.Statistics.Queries.GetMetrics;
 using SnapNFix.Application.Features.Statistics.Queries.GetCategoryDistribution;
 using SnapNFix.Application.Features.Statistics.Queries.GetMonthlyTarget;
@@ -23,16 +21,7 @@ public class StatisticsController : ControllerBase
     {
         _mediator = mediator;
     }
-
-    [HttpGet("dashboard-summary")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetDashboardSummary(CancellationToken cancellationToken)
-    {
-        var result = await _mediator.Send(new GetDashboardSummaryQuery(), cancellationToken);
-        return result.ErrorList.Count != 0 ? BadRequest(result) : Ok(result);
-    }
+    
 
     [HttpGet("metrics")]
     public async Task<IActionResult> GetMetrics(CancellationToken cancellationToken)
