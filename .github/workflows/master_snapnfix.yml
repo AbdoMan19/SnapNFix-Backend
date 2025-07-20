@@ -56,6 +56,118 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_8ADE57C22CF446B4B67C3A2A74AD0F1A }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_4002A35E6DCF4F39B5842D335D2E98F3 }}
 
+      - name: Set App Settings
+        uses: azure/appservice-settings@v1
+        with:
+          app-name: 'snapnfix'
+          app-settings-json: |
+            [
+              {
+                "name": "ConnectionStrings__DefaultConnection",
+                "value": "${{ secrets.AZURE_POSTGRESQL_CONNECTIONSTRING }}",
+                "slotSetting": false
+              },
+              {
+                "name": "AzureBlob__ConnectionString",
+                "value": "${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}",
+                "slotSetting": false
+              },
+              {
+                "name": "AI__PhotoValidation__ValidationEndpoint",
+                "value": "${{ secrets.VALIDATION_ENDPOINT }}",
+                "slotSetting": false
+              },
+              {
+                "name": "AI__PhotoValidation__WebhookUrl",
+                "value": "${{ secrets.WEBHOOK_URL }}",
+                "slotSetting": false
+              },
+              {
+                "name": "AI__PhotoValidation__WebhookApiKey",
+                "value": "${{ secrets.WEBHOOK_API_KEY }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Authentication__Google__ClientId",
+                "value": "${{ secrets.GOOGLE_CLIENT_ID }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Authentication__Google__ClientSecret",
+                "value": "${{ secrets.GOOGLE_CLIENT_SECRET }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Authentication__Google__RedirectUris",
+                "value": "${{ secrets.GOOGLE_REDIRECT_URI }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Jwt__Key",
+                "value": "${{ secrets.JWT_KEY }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Jwt__Issuer",
+                "value": "${{ secrets.JWT_ISSUER }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Jwt__Audience",
+                "value": "${{ secrets.JWT_AUDIENCE }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Twilio__AccountSid",
+                "value": "${{ secrets.TWILIO_ACCOUNT_SID }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Twilio__AuthToken",
+                "value": "${{ secrets.TWILIO_AUTH_TOKEN }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Twilio__FromNumber",
+                "value": "${{ secrets.TWILIO_FROM_NUMBER }}",
+                "slotSetting": false
+              },
+              {
+                "name": "AzureBlob__ContainerName",
+                "value": "${{ secrets.AZURE_BLOB_CONTAINER }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Firebase__DatabaseUrl",
+                "value": "${{ secrets.FIREBASE_DATABASE_URL }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Firebase__AuthSecret",
+                "value": "${{ secrets.FIREBASE_AUTH_SECRET }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Firebase__CredentialFilePath",
+                "value": "firebase-credentials.json",
+                "slotSetting": false
+              }
+            ]
+          connection-strings-json: |
+            [
+              {
+                "name": "DefaultConnection",
+                "value": "${{ secrets.AZURE_POSTGRESQL_CONNECTIONSTRING }}",
+                "type": "PostgreSQL",
+                "slotSetting": false
+              }
+            ]
+
+      - name: Create Firebase Credentials File
+        run: |
+          $firebaseCredentials = '${{ secrets.FIREBASE_CREDENTIALS }}'
+          Set-Content -Path "firebase-credentials.json" -Value $firebaseCredentials
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
