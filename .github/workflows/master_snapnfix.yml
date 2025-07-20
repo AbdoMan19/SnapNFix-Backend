@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy ASP.Net Core app to Azure Web App - snapnfix
+name: Build and deploy ASP.Net Core app to Azure Web App - SnapNFix
 
 on:
   push:
@@ -21,13 +21,13 @@ jobs:
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.x'
+          dotnet-version: "9.x"
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+        run: dotnet publish SnapNFix.Api/SnapNFix.Api.csproj -c Release -o '${{env.DOTNET_ROOT}}/myapp' --self-contained true --runtime win-x86
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -38,7 +38,9 @@ jobs:
   deploy:
     runs-on: windows-latest
     needs: build
-    
+    environment:
+      name: "Production"
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
       id-token: write #This is required for requesting the JWT
       contents: read #This is required for actions/checkout
@@ -48,19 +50,130 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: .net-app
-      
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_6B9AB4A25B54474190EE2E1EFF487E09 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_0621D936423745FDB3814EC7CA7863CB }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A55726CB889B48AA93F1019725953EDD }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_0621D936423745FDB3814EC7CA7863CB  }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A55726CB889B48AA93F1019725953EDD  }}
+
+      - name: Set App Settings
+        uses: azure/appservice-settings@v1
+        with:
+          app-name: 'snapnfix'
+          app-settings-json: |
+            [
+              {
+                "name": "ConnectionStrings__DefaultConnection",
+                "value": "${{ secrets.AZURE_POSTGRESQL_CONNECTIONSTRING }}",
+                "slotSetting": false
+              },
+              {
+                "name": "AzureBlob__ConnectionString",
+                "value": "${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}",
+                "slotSetting": false
+              },
+              {
+                "name": "AI__PhotoValidation__ValidationEndpoint",
+                "value": "${{ secrets.VALIDATION_ENDPOINT }}",
+                "slotSetting": false
+              },
+              {
+                "name": "AI__PhotoValidation__WebhookUrl",
+                "value": "${{ secrets.WEBHOOK_URL }}",
+                "slotSetting": false
+              },
+              {
+                "name": "AI__PhotoValidation__WebhookApiKey",
+                "value": "${{ secrets.WEBHOOK_API_KEY }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Authentication__Google__ClientId",
+                "value": "${{ secrets.GOOGLE_CLIENT_ID }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Authentication__Google__ClientSecret",
+                "value": "${{ secrets.GOOGLE_CLIENT_SECRET }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Authentication__Google__RedirectUris",
+                "value": "${{ secrets.GOOGLE_REDIRECT_URI }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Jwt__Key",
+                "value": "${{ secrets.JWT_KEY }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Jwt__Issuer",
+                "value": "${{ secrets.JWT_ISSUER }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Jwt__Audience",
+                "value": "${{ secrets.JWT_AUDIENCE }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Twilio__AccountSid",
+                "value": "${{ secrets.TWILIO_ACCOUNT_SID }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Twilio__AuthToken",
+                "value": "${{ secrets.TWILIO_AUTH_TOKEN }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Twilio__FromNumber",
+                "value": "${{ secrets.TWILIO_FROM_NUMBER }}",
+                "slotSetting": false
+              },
+              {
+                "name": "AzureBlob__ContainerName",
+                "value": "${{ secrets.AZURE_BLOB_CONTAINER }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Firebase__DatabaseUrl",
+                "value": "${{ secrets.FIREBASE_DATABASE_URL }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Firebase__AuthSecret",
+                "value": "${{ secrets.FIREBASE_AUTH_SECRET }}",
+                "slotSetting": false
+              },
+              {
+                "name": "Firebase__CredentialFilePath",
+                "value": "firebase-credentials.json",
+                "slotSetting": false
+              }
+            ]
+          connection-strings-json: |
+            [
+              {
+                "name": "DefaultConnection",
+                "value": "${{ secrets.AZURE_POSTGRESQL_CONNECTIONSTRING }}",
+                "type": "PostgreSQL",
+                "slotSetting": false
+              }
+            ]
+
+      - name: Create Firebase Credentials File
+        run: |
+          $firebaseCredentials = '${{ secrets.FIREBASE_CREDENTIALS }}'
+          Set-Content -Path "firebase-credentials.json" -Value $firebaseCredentials
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'snapnfix'
-          slot-name: 'Production'
+          slot-name: "Production"
           package: .
-          
